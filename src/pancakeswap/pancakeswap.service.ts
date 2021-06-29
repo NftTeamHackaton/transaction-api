@@ -1,28 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { ethers } from 'ethers';
-import {ChainId, Fetcher, CurrencyAmount, Route, Trade, TokenAmount, TradeType, Percent, JSBI, Price} from '@uniswap/sdk'
+import {ChainId, Fetcher, CurrencyAmount, Route, Trade, TokenAmount, TradeType, Percent, JSBI, Price} from '@pancakeswap/sdk'
 import { TokenBuilder } from './tokens/token.builder';
 
 @Injectable()
-export class UniswapService {
+export class PancakeswapService {
     constructor(private readonly tokenBuilder: TokenBuilder) {}
 
     public async calculatePrice (network: string, tokenInputSymbol: string, tokenOutputSymbol: string, amount: string) {
         try {
+            const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org")
             const chainID = ChainId[network.toUpperCase()]
             const tokenInput = this.tokenBuilder.build(chainID, tokenInputSymbol)
             const tokenOutput = this.tokenBuilder.build(chainID, tokenOutputSymbol)
             const tokenInputAmount = new TokenAmount(tokenInput, amount)
-            const pair = await Fetcher.fetchPairData(tokenInput, tokenOutput)
+            const pair = await Fetcher.fetchPairData(tokenInput, tokenOutput, provider)
             const route = new Route([pair], tokenInput);
             const trade = new Trade(route, tokenInputAmount, TradeType.EXACT_INPUT);
             const slippageTolerance = new Percent('50', '10000');
             const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw;
             const amountOutMax = trade.maximumAmountIn(slippageTolerance).raw;
-            let provider = ethers.getDefaultProvider(network.toLowerCase(), {
-                projectId: 'cf9ea9a288c245f3bb640e6a1bc8602a',
-                projectSecret: '88d08fc8088b43f99c51be742196f41f'
-            });
+
+            
+
             const pairContract = new ethers.Contract(
                 pair.liquidityToken.address,
                 ['function totalSupply() external view returns (uint)'],
