@@ -16,9 +16,12 @@ services:
             target: production
             dockerfile: ./.docker/nestjs/Dockerfile
         command: npm run start:prod
+        dns:
+            - 8.8.8.8
+            - 4.4.4.4
         ports:
-            - 3001:3000
-            - 922:9229
+            - 3000:3000
+            - 9229:9229
         networks:
             - inka-network
         volumes:
