@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+  inka-api-nginx:
+    depends_on:
+      - inka-api-dev
+    networks:
+      - inka-network
+
+  inka-api-dev:
+    build:
+        context: .
+        target: development
+        dockerfile: ./.docker/nestjs/Dockerfile
+    volumes:
+        - .:/usr/src/app
+        - /usr/src/app/node_modules
+    networks:
+      - inka-network
+
+networks:
+    inka-network:
+      external: true
