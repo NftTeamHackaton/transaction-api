@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Post } from '@nestjs/common';
 import Compound from '@compound-finance/compound-js';
 import Web3 from 'web3'
 import { ERC20ABI } from './erc20.abi';
@@ -6,9 +6,8 @@ import { cTokenABI } from './cToken.abi';
 import { Repository } from 'typeorm';
 import { Compound as CompoundEntity } from 'src/entities/compount.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { InkaCompoundProviderABI } from './inkaCompoundProvider.abi';
 import { StakingDto } from './staking.dto';
+
 const ethers = require('ethers');
 
 @Injectable()
@@ -56,9 +55,15 @@ export class CompoundService {
         }
     }
 
-    public async getAccountData(network: string, erc20Symbol: string, cTokenSymbol: string, address: string) {
-        // const bal = await Compound.comp.getCompBalance(address, 'https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a');
-        // const acc = await Compound.comp.getCompAccrued(address, 'https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a');
+    public async getCompData(network: string, address: string) {
+        const balance = await Compound.comp.getCompBalance(address, 'https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077');
+        const accrued = await Compound.comp.getCompAccrued(address, 'https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077');
+        return {
+            balance, accrued
+        }
+    }
+
+    public async getRewardData(network: string, erc20Symbol: string, cTokenSymbol: string, address: string) {
         let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
         const erc20TokenAddress = Compound.util.getAddress(erc20Symbol, network)
         const cTokenAddress = Compound.util.getAddress(cTokenSymbol, network)
@@ -97,14 +102,17 @@ export class CompoundService {
                 compoundStaked.reward = 0
                 await this.compoundRepository.save(compoundStaked)
             }
-
+            
             reward = (underlyingBalance - stakedBefore)
             staked = stakedBefore
             if(reward < 0) 
                 reward = 0;
         }
-
-        return {oneCTokenInUnderlying, reward, staked, total: underlyingBalance}
+        return {
+            reward: reward.toFixed(8), 
+            staked: Number(staked).toFixed(8), 
+            total: underlyingBalance.toFixed(8)
+        }
 
     }
 }

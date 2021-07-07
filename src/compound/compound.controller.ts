@@ -13,16 +13,22 @@ export class CompoundController {
         return response.status(200).send({})
     }
 
-    @Get('/:network/account/:erc20Symbol/:cTokenSymbol/:address')
-    public async accountData(
+    @Get('/:network/reward/:erc20Symbol/:cTokenSymbol/:address')
+    public async rewardData(
         @Param('network') network: string, 
         @Param('erc20Symbol') erc20Symbol: string, 
         @Param('cTokenSymbol') cTokenSymbol: string, 
         @Param('address') address: string, 
         @Res() response: Response
     ) {
-        const result = await this.compoundService.getAccountData(network, erc20Symbol, cTokenSymbol, address);
+        const result = await this.compoundService.getRewardData(network, erc20Symbol, cTokenSymbol, address);
         return response.status(200).send(result)
+    }
+
+    @Get('/:network/comp/:address')
+    public async compData(@Param('network') network: string, @Param('address') address: string, @Res() response: Response) {
+        const result = await this.compoundService.getCompData(network, address);
+        return response.status(200).send(result);
     }
 
     @Post('/:network/staking')
