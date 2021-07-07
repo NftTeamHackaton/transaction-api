@@ -4,9 +4,25 @@ import { AppService } from './app.service';
 import { UniswapModule } from './uniswap/uniswap.module';
 import { PancakeswapModule } from './pancakeswap/pancakeswap.module';
 import { CompoundModule } from './compound/compound.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from './config/config.module';
+import { ConfigService } from './config/config.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [UniswapModule, PancakeswapModule, CompoundModule],
+  imports: [
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return configService.getTypeOrmConfig();
+      }
+    }),
+    ScheduleModule.forRoot(),
+    UniswapModule, 
+    ConfigModule,
+    PancakeswapModule, 
+    CompoundModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

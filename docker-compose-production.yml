@@ -9,7 +9,7 @@ services:
         networks:
             - inka-network
     inka-api-prod:
-        container_name: nestjs_api_prod
+        container_name: inka-api-prod
         image: nestjs-api-prod:1.0.0
         build:
             context: .
