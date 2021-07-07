@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AaveModule } from './aave/aave.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     UniswapModule, 
     ConfigModule,
     PancakeswapModule, 
-    CompoundModule
+    CompoundModule, AaveModule
   ],
   controllers: [AppController],
   providers: [AppService],
