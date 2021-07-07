@@ -27,6 +27,8 @@ services:
         volumes:
             - .:/usr/src/app
             - /usr/src/app/node_modules
+        depends_on:
+            - inka-api-nginx                
         networks:
             - inka-network
         restart: unless-stopped

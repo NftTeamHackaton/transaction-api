@@ -1,0 +1,16 @@
+[
+    {
+      "name": "default",
+      "type": "postgres",
+      "host": "inka-postgres",
+      "port": 5432,
+      "username": "inka",
+      "password": "password",
+      "database": "inka",
+      "entities": ["dist/**/*.entity{ .ts,.js}"],
+      "synchronize": false,
+      "migrations": ["dist/migrations/*{.ts,.js}"],
+      "migrationsTableName": "migrations_typeorm",
+      "migrationsRun": true
+    }
+]
