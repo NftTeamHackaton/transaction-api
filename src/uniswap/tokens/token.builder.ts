@@ -54,7 +54,6 @@ export class TokenBuilder {
 
     public build(chainId: number, token: string): Token {
         const tokenFormat = token.toUpperCase()
-
         if(tokenFormat == 'WETH') {
             return WETH[chainId]
         }

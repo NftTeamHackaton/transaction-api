@@ -25,6 +25,19 @@ export class UniswapService {
         let balanceOf = await pairContract.balanceOf(accountAddress)
         totalSupply = new TokenAmount(pair.liquidityToken, totalSupply.toString())
         balanceOf = new TokenAmount(pair.liquidityToken, balanceOf.toString())
+
+        if(balanceOf.toSignificant(6) == 0) {
+            return {
+                lpTokens: "0",
+                lpTokensFormatted: "0",
+                value0: "0",
+                value1: "0",
+                value0Formatted: "0",
+                value1Formatted: "0",
+                shareOfPool: "0"
+            }
+        }
+
         const value0 = pair.getLiquidityValue(tokenInput, totalSupply, balanceOf)
         const value1 = pair.getLiquidityValue(tokenOutput, totalSupply, balanceOf)
         const liquidityMinted = pair.getLiquidityMinted(totalSupply, value0, value1)
