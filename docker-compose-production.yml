@@ -8,6 +8,8 @@ services:
           context: ./
         networks:
             - inka-network
+        depends_on:
+            - inka-api-prod
     inka-api-prod:
         container_name: inka-api-prod
         image: nestjs-api-prod:1.0.0
@@ -26,9 +28,7 @@ services:
             - inka-network
         volumes:
             - .:/usr/src/app
-            - /usr/src/app/node_modules
-        depends_on:
-            - inka-api-nginx                
+            - /usr/src/app/node_modules                
         networks:
             - inka-network
         restart: unless-stopped
