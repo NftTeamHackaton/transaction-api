@@ -8,25 +8,41 @@ export class UniswapService {
     constructor(private readonly tokenBuilder: TokenBuilder) {}
 
     public async userInfo(network: string, tokenInputSymbol: string, tokenOutputSymbol: string, accountAddress: string) {
-        const chainID = ChainId[network.toUpperCase()]
-        const tokenInput = this.tokenBuilder.build(chainID, tokenInputSymbol)
-        const tokenOutput = this.tokenBuilder.build(chainID, tokenOutputSymbol)
-        const pair = await Fetcher.fetchPairData(tokenInput, tokenOutput)
-        let provider = ethers.getDefaultProvider(network.toLowerCase(), {
-            projectId: 'cf9ea9a288c245f3bb640e6a1bc8602a',
-            projectSecret: '88d08fc8088b43f99c51be742196f41f'
-        });
-        const pairContract = new ethers.Contract(
-            pair.liquidityToken.address,
-            ['function totalSupply() external view returns (uint)', 'function balanceOf(address owner) external view returns (uint)'],
-            provider
-        );
-        let totalSupply = await pairContract.totalSupply()
-        let balanceOf = await pairContract.balanceOf(accountAddress)
-        totalSupply = new TokenAmount(pair.liquidityToken, totalSupply.toString())
-        balanceOf = new TokenAmount(pair.liquidityToken, balanceOf.toString())
+        try {
+            const chainID = ChainId[network.toUpperCase()]
+            const tokenInput = this.tokenBuilder.build(chainID, tokenInputSymbol)
+            const tokenOutput = this.tokenBuilder.build(chainID, tokenOutputSymbol)
+            const pair = await Fetcher.fetchPairData(tokenInput, tokenOutput)
+            let provider = ethers.getDefaultProvider(network.toLowerCase(), {
+                projectId: 'cf9ea9a288c245f3bb640e6a1bc8602a',
+                projectSecret: '88d08fc8088b43f99c51be742196f41f'
+            });
+            const pairContract = new ethers.Contract(
+                pair.liquidityToken.address,
+                ['function totalSupply() external view returns (uint)', 'function balanceOf(address owner) external view returns (uint)'],
+                provider
+            );
+            let totalSupply = await pairContract.totalSupply()
+            let balanceOf = await pairContract.balanceOf(accountAddress)
+            totalSupply = new TokenAmount(pair.liquidityToken, totalSupply.toString())
+            balanceOf = new TokenAmount(pair.liquidityToken, balanceOf.toString())
 
-        if(balanceOf.toSignificant(6) == 0) {
+            const value0 = pair.getLiquidityValue(tokenInput, totalSupply, balanceOf)
+            const value1 = pair.getLiquidityValue(tokenOutput, totalSupply, balanceOf)
+            const liquidityMinted = pair.getLiquidityMinted(totalSupply, value0, value1)
+            const shareOfPool = new Percent(liquidityMinted.raw, totalSupply.add(liquidityMinted).raw)
+            const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
+            return {
+                lpTokens: String(balanceOf.raw),
+                lpTokensFormatted: String(balanceOf.toSignificant(6)),
+                value0: String(value0.raw),
+                value1: String(value1.raw),
+                value0Formatted: String(value0.toSignificant(6)),
+                value1Formatted: String(value1.toSignificant(6)),
+                shareOfPool: shareOfPool?.lessThan(ONE_BIPS) ? '<0.01' : shareOfPool?.toFixed(2) ?? '0'
+            }
+        } catch (error) {
+            console.log(error)
             return {
                 lpTokens: "0",
                 lpTokensFormatted: "0",
@@ -36,21 +52,6 @@ export class UniswapService {
                 value1Formatted: "0",
                 shareOfPool: "0"
             }
-        }
-
-        const value0 = pair.getLiquidityValue(tokenInput, totalSupply, balanceOf)
-        const value1 = pair.getLiquidityValue(tokenOutput, totalSupply, balanceOf)
-        const liquidityMinted = pair.getLiquidityMinted(totalSupply, value0, value1)
-        const shareOfPool = new Percent(liquidityMinted.raw, totalSupply.add(liquidityMinted).raw)
-        const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
-        return {
-            lpTokens: String(balanceOf.raw),
-            lpTokensFormatted: String(balanceOf.toSignificant(6)),
-            value0: String(value0.raw),
-            value1: String(value1.raw),
-            value0Formatted: String(value0.toSignificant(6)),
-            value1Formatted: String(value1.toSignificant(6)),
-            shareOfPool: shareOfPool?.lessThan(ONE_BIPS) ? '<0.01' : shareOfPool?.toFixed(2) ?? '0'
         }
     }
 
