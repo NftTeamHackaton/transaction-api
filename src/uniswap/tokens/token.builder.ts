@@ -53,11 +53,12 @@ export class TokenBuilder {
     
 
     public build(chainId: number, token: string): Token {
+        console.log(chainId, token)
         const tokenFormat = token.toUpperCase()
         if(tokenFormat == 'WETH') {
             return WETH[chainId]
         }
-
+        
         const tokenData = this.TOKENS[tokenFormat][chainId]
         return new Token(chainId, tokenData.address, tokenData.decimals, tokenData.symbol, tokenData.name)
     }

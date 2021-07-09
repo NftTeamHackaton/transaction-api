@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StakingDto } from './staking.dto';
 import { ConfigService } from 'src/config/config.service';
 import { Erc20TransactionEntity } from 'src/entities/erc20Transaction.entity';
-import InputDataDecoder from 'ethereum-input-data-decoder'
 const ethers = require('ethers');
 
 @Injectable()
@@ -25,7 +24,7 @@ export class CompoundService {
         private readonly httpService: HttpService
     ) {}
 
-    private async cacheTransactionHistory(network: string, contractAddress: string, address: string): Promise<Erc20TransactionEntity[]> {
+    private async cacheTransactionHistory(network: string, contractAddress: string, address: string): Promise<void> {
         const transactions = await this.httpService.get('/api', {
             params: {
                 module: 'account',
@@ -41,36 +40,42 @@ export class CompoundService {
         const data: Erc20TransactionInterface[] = transactions.data.result;
         for (let i = 0; i < data.length; i++) {
             const tx: Erc20TransactionInterface = data[i]
-            await this.erc20TransactionRepository.save({
-                ...tx,
-                nonce: Number(tx.nonce),
-                tokenDecimals: Number(tx.tokenDecimal),
-                transactionDate: new Date(Number(tx.timeStamp) * 1000),
-                network
-            })
+
+            const savedTx = await this.erc20TransactionRepository.findOne({hash: tx.hash});
+
+            if(savedTx == undefined) {
+                await this.erc20TransactionRepository.save({
+                    ...tx,
+                    nonce: Number(tx.nonce),
+                    tokenDecimals: Number(tx.tokenDecimal),
+                    transactionDate: new Date(Number(tx.timeStamp) * 1000),
+                    network
+                })
+            }
         }
+    }
+
+    public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string) {        
+        const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
+        const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase()).toLowerCase()
+        await this.cacheTransactionHistory(network, contractAddress, address)
+        return this.compoundTransaction(contractAddress, cTokenContractAddress, address)
+    }
+
+    private async compoundTransaction(contractAddress: string, cTokenContractAddress: string, address: string) {
         return this.erc20TransactionRepository.find({where: [
-            {contractAddress, from: address},
-            {contractAddress, to: address},
+            {contractAddress, from: address, to: '0x031A512148DBFDB933E41F2f6824D737830595Be'.toLowerCase()},
+            {contractAddress, from: '0x031A512148DBFDB933E41F2f6824D737830595Be'.toLowerCase(), to: address},
+
+            {contractAddress, from: address, to: cTokenContractAddress},
+            {contractAddress, from: cTokenContractAddress, to: address},
         ]})
     }
 
-    public async getCompoundHistory(network: string, erc20Symbol: string, address: string) {        
-        const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
-        const v = "0xf305d71900000000000000000000000007de306ff27a2b630b1141956844eb1552b956b500000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000030d4000000000000000000000000000000000000000000000000000186c87301c62ce000000000000000000000000f0291be50725ef8ea95694ba18bf162026f8fce90000000000000000000000000000000000000000000000000000000060dafb1c"
-        const res = InputDataDecoder.decodeData(v)
-        console.log(res)
-        // const cachedTxCount = await this.erc20TransactionRepository.count({where: [
-        //     {contractAddress, from: address},
-        //     {contractAddress, to: address},
-        // ]})
-        // if(cachedTxCount <= 0) {
-        //     return this.cacheTransactionHistory(network, contractAddress, address)
-        // }
-        return this.erc20TransactionRepository.find({where: [
-            {contractAddress, from: address},
-            {contractAddress, to: address},
-        ]})
+    public async getAllCompoundTransaction(network: string, erc20Symbol: string, address: string) {
+        const contractAddress = Compound.util.getAddress(erc20Symbol, network).toLowerCase()
+        const cTokenContractAddress = Compound.util.getAddress('c' + erc20Symbol, network).toLowerCase()
+        return this.compoundTransaction(contractAddress, cTokenContractAddress, address)
     }
 
     public async stakedBalance(network: string, address: string) {

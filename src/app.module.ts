@@ -9,6 +9,7 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AaveModule } from './aave/aave.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { AaveModule } from './aave/aave.module';
     UniswapModule, 
     ConfigModule,
     PancakeswapModule, 
-    CompoundModule, AaveModule
+    CompoundModule, AaveModule, TransactionModule
   ],
   controllers: [AppController],
   providers: [AppService],
