@@ -30,6 +30,7 @@
     "@nestjs/typeorm": "^7.1.5",
     "@pancakeswap/sdk": "^2.3.2",
     "@uniswap/sdk": "^3.0.3",
+    "ethereum-input-data-decoder": "^0.3.2",
     "ethers": "^5.3.1",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",

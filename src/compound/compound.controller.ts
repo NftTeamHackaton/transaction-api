@@ -7,10 +7,20 @@ import { StakingDto } from './staking.dto';
 export class CompoundController {
     constructor(private readonly compoundService: CompoundService) {}
 
-    @Get('/test')
-    public async test(@Res() response: Response) {
-        await this.compoundService.test();
-        return response.status(200).send({})
+    @Get('/:network/history/:erc20Symbol/:address')
+    public async test(@Param('network') network: string, @Param('erc20Symbol') erc20Symbol: string, @Param('address') address: string, @Res() response: Response) {
+        const transaction = await this.compoundService.getCompoundHistory(network, erc20Symbol, address.toLowerCase());
+        return response.status(200).send({transaction})
+    }
+
+    @Get('/:network/staked/:address')
+    public async stakedBalance(
+        @Param('network') network: string, 
+        @Param('address') address: string, 
+        @Res() response: Response
+    ) {
+        const result = await this.compoundService.stakedBalance(network, address);
+        return response.status(200).send(result)
     }
 
     @Get('/:network/reward/:erc20Symbol/:cTokenSymbol/:address')
