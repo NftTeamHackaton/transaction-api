@@ -55,29 +55,6 @@ export class CompoundService {
         }
     }
 
-    public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string) {        
-        const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
-        const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase()).toLowerCase()
-        await this.cacheTransactionHistory(network, contractAddress, address)
-        return this.compoundTransaction(contractAddress, cTokenContractAddress, address)
-    }
-
-    private async compoundTransaction(contractAddress: string, cTokenContractAddress: string, address: string) {
-        return this.erc20TransactionRepository.find({where: [
-            {contractAddress, from: address, to: '0x031A512148DBFDB933E41F2f6824D737830595Be'.toLowerCase()},
-            {contractAddress, from: '0x031A512148DBFDB933E41F2f6824D737830595Be'.toLowerCase(), to: address},
-
-            {contractAddress, from: address, to: cTokenContractAddress},
-            {contractAddress, from: cTokenContractAddress, to: address},
-        ]})
-    }
-
-    public async getAllCompoundTransaction(network: string, erc20Symbol: string, address: string) {
-        const contractAddress = Compound.util.getAddress(erc20Symbol, network).toLowerCase()
-        const cTokenContractAddress = Compound.util.getAddress('c' + erc20Symbol, network).toLowerCase()
-        return this.compoundTransaction(contractAddress, cTokenContractAddress, address)
-    }
-
     public async stakedBalance(network: string, address: string) {
         let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
         const cTokenUSDT = new provider.eth.Contract(cTokenABI, Compound.util.getAddress('cUSDT', network.toLowerCase()));

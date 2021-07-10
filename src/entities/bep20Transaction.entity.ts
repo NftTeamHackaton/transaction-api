@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-@Entity('erc_20_transactions')
-export class Erc20TransactionEntity {
+@Entity('bep_20_transactions')
+export class Bep20TransactionEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

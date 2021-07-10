@@ -6,8 +6,18 @@ import { AaveService } from './aave.service';
 export class AaveController {
     constructor(private readonly aaveService: AaveService) {}
 
+    @Get('/:network/staked/:address')
+    public async stakedInfo(
+        @Param('network') network: string, 
+        @Param('address') address: string, 
+        @Res() response: Response
+    ) {
+        const result = await this.aaveService.stakedData(network, address);
+        return response.status(200).send(result)
+    }
+
     @Get('/:network/reward/:erc20Symbol/:address')
-    public async testAave(
+    public async rewardInfo(
         @Param('network') network: string, 
         @Param('erc20Symbol') erc20Symbol: string, 
         @Param('address') address: string, 

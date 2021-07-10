@@ -32,6 +32,10 @@ export class ConfigService {
         return this.get('ETHERSCAN_API_KEY')
     }
 
+    getSmartChainEtherscanApiKey(): string {
+        return this.get('SMART_CHAIN_ETHERSCAN_API_KEY')
+    }
+
     getTypeOrmConfig(): TypeOrmModuleOptions {
         return {
             type: 'postgres',

@@ -17,6 +17,21 @@ export class AaveService {
         private readonly tokenBuilder: TokenBuilder
     ) {}
 
+    public async stakedData(network: string, address: string) {
+        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+
+        const usdtToken: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], 'USDT')
+        const usdcToken: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], 'USDC')
+        const aTokenUSDT = new provider.eth.Contract(aTokenABI, usdtToken.aTokenAddress);
+        const aTokenUSDC = new provider.eth.Contract(aTokenABI, usdcToken.aTokenAddress);
+        const balanceOfUSDT = await aTokenUSDT.methods.balanceOf(address).call()
+        const balanceOfUSDC = await aTokenUSDC.methods.balanceOf(address).call()
+        return {
+            usdtStaked: balanceOfUSDT > 0 ? true : false,
+            usdcStaked: balanceOfUSDC > 0 ? true : false,
+        }
+    }
+
     public async getRewardData(network: string, erc20Symbol: string, address: string) {
         let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
 
