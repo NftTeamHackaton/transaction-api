@@ -27,6 +27,18 @@ export class AaveTokenBuilder {
                 symbol: 'USDT',
                 address: '0x13512979ADE267AB5100878E2e0f485B568328a4'
             }
+        },
+        WETH: {
+            1: {},
+            42: {
+                aTokenAddress: '0x87b1f4cf9BD63f7BBD3eE1aD04E8F52540349347',
+                aTokenSymbol: 'aWETH',
+                stableDebtTokenAddress: '0x1F85D0dc45332D00aead98D26db0735350F80D18',
+                variableDebtTokenAddress: '0xDD13CE9DE795E7faCB6fEC90E346C7F3abe342E2',
+                decimals: 18,
+                symbol: 'WETH',
+                address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C'
+            }
         }
     }
     

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import Web3 from 'web3'
 import { aTokenABI } from './aToken.abi';
 import { AaveTokenBuilder } from './aaveToken.builder';
+import { LendingPoolABI } from './lendingPool.abi';
 
 @Injectable()
 export class AaveService {
@@ -38,6 +39,10 @@ export class AaveService {
         const tokenData: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], erc20Symbol)
 
         const aToken = new provider.eth.Contract(aTokenABI, tokenData.aTokenAddress);
+        const lendingPool = new provider.eth.Contract(LendingPoolABI, "0xE0fBa4Fc209b4948668006B2bE61711b7f465bAe")
+        const s = await lendingPool.methods.getReserveData(tokenData.address).call()
+        const RAY = 1e27
+        const percentDepositAPY = 100 * Number(s.currentLiquidityRate)/RAY
         const balanceOfAToken = await aToken.methods.balanceOf(address).call()
         const formattedBalance = (balanceOfAToken / Math.pow(10, tokenData.decimals))
         const aaveStaked = await this.aaveRepository.findOne({
@@ -72,6 +77,7 @@ export class AaveService {
                 reward = 0;
         }
         return {
+            APY: percentDepositAPY.toFixed(2),
             reward: reward.toFixed(8), 
             staked: Number(staked).toFixed(8), 
             total: formattedBalance.toFixed(8)
