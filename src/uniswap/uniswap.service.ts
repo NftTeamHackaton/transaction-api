@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ethers } from 'ethers';
 import {ChainId, Fetcher, CurrencyAmount, Route, Trade, TokenAmount, TradeType, Percent, JSBI, Price, Pair} from '@uniswap/sdk'
-import { TokenBuilder } from './tokens/token.builder';
+import { UniswapTokenBuilder } from './tokens/uniswapToken.builder';
 import Web3 from 'web3'
 
 @Injectable()
 export class UniswapService {
-    constructor(private readonly tokenBuilder: TokenBuilder) {}
+    constructor(private readonly tokenBuilder: UniswapTokenBuilder) {}
 
     public async getTransaction(network: string, transactionHash: string) {
         let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));

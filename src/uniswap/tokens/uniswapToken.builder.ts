@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {ChainId, Fetcher, WETH, Route, Trade, TokenAmount, TradeType, Percent, Token} from '@uniswap/sdk'
 
 @Injectable()
-export class TokenBuilder {
+export class UniswapTokenBuilder {
     readonly TOKENS = {
         USDC: {
             1: {},

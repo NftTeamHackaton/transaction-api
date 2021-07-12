@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { TokenBuilder } from './tokens/token.builder';
+import { UniswapTokenBuilder } from './tokens/uniswapToken.builder';
 import { UniswapController } from './uniswap.controller';
 import { UniswapService } from './uniswap.service';
 
 @Module({
   controllers: [UniswapController],
-  providers: [UniswapService, TokenBuilder]
+  providers: [UniswapService, UniswapTokenBuilder]
 })
 export class UniswapModule {}

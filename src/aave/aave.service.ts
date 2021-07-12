@@ -5,7 +5,7 @@ import { AaveInvest } from 'src/entities/aaveInvest.entity';
 import { Repository } from 'typeorm';
 import Web3 from 'web3'
 import { aTokenABI } from './aToken.abi';
-import { TokenBuilder } from './token.builder';
+import { AaveTokenBuilder } from './aaveToken.builder';
 
 @Injectable()
 export class AaveService {
@@ -14,7 +14,7 @@ export class AaveService {
         @InjectRepository(AaveInvest)
         private readonly aaveRepository: Repository<AaveInvest>,
 
-        private readonly tokenBuilder: TokenBuilder
+        private readonly tokenBuilder: AaveTokenBuilder
     ) {}
 
     public async stakedData(network: string, address: string) {

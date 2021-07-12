@@ -17,10 +17,53 @@ export class BscTransactionService {
         private readonly httpService: HttpService
     ) {}
 
+    public async getAllBNBTransactionList(network: string, address: string) {
+        const cachedTxCount = await this.bep20TransactionRepository.count({where: [
+            {tokenSymbol: 'BNB', from: address}, {tokenSymbol: 'BNB', to: address}
+        ]})
+        if(cachedTxCount <= 0) {
+            await this.transactionBNBCache(network, address, '')
+        }
+        return this.fetchBNBTransactionList(network, 'BNB', address)
+    }
+
+    private async fetchBNBTransactionList(network: string, tokenSymbol: string, address: string) {
+        return this.bep20TransactionRepository.find({where: [
+            {tokenSymbol, from: address},
+            {tokenSymbol, to: address},
+        ]})
+    }
+
+    public async getAllBEP20TransactionList(network: string, contractAddress: string, address: string) {
+        const cachedTxCount = await this.bep20TransactionRepository.count({where: [
+            {contractAddress: '', from: address}, {contractAddress: '', to: address}
+        ]})
+        if(cachedTxCount <= 0) {
+            await this.transactionBEP20Cache(network, contractAddress, address, '')
+        }
+        return this.fetchBEP20TransactionList(network, contractAddress, address)
+    }
+
+    private async fetchBEP20TransactionList(network: string, contractAddress: string, address: string) {
+        return this.bep20TransactionRepository.find({where: [
+            {contractAddress, from: address},
+            {contractAddress, to: address},
+        ]})
+    }
+
+
     public async getAllPancakeSwapTransaction(network: string, token0: string, token1: string, address: string) {
         const tokenFirst = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network], token0)
         const tokenSecond = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network], token1)
-        return this.fetchPancakeSwapTransaction(tokenFirst.address.toLowerCase(), tokenSecond.address.toLowerCase(), address)
+        const cachedTxCount = await this.bep20TransactionRepository.count({where: [
+            {from: address},
+            {to: address}
+        ]})
+        if(cachedTxCount <= 0) {
+            await this.transactionBEP20Cache(network, tokenSecond.address, address, 'swap')
+            await this.transactionBNBCache(network, address, 'swap')
+        }
+        return this.fetchPancakeSwapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
     public async newTxInPancakeSwap(network: string, token0: string, token1: string, address: string, operation: string) {
@@ -37,7 +80,7 @@ export class BscTransactionService {
         if(tokenFirst.symbol == 'WBNB' || tokenSecond.symbol == 'WBNB') {
             await this.transactionBNBCache(network, address, operation)
         }
-        return this.fetchPancakeSwapTransaction(tokenFirst.address.toLowerCase(), tokenSecond.address.toLowerCase(), address)
+        return this.fetchPancakeSwapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
     private async transactionBEP20Cache(network: string, contractAddress: string, address: string, operation: string) {
@@ -122,20 +165,43 @@ export class BscTransactionService {
         }
     }
 
-    private async fetchPancakeSwapTransaction(token0Address: string, token1Address: string, address: string) {
-        console.log(token0Address, token1Address, address)
+    private async fetchPancakeSwapTransaction(token0Symbol: string, token1Symbol: string, address: string) {
+        if(token0Symbol == 'WBNB') {
+            token0Symbol = 'BNB'
+        }
+
+        if(token1Symbol == 'WBNB') {
+            token1Symbol = 'BNB'
+        }
         return this.bep20TransactionRepository.find({where: [
-            {contractAddress: token0Address, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
-            {contractAddress: token1Address, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
+            {tokenSymbol: token1Symbol, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
+            {tokenSymbol: token1Symbol, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
 
-            {contractAddress: token0Address, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
-            {contractAddress: token1Address, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
+            {tokenSymbol: token1Symbol, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
+            {tokenSymbol: token1Symbol, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
 
-            {from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
-            {from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
+            {tokenSymbol: token1Symbol, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
+            {tokenSymbol: token1Symbol, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
 
-            {from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
-            {from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
+            {tokenSymbol: token1Symbol, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
+            {tokenSymbol: token1Symbol, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
+
+            {tokenSymbol: token1Symbol, from: address, to: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16'.toLowerCase()},
+            {tokenSymbol: token1Symbol, from: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16'.toLowerCase(), to: address},
+            {tokenSymbol: token0Symbol, from: address, to: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16'.toLowerCase()},
+            {tokenSymbol: token0Symbol, from: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16'.toLowerCase(), to: address},
+
+            {tokenSymbol: token0Symbol, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
+            {tokenSymbol: token0Symbol, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
+
+            {tokenSymbol: token0Symbol, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
+            {tokenSymbol: token0Symbol, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
+
+            {tokenSymbol: token0Symbol, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
+            {tokenSymbol: token0Symbol, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
+
+            {tokenSymbol: token0Symbol, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
+            {tokenSymbol: token0Symbol, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
         ]})
     }
 }
