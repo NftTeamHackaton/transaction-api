@@ -18,6 +18,22 @@ export class AaveService {
         private readonly tokenBuilder: AaveTokenBuilder
     ) {}
 
+    public async apyInfo(network: string) {
+        const RAY = 1e27
+        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+        const usdtToken: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], 'USDT')
+        const usdcToken: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], 'USDC')
+
+        const lendingPool = new provider.eth.Contract(LendingPoolABI, "0xE0fBa4Fc209b4948668006B2bE61711b7f465bAe")
+
+        const usdtInfo = await lendingPool.methods.getReserveData(usdtToken.address).call()
+        const usdcInfo = await lendingPool.methods.getReserveData(usdcToken.address).call()
+        return {
+            usdtAPY: (100 * Number(usdtInfo.currentLiquidityRate)/RAY).toFixed(2),
+            usdcAPY: (100 * Number(usdcInfo.currentLiquidityRate)/RAY).toFixed(2)
+        }
+    }
+
     public async stakedData(network: string, address: string) {
         let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
 

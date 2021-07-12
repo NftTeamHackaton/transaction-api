@@ -6,6 +6,15 @@ import { AaveService } from './aave.service';
 export class AaveController {
     constructor(private readonly aaveService: AaveService) {}
 
+    @Get('/:network/apy')
+    public async apyInfo(
+        @Param('network') network: string,
+        @Res() response: Response
+    ) {
+        const result = await this.aaveService.apyInfo(network);
+        return response.status(200).send(result)
+    }
+
     @Get('/:network/staked/:address')
     public async stakedInfo(
         @Param('network') network: string, 
