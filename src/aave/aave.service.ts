@@ -87,6 +87,12 @@ export class AaveService {
                 aaveStaked.reward = 0
                 await this.aaveRepository.save(aaveStaked)
             }
+
+            if(formattedBalance < aaveStaked.stakedBalance) {
+                aaveStaked.stakedBalance = formattedBalance
+                await this.aaveRepository.save(aaveStaked)
+            }
+
             reward = (formattedBalance - stakedBefore)
             staked = stakedBefore
             if(reward < 0) 

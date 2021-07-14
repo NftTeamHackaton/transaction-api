@@ -147,6 +147,11 @@ export class CompoundService {
                 compoundStaked.reward = 0
                 await this.compoundRepository.save(compoundStaked)
             }
+
+            if(underlyingBalance < compoundStaked.stakedBalance) {
+                compoundStaked.stakedBalance = underlyingBalance
+                await this.compoundRepository.save(compoundStaked)
+            }
             
             reward = (underlyingBalance - stakedBefore)
             staked = stakedBefore
