@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PancakeswapController } from './pancakeswap.controller';
 import { PancakeswapService } from './pancakeswap.service';
-import { TokenBuilder } from './tokens/token.builder';
+import { PancakeTokenBuilder } from './tokens/pancakeToken.builder';
 
 @Module({
   controllers: [PancakeswapController],
-  providers: [PancakeswapService, TokenBuilder]
+  providers: [PancakeswapService, PancakeTokenBuilder]
 })
 export class PancakeswapModule {}

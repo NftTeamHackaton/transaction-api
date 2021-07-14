@@ -2,7 +2,7 @@ import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AaveTokenBuilder } from 'src/aave/aaveToken.builder';
 import { UniswapTokenBuilder } from 'src/uniswap/tokens/uniswapToken.builder';
-import { TokenBuilder as PancakeSwapTokenBuild } from 'src/pancakeswap/tokens/token.builder';
+import { PancakeTokenBuilder } from 'src/pancakeswap/tokens/pancakeToken.builder';
 import { ConfigModule } from 'src/config/config.module';
 import { ConfigService } from 'src/config/config.service';
 import { Compound } from 'src/entities/compount.entity';
@@ -26,6 +26,6 @@ import { BscTransactionService } from './bscTransaction.service';
     })
   ],
   controllers: [TransactionController],
-  providers: [EthereumTransactionService, BscTransactionService, AaveTokenBuilder, UniswapTokenBuilder, PancakeSwapTokenBuild]
+  providers: [EthereumTransactionService, BscTransactionService, AaveTokenBuilder, UniswapTokenBuilder, PancakeTokenBuilder]
 })
 export class TransactionModule {}

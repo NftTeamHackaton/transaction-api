@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ethers } from 'ethers';
 import {ChainId, Fetcher, Pair, Route, Trade, TokenAmount, TradeType, Percent, JSBI, Price} from '@pancakeswap/sdk'
-import { TokenBuilder } from './tokens/token.builder';
+import { PancakeTokenBuilder } from './tokens/pancakeToken.builder';
 
 @Injectable()
 export class PancakeswapService {
-    constructor(private readonly tokenBuilder: TokenBuilder) {}
+    constructor(private readonly tokenBuilder: PancakeTokenBuilder) {}
 
     public async calculatePrice (network: string, tokenInputSymbol: string, tokenOutputSymbol: string, amount: string) {
         try {
