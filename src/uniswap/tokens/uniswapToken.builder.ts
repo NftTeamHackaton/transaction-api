@@ -48,7 +48,23 @@ export class UniswapTokenBuilder {
                 address: '0xd3a691c852cdb01e281545a27064741f0b7f6825',
                 name: 'Wrapped BTC (WBTC)'
             }
-        }
+        },
+        DAI: {
+            42: {
+                decimals: 18,
+                symbol: 'DAI',
+                address: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
+                name: 'DAI Stablecoin'
+            }
+        },
+        BAT: {
+            42: {
+                decimals: 18,
+                symbol: 'BAT',
+                address: '0x482dc9bb08111cb875109b075a40881e48ae02cd',
+                name: 'Basic Attention Token'
+            }
+        },
     }
     
 

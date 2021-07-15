@@ -43,6 +43,14 @@ export class PancakeTokenBuilder {
                 address: '0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c',
                 name: 'BTCB Token'
             }
+        },
+        BAT: {
+            56: {
+                decimals: 18,
+                symbol: 'BAT',
+                address: '0x101d82428437127bf1608f699cd651e6abf9766e',
+                name: 'Binance-Peg Basic Attention Token'
+            }
         }
     }
     
