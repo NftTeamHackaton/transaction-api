@@ -77,7 +77,6 @@ export class UniswapTokenBuilder {
     
 
     public build(chainId: number, token: string): Token {
-        console.log(chainId, token)
         const tokenFormat = token.toUpperCase()
         if(tokenFormat == 'WETH') {
             return WETH[chainId]

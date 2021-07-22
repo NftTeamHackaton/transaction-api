@@ -29,19 +29,22 @@ export class UniswapService {
                 projectSecret: '88d08fc8088b43f99c51be742196f41f'
             });
             let staked = []
-            for(let i = 0; i <= pairs.length; i++) {
+            for(let i = 0; i < pairs.length; i++) {
                 const pairContract = new ethers.Contract(
                     pairs[i].liquidityToken.address,
                     ['function totalSupply() external view returns (uint)', 'function balanceOf(address owner) external view returns (uint)'],
                     provider
                 );
                 let balanceOf = await pairContract.balanceOf(address)
-                if(balanceOf > 0) {
+                
+                if(Number(balanceOf) > 0) {
+                    console.log(`${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`)
                     staked.push({
                         pair: `${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`,
                         staked: true
                     })
                 } else {
+                    console.log(`${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`)
                     staked.push({
                         pair: `${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`,
                         staked: false
