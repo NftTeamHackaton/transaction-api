@@ -23,4 +23,10 @@ export class UniswapController {
         const result = await this.uniswapService.userInfo(network, token0, token1, accountAddress)
         return response.send(result).status(200)
     }
+
+    @Get('/:network/staked/info/:accountAddress')
+    public async stakedInfo(@Param('network') network: string, @Param('accountAddress') accountAddress: string, @Res() response: Response) {
+        const result = await this.uniswapService.stakedInfo(network, accountAddress)
+        return response.send(result).status(200)
+    }
 }

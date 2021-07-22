@@ -65,6 +65,14 @@ export class UniswapTokenBuilder {
                 name: 'Basic Attention Token'
             }
         },
+        COMP: {
+            42: {
+                decimals: 18,
+                symbol: 'COMP',
+                address: '0x61460874a7196d6a22D1eE4922473664b3E95270',
+                name: 'Compound'
+            }
+        }
     }
     
 

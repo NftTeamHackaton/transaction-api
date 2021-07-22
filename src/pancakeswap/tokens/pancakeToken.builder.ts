@@ -51,6 +51,14 @@ export class PancakeTokenBuilder {
                 address: '0x101d82428437127bf1608f699cd651e6abf9766e',
                 name: 'Binance-Peg Basic Attention Token'
             }
+        },
+        WETH: {
+            56: {
+                decimals: 18,
+                symbol: 'ETH',
+                address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
+                name: 'Ethereum Token'
+            }
         }
     }
     

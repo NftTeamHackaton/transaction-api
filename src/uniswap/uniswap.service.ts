@@ -17,6 +17,46 @@ export class UniswapService {
         }
     }
 
+    public async stakedInfo(network: string, address: string) {
+        try {
+            const chainID = ChainId[network.toUpperCase()]
+            const pairEthAndUsdt = await Fetcher.fetchPairData(this.tokenBuilder.build(chainID, "WETH"), this.tokenBuilder.build(chainID, "USDT"))
+            const pairEthAndUsdc = await Fetcher.fetchPairData(this.tokenBuilder.build(chainID, "WETH"), this.tokenBuilder.build(chainID, "USDC"))
+            const pairEthAndWbtc = await Fetcher.fetchPairData(this.tokenBuilder.build(chainID, "WETH"), this.tokenBuilder.build(chainID, "WBTC"))
+            const pairs = [pairEthAndUsdt, pairEthAndUsdc, pairEthAndWbtc]
+            let provider = ethers.getDefaultProvider(network.toLowerCase(), {
+                projectId: 'cf9ea9a288c245f3bb640e6a1bc8602a',
+                projectSecret: '88d08fc8088b43f99c51be742196f41f'
+            });
+            let staked = []
+            for(let i = 0; i <= pairs.length; i++) {
+                const pairContract = new ethers.Contract(
+                    pairs[i].liquidityToken.address,
+                    ['function totalSupply() external view returns (uint)', 'function balanceOf(address owner) external view returns (uint)'],
+                    provider
+                );
+                let balanceOf = await pairContract.balanceOf(address)
+                if(balanceOf > 0) {
+                    staked.push({
+                        pair: `${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`,
+                        staked: true
+                    })
+                } else {
+                    staked.push({
+                        pair: `${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`,
+                        staked: false
+                    })
+                }
+                
+            }
+            return staked;            
+
+        } catch (error) {
+            console.log(error)
+            return []
+        }
+    }
+
     public async userInfo(network: string, tokenInputSymbol: string, tokenOutputSymbol: string, accountAddress: string) {
         try {
             const chainID = ChainId[network.toUpperCase()]
