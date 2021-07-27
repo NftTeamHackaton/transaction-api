@@ -21,8 +21,8 @@ export class EthereumTransactionService {
     ) {}
     
     public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string, opeartion: string) {
-        const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase())
-        const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase())
+        const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
+        const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase()).toLowerCase()
         this.logger.debug(network)
         this.logger.debug(erc20Symbol)
         this.logger.debug(сTokenSymbol)
