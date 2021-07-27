@@ -21,10 +21,13 @@ export class EthereumTransactionService {
     ) {}
     
     public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string, opeartion: string) {        
-        const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
-        const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase()).toLowerCase()
-        await this.transactionErc20Cache(network, contractAddress, address, opeartion)
-        return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
+        const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase())
+        const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase())
+        if(contractAddress != undefined && cTokenContractAddress != undefined) {
+            await this.transactionErc20Cache(network, contractAddress, address, opeartion)
+            return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
+        }
+        return []
     }
 
     public async getAllEthereumTransactionList(network: string, address: string) {
@@ -47,7 +50,7 @@ export class EthereumTransactionService {
         return this.fetchERC20TransactionList(network, contractAddress, address)
     }
 
-    public async getAllCompoundTransaction(network: string, erc20Symbol: string, address: string, operation: string) {
+    public async getAllCompoundTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network).toLowerCase()
         const cTokenContractAddress = Compound.util.getAddress('c' + erc20Symbol, network).toLowerCase()
         const cachedTxCount = await this.erc20TransactionRepository.count({where: [
@@ -66,7 +69,7 @@ export class EthereumTransactionService {
         return this.fetchAaveTransaction(tokenData.address.toLowerCase(), tokenData.aTokenAddress.toLowerCase(), address)
     }
 
-    public async getAllAaveTransaction(network: string, erc20Symbol: string, address: string, operation: string) {
+    public async getAllAaveTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
         const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network], erc20Symbol)
         const cachedTxCount = await this.erc20TransactionRepository.count({where: [
             {from: address}, {to: address}
@@ -98,7 +101,7 @@ export class EthereumTransactionService {
         return this.fetchUniswapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
-    public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string, operation: string) {
+    public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string, operation?: string) {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
         const cachedTxCount = await this.erc20TransactionRepository.count({where: [
@@ -115,7 +118,10 @@ export class EthereumTransactionService {
         return this.fetchUniswapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
-    private async transactionErc20Cache(network: string, contractAddress: string, address: string, operation: string): Promise<void> {
+    private async transactionErc20Cache(network: string, contractAddress: string, address: string, operation?: string): Promise<void> {
+        if(operation == undefined) {
+            operation = ''
+        }
         const transactions = await this.httpService.get('/api', {
             params: {
                 module: 'account',
@@ -147,7 +153,10 @@ export class EthereumTransactionService {
         }
     }
 
-    private async transactionEthCache(network: string, address: string, operation: string): Promise<void> {
+    private async transactionEthCache(network: string, address: string, operation?: string): Promise<void> {
+        if(operation == undefined) {
+            operation = ''
+        }
         const transactions = await this.httpService.get('/api', {
             params: {
                 module: 'account',
