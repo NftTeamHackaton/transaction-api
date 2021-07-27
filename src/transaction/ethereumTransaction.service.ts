@@ -20,9 +20,16 @@ export class EthereumTransactionService {
         private readonly httpService: HttpService
     ) {}
     
-    public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string, opeartion: string) {        
+    public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string, opeartion: string) {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase())
         const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase())
+        this.logger.debug(network)
+        this.logger.debug(erc20Symbol)
+        this.logger.debug(сTokenSymbol)
+        this.logger.debug(address)
+        this.logger.debug(opeartion)
+        this.logger.debug(contractAddress)
+        this.logger.debug(cTokenContractAddress)
         if(contractAddress != undefined && cTokenContractAddress != undefined) {
             await this.transactionErc20Cache(network, contractAddress, address, opeartion)
             return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
