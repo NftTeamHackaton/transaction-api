@@ -30,11 +30,8 @@ export class EthereumTransactionService {
         this.logger.debug(opeartion)
         this.logger.debug(contractAddress)
         this.logger.debug(cTokenContractAddress)
-        if(contractAddress != undefined && cTokenContractAddress != undefined) {
-            await this.transactionErc20Cache(network, contractAddress, address, opeartion)
-            return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
-        }
-        return []
+        await this.transactionErc20Cache(network, contractAddress, address, opeartion)
+        return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
     }
 
     public async getAllEthereumTransactionList(network: string, address: string) {
