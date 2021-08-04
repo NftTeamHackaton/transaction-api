@@ -36,7 +36,7 @@ export class PancakeTokenBuilder {
                 name: 'Tether USD'
             } 
         },
-        WBTC: {
+        BTCB: {
             56: {
                 decimals: 18,
                 symbol: 'BTCB',

@@ -157,7 +157,12 @@ export class EthereumTransactionService {
         }
     }
 
+    private async delay(second) {
+        return new Promise(res => setTimeout(res, second));
+    }
+
     private async transactionEthCache(network: string, address: string, operation?: string): Promise<void> {
+        await this.delay(10000)
         if(operation == undefined) {
             operation = ''
         }
