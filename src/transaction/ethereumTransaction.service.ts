@@ -135,6 +135,8 @@ export class EthereumTransactionService {
             }
         }).toPromise()
         const data: EthereumTransactionInterface[] = transactions.data.result;
+        console.log("+========ETH=========+")
+        console.log(data)
         for (let i = 0; i < data.length; i++) {
             const tx: EthereumTransactionInterface = data[i]
 
