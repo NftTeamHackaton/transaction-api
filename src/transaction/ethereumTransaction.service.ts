@@ -142,7 +142,7 @@ export class EthereumTransactionService {
 
             const savedTx = await this.erc20TransactionRepository.findOne({hash: tx.hash});
             
-            if(savedTx == undefined) {
+            if(savedTx != undefined) {
                 
                 if(savedTx.tokenSymbol == 'ETH') {
                     continue;
