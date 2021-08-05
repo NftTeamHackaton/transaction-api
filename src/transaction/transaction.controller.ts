@@ -63,7 +63,7 @@ export class TransactionController {
 
     @Post('/compound/:network')
     public async newTxInCompound(@Param('network') network: string, @Body() compoundTxDto: CompoundTxDto, @Res() response: Response) {
-        const transactions = await this.ethereumTransactionService.newTxInCompound(network, compoundTxDto.erc20Symbol, compoundTxDto.сTokenSymbol, compoundTxDto.address.toLowerCase());
+        const transactions = await this.ethereumTransactionService.newTxInCompound(network, compoundTxDto.erc20Symbol, compoundTxDto.address.toLowerCase(), compoundTxDto.operation);
         return response.status(200).send({transactions})
     }
 
