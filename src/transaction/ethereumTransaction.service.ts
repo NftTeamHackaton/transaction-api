@@ -22,9 +22,8 @@ export class EthereumTransactionService {
     
     public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string, opeartion: string) {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
-        const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase()).toLowerCase()
-        await this.transactionErc20Cache(network, contractAddress, address, opeartion)
-        return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
+        await this.transactionErc20Cache(network, contractAddress, address, opeartion, undefined, 'compound')
+        return this.fetchCompoundTransaction(address)
     }
 
     public async getAllEthereumTransactionList(network: string, address: string) {
@@ -36,9 +35,7 @@ export class EthereumTransactionService {
     }
 
     public async getAllCompoundTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
-        const contractAddress = Compound.util.getAddress(erc20Symbol, network).toLowerCase()
-        const cTokenContractAddress = Compound.util.getAddress('c' + erc20Symbol, network).toLowerCase()
-        return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
+        return this.fetchCompoundTransaction(address)
     }
 
     public async newTxInAave(network: string, erc20Symbol: string, address: string, operation: string) {
@@ -217,13 +214,10 @@ export class EthereumTransactionService {
         ]})
     }
 
-    private async fetchCompoundTransaction(contractAddress: string, cTokenContractAddress: string, address: string) {
+    private async fetchCompoundTransaction(address: string) {
         return this.erc20TransactionRepository.find({where: [
-            {contractAddress, from: address, to: '0x031A512148DBFDB933E41F2f6824D737830595Be'.toLowerCase()},
-            {contractAddress, from: '0x031A512148DBFDB933E41F2f6824D737830595Be'.toLowerCase(), to: address},
-
-            {contractAddress, from: address, to: cTokenContractAddress},
-            {contractAddress, from: cTokenContractAddress, to: address},
+            {service: 'compound', from: address},
+            {service: 'compound', to: address},
         ]})
     }
 }
