@@ -230,7 +230,8 @@ export class EthereumTransactionService {
     }
 
     private async fetchUniswapTransaction(token0Symbol: string, token1Symbol: string, address: string) {
-        
+        const pair = `${token0Symbol}-${token1Symbol}`
+        const service = 'uniswap'
         if(token0Symbol == 'WETH') {
             token0Symbol = 'ETH'
         }
@@ -240,23 +241,23 @@ export class EthereumTransactionService {
         }
 
         return this.erc20TransactionRepository.find({order: {nonce: 'DESC'}, where: [
-            {tokenSymbol: token0Symbol, from: address, to: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase()},
-            {tokenSymbol: token0Symbol, from: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase(), to: address},
+            {service, pair, tokenSymbol: token0Symbol, from: address, to: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase()},
+            {service, pair, tokenSymbol: token0Symbol, from: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase(), to: address},
 
-            {tokenSymbol: token1Symbol, from: address, to: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase()},
-            {tokenSymbol: token1Symbol, from: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase(), to: address},
+            {service, pair, tokenSymbol: token1Symbol, from: address, to: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase()},
+            {service, pair, tokenSymbol: token1Symbol, from: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase(), to: address},
 
-            {tokenSymbol: token0Symbol, from: address, to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase()},
-            {tokenSymbol: token0Symbol, from: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase(), to: address},
+            {service, pair, tokenSymbol: token0Symbol, from: address, to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase()},
+            {service, pair, tokenSymbol: token0Symbol, from: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase(), to: address},
 
-            {tokenSymbol: token1Symbol, from: address, to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase()},
-            {tokenSymbol: token1Symbol, from: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase(), to: address},
+            {service, pair, tokenSymbol: token1Symbol, from: address, to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase()},
+            {service, pair, tokenSymbol: token1Symbol, from: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase(), to: address},
 
-            {tokenSymbol: token1Symbol, from: address, to: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase()},
-            {tokenSymbol: token1Symbol, from: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase(), to: address},
+            {service, pair, tokenSymbol: token1Symbol, from: address, to: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase()},
+            {service, pair, tokenSymbol: token1Symbol, from: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase(), to: address},
 
-            {tokenSymbol: token0Symbol, from: address, to: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase()},
-            {tokenSymbol: token0Symbol, from: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase(), to: address},
+            {service, pair, tokenSymbol: token0Symbol, from: address, to: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase()},
+            {service, pair, tokenSymbol: token0Symbol, from: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase(), to: address},
         ]})
     }
 
