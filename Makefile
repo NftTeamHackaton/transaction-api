@@ -4,7 +4,7 @@ export TAG=master
 
 compose_local = -f docker-compose.yml -f docker-compose.local.yml
 
-container_prefix = nft
+container_prefix = inka
 
 # -- Dev Wrk -------------------------------------------------------
 

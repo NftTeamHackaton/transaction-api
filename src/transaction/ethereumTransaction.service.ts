@@ -69,7 +69,7 @@ export class EthereumTransactionService {
 
     public async newTxInAave(network: string, erc20Symbol: string, address: string, operation: string) {
         const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network], erc20Symbol)
-        await this.transactionErc20Cache(network, tokenData.address, address, operation)
+        await this.transactionErc20Cache(network, tokenData.address, address, operation, undefined, 'aave')
         return this.fetchAaveTransaction(tokenData.address.toLowerCase(), tokenData.aTokenAddress.toLowerCase(), address)
     }
 
@@ -89,19 +89,20 @@ export class EthereumTransactionService {
     public async newTxInUniswap(network: string, token0: string, token1: string, address: string, operation: string) {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
-        console.log(tokenFirst.symbol, tokenSecond.symbol)
+        const pair = `${tokenFirst.symbol}-${tokenSecond.symbol}`
+        console.log(pair)
         await this.delay(20000)
         if(tokenFirst.symbol != 'WETH') {
-            await this.transactionErc20Cache(network, tokenFirst.address, address, operation)
+            await this.transactionErc20Cache(network, tokenFirst.address, address, operation, pair, 'uniswap')
         }
 
         if(tokenSecond.symbol != 'WETH') {
-            await this.transactionErc20Cache(network, tokenSecond.address, address, operation)
+            await this.transactionErc20Cache(network, tokenSecond.address, address, operation, pair, 'uniswap')
         }
 
         if(tokenFirst.symbol == 'WETH' || tokenSecond.symbol == 'WETH') {
             console.log('ETH CACHE')
-            await this.transactionEthCache(network, address, operation)
+            await this.transactionEthCache(network, address, operation, pair, 'uniswap')
         }
         
         return this.fetchUniswapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
@@ -124,7 +125,7 @@ export class EthereumTransactionService {
         return this.fetchUniswapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
-    private async transactionErc20Cache(network: string, contractAddress: string, address: string, operation?: string): Promise<void> {
+    private async transactionErc20Cache(network: string, contractAddress: string, address: string, operation?: string, pair?: string, service?: string): Promise<void> {
         if(operation == undefined) {
             operation = ''
         }
@@ -135,7 +136,7 @@ export class EthereumTransactionService {
                 contractaddress: contractAddress,
                 address,
                 page: 1,
-                offset: 100,
+                offset: 2,
                 sort: 'desc',
                 apikey: this.configService.getEtherscanApiKey()
             }
@@ -153,7 +154,7 @@ export class EthereumTransactionService {
                     tokenDecimals: Number(tx.tokenDecimal),
                     transactionDate: new Date(Number(tx.timeStamp) * 1000),
                     network,
-                    operation
+                    operation, pair, service
                 })
             }
         }
@@ -163,7 +164,7 @@ export class EthereumTransactionService {
         return new Promise(res => setTimeout(res, second));
     }
 
-    private async transactionEthCache(network: string, address: string, operation?: string): Promise<void> {
+    private async transactionEthCache(network: string, address: string, operation?: string, pair?: string, service?: string): Promise<void> {
         if(operation == undefined) {
             operation = ''
         }
@@ -175,7 +176,7 @@ export class EthereumTransactionService {
                 startblock: 0,
                 endblock: 99999999,
                 page: 1,
-                offset: 100,
+                offset: 2,
                 sort: 'desc',
                 apikey: this.configService.getEtherscanApiKey()
             }
@@ -208,7 +209,7 @@ export class EthereumTransactionService {
                     confirmations: tx.confirmations,
                     transactionDate: new Date(Number(tx.timeStamp) * 1000),
                     network,
-                    operation
+                    operation, pair, service
                 })
             }
         }

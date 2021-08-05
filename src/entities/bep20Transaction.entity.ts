@@ -70,4 +70,10 @@ export class Bep20TransactionEntity {
 
     @Column({ length: 255, nullable: false })
     operation: string;
+
+    @Column({ length: 255, nullable: true })
+    service: string;
+
+    @Column({ length: 255, nullable: true })
+    pair: string;
 }
