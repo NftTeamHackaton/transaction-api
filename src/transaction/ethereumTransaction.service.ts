@@ -24,7 +24,7 @@ export class EthereumTransactionService {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
         await this.delay(20000)
         await this.transactionErc20Cache(network, contractAddress, address, opeartion, undefined, 'compound')
-        return this.fetchCompoundTransaction(address)
+        return this.fetchCompoundTransaction(address, erc20Symbol.toUpperCase())
     }
 
     public async getAllEthereumTransactionList(network: string, address: string) {
@@ -36,7 +36,7 @@ export class EthereumTransactionService {
     }
 
     public async getAllCompoundTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
-        return this.fetchCompoundTransaction(address)
+        return this.fetchCompoundTransaction(address, erc20Symbol.toUpperCase())
     }
 
     public async newTxInAave(network: string, erc20Symbol: string, address: string, operation: string) {
@@ -212,10 +212,10 @@ export class EthereumTransactionService {
         ]})
     }
 
-    private async fetchCompoundTransaction(address: string) {
+    private async fetchCompoundTransaction(address: string, symbol: string) {
         return this.erc20TransactionRepository.find({where: [
-            {service: 'compound', from: address},
-            {service: 'compound', to: address},
+            {service: 'compound', tokenSymbol: symbol, from: address},
+            {service: 'compound', tokenSymbol: symbol, to: address},
         ]})
     }
 }
