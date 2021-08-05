@@ -89,7 +89,7 @@ export class EthereumTransactionService {
                 contractaddress: contractAddress,
                 address,
                 page: 1,
-                offset: 2,
+                offset: 1,
                 sort: 'desc',
                 apikey: this.configService.getEtherscanApiKey()
             }
@@ -129,7 +129,7 @@ export class EthereumTransactionService {
                 startblock: 0,
                 endblock: 99999999,
                 page: 1,
-                offset: 2,
+                offset: 1,
                 sort: 'desc',
                 apikey: this.configService.getEtherscanApiKey()
             }
