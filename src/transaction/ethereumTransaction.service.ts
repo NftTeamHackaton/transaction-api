@@ -90,6 +90,7 @@ export class EthereumTransactionService {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
         console.log(tokenFirst.symbol, tokenSecond.symbol)
+        await this.delay(20000)
         if(tokenFirst.symbol != 'WETH') {
             await this.transactionErc20Cache(network, tokenFirst.address, address, operation)
         }
@@ -124,7 +125,6 @@ export class EthereumTransactionService {
     }
 
     private async transactionErc20Cache(network: string, contractAddress: string, address: string, operation?: string): Promise<void> {
-        await this.delay(10000)
         if(operation == undefined) {
             operation = ''
         }
@@ -164,7 +164,6 @@ export class EthereumTransactionService {
     }
 
     private async transactionEthCache(network: string, address: string, operation?: string): Promise<void> {
-        await this.delay(10000)
         if(operation == undefined) {
             operation = ''
         }
