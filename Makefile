@@ -36,6 +36,9 @@ dev-up-build-no-daemon:
 migration-run:
 	docker exec -u root  -it $(container_prefix)-api-dev npx typeorm migration:run
 
+migration-run-prod:
+	docker exec -u root  -it $(container_prefix)-api-prod npx typeorm migration:run
+
 migration-create:
 	docker exec -u root -it $(container_prefix)-api-dev npx typeorm -n $(name) migration:generate
 
