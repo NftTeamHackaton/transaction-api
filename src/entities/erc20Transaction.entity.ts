@@ -14,7 +14,7 @@ export class Erc20TransactionEntity {
     @Column({ type: 'timestamp', nullable: false })
     transactionDate: Date;
 
-    @Column({ length: 255, nullable: false, unique: true })
+    @Column({ length: 255, nullable: false, unique: false })
     hash: string;
 
     @Column({ nullable: false })
