@@ -142,33 +142,37 @@ export class EthereumTransactionService {
 
             const savedTx = await this.erc20TransactionRepository.findOne({hash: tx.hash});
             
-            if(savedTx == undefined && savedTx.tokenSymbol != 'ETH') {
-                console.log("SAVE")
-                await this.erc20TransactionRepository.save({
-                    blockNumber: tx.blockNumber,
-                    timeStamp: tx.timeStamp,
-                    hash: tx.hash,
-                    nonce: Number(tx.nonce),
-                    blockHash: tx.blockHash,
-                    from: tx.from,
-                    contractAddress: '',
-                    to: tx.to,
-                    value: tx.value,
-                    tokenName: 'Ethereum',
-                    tokenSymbol: 'ETH',
-                    tokenDecimals: 18,
-                    transactionIndex: tx.transactionIndex,
-                    gas: tx.gas,
-                    gasPrice: tx.gasPrice,
-                    gasUsed: tx.gasUsed,
-                    cumulativeGasUsed: tx.cumulativeGasUsed,
-                    input: tx.input,
-                    confirmations: tx.confirmations,
-                    transactionDate: new Date(Number(tx.timeStamp) * 1000),
-                    network,
-                    operation, pair, service
-                })
+            if(savedTx == undefined) {
+                
+                if(savedTx.tokenSymbol == 'ETH') {
+                    continue;
+                }
+
             }
+            await this.erc20TransactionRepository.save({
+                blockNumber: tx.blockNumber,
+                timeStamp: tx.timeStamp,
+                hash: tx.hash,
+                nonce: Number(tx.nonce),
+                blockHash: tx.blockHash,
+                from: tx.from,
+                contractAddress: '',
+                to: tx.to,
+                value: tx.value,
+                tokenName: 'Ethereum',
+                tokenSymbol: 'ETH',
+                tokenDecimals: 18,
+                transactionIndex: tx.transactionIndex,
+                gas: tx.gas,
+                gasPrice: tx.gasPrice,
+                gasUsed: tx.gasUsed,
+                cumulativeGasUsed: tx.cumulativeGasUsed,
+                input: tx.input,
+                confirmations: tx.confirmations,
+                transactionDate: new Date(Number(tx.timeStamp) * 1000),
+                network,
+                operation, pair, service
+            })
         }
     }
 
