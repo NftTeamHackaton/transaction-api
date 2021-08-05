@@ -141,8 +141,8 @@ export class EthereumTransactionService {
             const tx: EthereumTransactionInterface = data[i]
 
             const savedTx = await this.erc20TransactionRepository.findOne({hash: tx.hash});
-            console.log(savedTx)
-            if(savedTx == undefined) {
+            
+            if(savedTx == undefined && savedTx.tokenSymbol != 'ETH') {
                 console.log("SAVE")
                 await this.erc20TransactionRepository.save({
                     blockNumber: tx.blockNumber,
