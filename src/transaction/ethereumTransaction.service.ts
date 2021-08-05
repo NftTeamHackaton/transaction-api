@@ -123,6 +123,7 @@ export class EthereumTransactionService {
     }
 
     private async transactionErc20Cache(network: string, contractAddress: string, address: string, operation?: string): Promise<void> {
+        await this.delay(10000)
         if(operation == undefined) {
             operation = ''
         }
