@@ -56,14 +56,14 @@ export class TransactionController {
             operation = operation.toLowerCase()
         }
         const transactions = await this.ethereumTransactionService.getAllCompoundTransaction(
-            network.toLowerCase(), erc20Symbol.toUpperCase(), address.toLowerCase(), operation
+            erc20Symbol.toUpperCase(), address.toLowerCase()
         );
         return response.status(200).send({transactions});
     }
 
     @Post('/compound/:network')
     public async newTxInCompound(@Param('network') network: string, @Body() compoundTxDto: CompoundTxDto, @Res() response: Response) {
-        const transactions = await this.ethereumTransactionService.newTxInCompound(network, compoundTxDto.erc20Symbol, compoundTxDto.сTokenSymbol, compoundTxDto.address.toLowerCase(), compoundTxDto.operation);
+        const transactions = await this.ethereumTransactionService.newTxInCompound(network, compoundTxDto.erc20Symbol, compoundTxDto.сTokenSymbol, compoundTxDto.address.toLowerCase());
         return response.status(200).send({transactions})
     }
 
@@ -84,7 +84,7 @@ export class TransactionController {
         if(operation) {
             operation = operation.toLowerCase()
         }
-        const transactions = await this.ethereumTransactionService.getAllAaveTransaction(network.toUpperCase(), erc20Symbol.toUpperCase(), address.toLowerCase(), operation);
+        const transactions = await this.ethereumTransactionService.getAllAaveTransaction(erc20Symbol.toUpperCase(), address.toLowerCase());
         return response.status(200).send({transactions});
     }
 

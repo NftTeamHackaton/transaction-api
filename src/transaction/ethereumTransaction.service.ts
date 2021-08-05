@@ -20,7 +20,7 @@ export class EthereumTransactionService {
         private readonly httpService: HttpService
     ) {}
     
-    public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string, opeartion: string) {
+    public async newTxInCompound(network: string, erc20Symbol: string, address: string, opeartion: string) {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
         await this.delay(20000)
         await this.transactionErc20Cache(network, contractAddress, address, opeartion, undefined, 'compound')
@@ -28,14 +28,16 @@ export class EthereumTransactionService {
     }
 
     public async getAllEthereumTransactionList(network: string, address: string) {
+        await this.transactionEthCache(network, address)
         return this.fetchEthereumTransactionList(network, 'ETH', address)
     }
 
     public async getAllERC20TransactionList(network: string, contractAddress: string, address: string) {
+        await this.transactionErc20Cache(network, contractAddress, address)
         return this.fetchERC20TransactionList(network, contractAddress, address)
     }
 
-    public async getAllCompoundTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
+    public async getAllCompoundTransaction(erc20Symbol: string, address: string) {
         return this.fetchCompoundTransaction(address, erc20Symbol.toUpperCase())
     }
 
@@ -43,11 +45,11 @@ export class EthereumTransactionService {
         const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network], erc20Symbol)
         await this.delay(20000)
         await this.transactionErc20Cache(network, tokenData.address, address, operation, undefined, 'aave')
-        return this.fetchAaveTransaction(address)
+        return this.fetchAaveTransaction(address, erc20Symbol.toUpperCase())
     }
 
-    public async getAllAaveTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
-        return this.fetchAaveTransaction(address)
+    public async getAllAaveTransaction(erc20Symbol: string, address: string) {
+        return this.fetchAaveTransaction(address, erc20Symbol.toUpperCase())
     }
 
     public async newTxInUniswap(network: string, token0: string, token1: string, address: string, operation: string) {
@@ -205,10 +207,10 @@ export class EthereumTransactionService {
         ]})
     }
 
-    private async fetchAaveTransaction(address: string) {
+    private async fetchAaveTransaction(address: string, symbol: string) {
         return this.erc20TransactionRepository.find({where: [
-            {service: 'aave', from: address},
-            {service: 'aave', to: address},
+            {service: 'aave', tokenSymbol: symbol, from: address},
+            {service: 'aave', tokenSymbol: symbol, to: address},
         ]})
     }
 
