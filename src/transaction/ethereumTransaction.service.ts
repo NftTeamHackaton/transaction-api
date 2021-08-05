@@ -22,6 +22,7 @@ export class EthereumTransactionService {
     
     public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string, opeartion: string) {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
+        await this.delay(20000)
         await this.transactionErc20Cache(network, contractAddress, address, opeartion, undefined, 'compound')
         return this.fetchCompoundTransaction(address)
     }
@@ -40,13 +41,13 @@ export class EthereumTransactionService {
 
     public async newTxInAave(network: string, erc20Symbol: string, address: string, operation: string) {
         const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network], erc20Symbol)
+        await this.delay(20000)
         await this.transactionErc20Cache(network, tokenData.address, address, operation, undefined, 'aave')
-        return this.fetchAaveTransaction(tokenData.address.toLowerCase(), tokenData.aTokenAddress.toLowerCase(), address)
+        return this.fetchAaveTransaction(address)
     }
 
     public async getAllAaveTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
-        const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network], erc20Symbol)
-        return this.fetchAaveTransaction(tokenData.address.toLowerCase(), tokenData.aTokenAddress.toLowerCase(), address)
+        return this.fetchAaveTransaction(address)
     }
 
     public async newTxInUniswap(network: string, token0: string, token1: string, address: string, operation: string) {
@@ -204,13 +205,10 @@ export class EthereumTransactionService {
         ]})
     }
 
-    private async fetchAaveTransaction(contractAddress: string, lendingPoolAddress: string, address: string) {
+    private async fetchAaveTransaction(address: string) {
         return this.erc20TransactionRepository.find({where: [
-            {contractAddress, from: address, to: '0x2a2c4c74eadb37a76fc1da7924c60fa466bad334'},
-            {contractAddress, from: '0x2a2c4c74eadb37a76fc1da7924c60fa466bad334', to: address},
-
-            {from: address, to: lendingPoolAddress},
-            {from: lendingPoolAddress, to: address},
+            {service: 'aave', from: address},
+            {service: 'aave', to: address},
         ]})
     }
 
