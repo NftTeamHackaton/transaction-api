@@ -23,47 +23,21 @@ export class EthereumTransactionService {
     public async newTxInCompound(network: string, erc20Symbol: string, сTokenSymbol: string, address: string, opeartion: string) {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
         const cTokenContractAddress = Compound.util.getAddress(сTokenSymbol, network.toLowerCase()).toLowerCase()
-        this.logger.debug(network)
-        this.logger.debug(erc20Symbol)
-        this.logger.debug(сTokenSymbol)
-        this.logger.debug(address)
-        this.logger.debug(opeartion)
-        this.logger.debug(contractAddress)
-        this.logger.debug(cTokenContractAddress)
         await this.transactionErc20Cache(network, contractAddress, address, opeartion)
         return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
     }
 
     public async getAllEthereumTransactionList(network: string, address: string) {
-        const cachedTxCount = await this.erc20TransactionRepository.count({where: [
-            {contractAddress: '', from: address}, {contractAddress: '', to: address}
-        ]})
-        if(cachedTxCount <= 0) {
-            await this.transactionEthCache(network, address, '')
-        }
         return this.fetchEthereumTransactionList(network, 'ETH', address)
     }
 
     public async getAllERC20TransactionList(network: string, contractAddress: string, address: string) {
-        const cachedTxCount = await this.erc20TransactionRepository.count({where: [
-            {contractAddress: '', from: address}, {contractAddress: '', to: address}
-        ]})
-        if(cachedTxCount <= 0) {
-            await this.transactionErc20Cache(network, contractAddress, address, '')
-        }
         return this.fetchERC20TransactionList(network, contractAddress, address)
     }
 
     public async getAllCompoundTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network).toLowerCase()
         const cTokenContractAddress = Compound.util.getAddress('c' + erc20Symbol, network).toLowerCase()
-        const cachedTxCount = await this.erc20TransactionRepository.count({where: [
-            {from: address}, {to: address}
-        ]})
-
-        if(cachedTxCount <= 0) {
-            await this.transactionErc20Cache(network, contractAddress, address, operation)
-        }
         return this.fetchCompoundTransaction(contractAddress, cTokenContractAddress, address)
     }
 
@@ -75,14 +49,6 @@ export class EthereumTransactionService {
 
     public async getAllAaveTransaction(network: string, erc20Symbol: string, address: string, operation?: string) {
         const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network], erc20Symbol)
-        const cachedTxCount = await this.erc20TransactionRepository.count({where: [
-            {from: address}, {to: address}
-        ]})
-
-        if(cachedTxCount <= 0) {
-            await this.transactionErc20Cache(network, tokenData.address, address, operation)
-        }
-
         return this.fetchAaveTransaction(tokenData.address.toLowerCase(), tokenData.aTokenAddress.toLowerCase(), address)
     }
 
@@ -90,7 +56,6 @@ export class EthereumTransactionService {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
         const pair = `${tokenFirst.symbol}-${tokenSecond.symbol}`
-        console.log(pair)
         await this.delay(20000)
         if(tokenFirst.symbol != 'WETH') {
             await this.transactionErc20Cache(network, tokenFirst.address, address, operation, pair, 'uniswap')
@@ -101,7 +66,6 @@ export class EthereumTransactionService {
         }
 
         if(tokenFirst.symbol == 'WETH' || tokenSecond.symbol == 'WETH') {
-            console.log('ETH CACHE')
             await this.transactionEthCache(network, address, operation, pair, 'uniswap')
         }
         
@@ -111,17 +75,6 @@ export class EthereumTransactionService {
     public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string, operation?: string) {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
-        const cachedTxCount = await this.erc20TransactionRepository.count({where: [
-            {from: address}, {to: address}
-        ]})
-
-        if(cachedTxCount <= 0) {
-            await this.transactionErc20Cache(network, tokenFirst.address, address, operation)
-            await this.transactionErc20Cache(network, tokenSecond.address, address, operation)
-            await this.transactionEthCache(network, address, operation)
-        }
-    
-
         return this.fetchUniswapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
