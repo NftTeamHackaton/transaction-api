@@ -89,7 +89,7 @@ export class EthereumTransactionService {
     public async newTxInUniswap(network: string, token0: string, token1: string, address: string, operation: string) {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
-
+        console.log(tokenFirst.symbol, tokenSecond.symbol)
         if(tokenFirst.symbol != 'WETH') {
             await this.transactionErc20Cache(network, tokenFirst.address, address, operation)
         }
@@ -99,6 +99,7 @@ export class EthereumTransactionService {
         }
 
         if(tokenFirst.symbol == 'WETH' || tokenSecond.symbol == 'WETH') {
+            console.log('ETH CACHE')
             await this.transactionEthCache(network, address, operation)
         }
         
