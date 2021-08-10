@@ -24,7 +24,8 @@ export class MinioClientService {
   public get client() {
     return this.minio.client;
   }
-
+// preview 1
+// contents 2, 3
   public async upload(
     file: BufferedFile,
     bucketName: string = this.bucketName,
@@ -70,7 +71,7 @@ export class MinioClientService {
         hashedFileName: hashedFileName,
         extension: extension,
         mimeType: file.mimetype,
-        url: `${this.config.get('MINIO_ENDPOINT')}/${this.config.get('MINIO_BUCKET_NAME')}/${fileName}`,
+        url: `${this.config.get('MINIO_ENDPOINT')}:${this.config.get('MINIO_PORT')}/${this.config.get('MINIO_BUCKET_NAME')}/${fileName}`,
         originalName: file.originalname
     });
   }
