@@ -10,6 +10,8 @@ import { ConfigService } from './config/config.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AaveModule } from './aave/aave.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { StoriesModule } from './stories/stories.module';
+import { MinioClientModule } from './minio-client/minio-client.module';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { TransactionModule } from './transaction/transaction.module';
     UniswapModule, 
     ConfigModule,
     PancakeswapModule, 
-    CompoundModule, AaveModule, TransactionModule
+    CompoundModule, AaveModule, TransactionModule, StoriesModule, MinioClientModule
   ],
   controllers: [AppController],
   providers: [AppService],

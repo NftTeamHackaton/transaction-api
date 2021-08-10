@@ -28,7 +28,7 @@ dev-build-no-cache:
 	docker-compose $(compose_local) build --no-cache
 
 dev-up-build:
-	docker-compose $(compose_local) up --build -V -d
+	docker-compose $(compose_local) up --build -d
 
 dev-up-build-no-daemon:
 	docker-compose $(compose_local) up --build
