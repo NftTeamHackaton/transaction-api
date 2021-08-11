@@ -19,4 +19,7 @@ export class StoriesEntity {
     @ManyToMany(() => FileEntity)
     @JoinTable()
     contents: FileEntity[];
+
+    @Column({ type: 'integer', name: 'priority', nullable: true })
+    priority: number;
 }

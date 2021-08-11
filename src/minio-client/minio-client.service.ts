@@ -76,6 +76,15 @@ export class MinioClientService {
     });
   }
 
+  public async uploadMultiple(files: BufferedFile[], bucketName: string = this.bucketName): Promise<FileEntity[]> {
+    const filesMetaData: FileEntity[] = []
+    for (let i = 0; i < files.length; i++) {
+      const file = await this.upload(files[i])
+      filesMetaData.push(file)
+    }
+    return filesMetaData
+  }
+
   async delete(objetName: string, bucketName: string = this.bucketName) {
     this.client.removeObject(bucketName, objetName, function (err, res) {
       if (err)
