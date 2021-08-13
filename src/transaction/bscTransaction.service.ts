@@ -18,12 +18,7 @@ export class BscTransactionService {
     ) {}
 
     public async getAllBNBTransactionList(network: string, address: string) {
-        const cachedTxCount = await this.bep20TransactionRepository.count({where: [
-            {tokenSymbol: 'BNB', from: address}, {tokenSymbol: 'BNB', to: address}
-        ]})
-        if(cachedTxCount <= 0) {
-            await this.transactionBNBCache(network, address, '')
-        }
+        await this.transactionBNBCache(network, address, '')
         return this.fetchBNBTransactionList(network, 'BNB', address)
     }
 
@@ -35,12 +30,7 @@ export class BscTransactionService {
     }
 
     public async getAllBEP20TransactionList(network: string, contractAddress: string, address: string) {
-        const cachedTxCount = await this.bep20TransactionRepository.count({where: [
-            {contractAddress: '', from: address}, {contractAddress: '', to: address}
-        ]})
-        if(cachedTxCount <= 0) {
-            await this.transactionBEP20Cache(network, contractAddress, address, '')
-        }
+        await this.transactionBEP20Cache(network, contractAddress, address, '')
         return this.fetchBEP20TransactionList(network, contractAddress, address)
     }
 
