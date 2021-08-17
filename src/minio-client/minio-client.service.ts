@@ -30,12 +30,12 @@ export class MinioClientService {
     file: BufferedFile,
     bucketName: string = this.bucketName,
   ): Promise<FileEntity> {
-    if (!(file.mimetype.includes('jpeg') || file.mimetype.includes('png'))) {
-      throw new HttpException(
-        'File type not supported',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // if (!(file.mimetype.includes('jpeg') || file.mimetype.includes('png'))) {
+    //   throw new HttpException(
+    //     'File type not supported',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
     const timestamp = Date.now().toString();
     const hashedFileName = crypto
       .createHash('md5')
