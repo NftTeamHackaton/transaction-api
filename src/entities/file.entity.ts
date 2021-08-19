@@ -11,7 +11,7 @@ export class FileEntity {
     @Column({ type: 'varchar', length: 255, name: 'mime_type' })
     mimeType: string;
 
-    @Column({ name: 'size', type: 'integer'})
+    @Column({ type: 'integer', name: 'size'})
     size: number;
 
     @Column({ type: 'varchar', length: 255, name: 'extension' })
@@ -22,4 +22,7 @@ export class FileEntity {
 
     @Column({ type: 'varchar', length: 255, name: 'orginial_name' })
     originalName: string;
+
+    @Column({ type: 'integer', name: 'index_number', nullable: true })
+    indexNumber: number;
 }

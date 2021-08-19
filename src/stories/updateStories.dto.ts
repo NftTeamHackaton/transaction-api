@@ -14,6 +14,10 @@ export class UpdateStoriesDto {
     contents: number[];
 
     @IsNotEmpty()
+    @IsArray()
+    removeContent: number[];
+
+    @IsNotEmpty()
     @IsString()
     name: string;
 

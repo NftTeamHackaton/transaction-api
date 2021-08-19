@@ -45,9 +45,21 @@ export class StoriesController {
         return response.status(200).send(stories)
     }
 
+    @Get('/list-in-active')
+    public async listInActive(@Res() response: Response) {
+        const stories = await this.storiesService.listInActive();
+        return response.status(200).send(stories)
+    }
+
     @Get('/priority/:id/:priority')
     public async priority(@Param('id') id: number, @Param('priority') priority: number, @Res() response: Response) {
         const stories = await this.storiesService.setPriority(id, priority);
+        return response.status(200).send(stories)
+    }
+
+    @Get('/content-priority/:id/:priority/:contentId')
+    public async contentPriority(@Param('id') id: number, @Param('priority') priority: number, @Param('contentId') contentId: number, @Res() response: Response) {
+        const stories = await this.storiesService.setContentIndex(id, contentId, priority);
         return response.status(200).send(stories)
     }
 

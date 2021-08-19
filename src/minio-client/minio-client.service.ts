@@ -29,6 +29,7 @@ export class MinioClientService {
   public async upload(
     file: BufferedFile,
     bucketName: string = this.bucketName,
+    indexNumber: number = null
   ): Promise<FileEntity> {
     // if (!(file.mimetype.includes('jpeg') || file.mimetype.includes('png'))) {
     //   throw new HttpException(
@@ -72,14 +73,15 @@ export class MinioClientService {
         extension: extension,
         mimeType: file.mimetype,
         url: `${this.config.get('MINIO_ENDPOINT')}:${this.config.get('MINIO_PORT')}/${this.config.get('MINIO_BUCKET_NAME')}/${fileName}`,
-        originalName: file.originalname
+        originalName: file.originalname,
+        indexNumber
     });
   }
 
   public async uploadMultiple(files: BufferedFile[], bucketName: string = this.bucketName): Promise<FileEntity[]> {
     const filesMetaData: FileEntity[] = []
     for (let i = 0; i < files.length; i++) {
-      const file = await this.upload(files[i])
+      const file = await this.upload(files[i], this.bucketName, i)
       filesMetaData.push(file)
     }
     return filesMetaData

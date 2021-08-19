@@ -27,6 +27,18 @@ export class StoriesService {
         })
     }
 
+    public async listInActive(): Promise<StoriesEntity[]> {
+        return this.storiesRepository.find({
+            relations: ['preview', 'contents'],
+            order: {
+                priority: 'ASC'
+            },
+            where: {
+                isActive: false
+            }
+        })
+    }
+
     public async all(): Promise<StoriesEntity[]> {
         return this.storiesRepository.find({
             relations: ['preview', 'contents']
@@ -59,6 +71,31 @@ export class StoriesService {
 
         stories.priority = priority
         return this.storiesRepository.save(stories)
+    }
+
+    public async setContentIndex(storiesId: number, contentId: number, index: number): Promise<FileEntity> {
+        const stories = await this.detail(storiesId)
+        const content = await this.fileRepository.findOne(contentId)
+
+        const contents = stories.contents
+
+        for (let i = 0; i < contents.length; i++) {
+            console.log(contents[i] )
+            if(!contents[i].indexNumber) {
+                contents[i].indexNumber = 0
+            } 
+
+            if(contents[i].indexNumber >= index && contents[i].indexNumber > 0) {
+                contents[i].indexNumber -= 1
+            }
+
+
+            await this.fileRepository.save(contents[i])
+        }
+
+        
+        content.indexNumber = index
+        return this.fileRepository.save(content)
     }
 
     public async create(createStoriesDto: CreateStoriesDto): Promise<StoriesEntity> {
@@ -102,7 +139,6 @@ export class StoriesService {
     public async update(updateStoriesDto: UpdateStoriesDto) {
         const stories = await this.storiesRepository.findOne(updateStoriesDto.storiesId, {relations: ['preview', 'contents']})
         const preview = await this.fileRepository.findOne(updateStoriesDto.previewId)
-        const contents: FileEntity[] = [];
 
         if(!stories) {
             throw new NotFoundException('Stories not found!')
@@ -128,19 +164,24 @@ export class StoriesService {
         if(updateStoriesDto.contents.length > 0) {
             for(let i = 0; i < updateStoriesDto.contents.length; i++) {
                 const file = await this.fileRepository.findOne(updateStoriesDto.contents[i])
-    
                 if(!file) {
                     throw new NotFoundException('Content file not found!')
                 }
-                contents.push(file);
+                stories.contents.push(file);
             }
         }
 
-        stories.contents = contents
+        if(updateStoriesDto.removeContent.length > 0) {
+            stories.contents = stories.contents.filter(function (content) {
+                for(let i = 0; i < updateStoriesDto.removeContent.length; i++) {
+                    return content.id != updateStoriesDto.removeContent[i] ? content : null
+                }
+            })
+            console.log(stories.contents)
+        }
         stories.preview = preview
         stories.name = updateStoriesDto.name
         stories.isActive = updateStoriesDto.isActive
-
         return this.storiesRepository.save(stories);
     }
 
