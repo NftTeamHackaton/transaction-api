@@ -30,24 +30,37 @@ export class UniswapService {
             });
             let staked = []
             for(let i = 0; i < pairs.length; i++) {
+                const pair = pairs[i]
                 const pairContract = new ethers.Contract(
                     pairs[i].liquidityToken.address,
                     ['function totalSupply() external view returns (uint)', 'function balanceOf(address owner) external view returns (uint)'],
                     provider
                 );
-                let balanceOf = await pairContract.balanceOf(address)
+                let balanceOfContract = await pairContract.balanceOf(address)
+
+                let totalSupply = await pairContract.totalSupply()
+                totalSupply = new TokenAmount(pair.liquidityToken, totalSupply.toString())
+                let balanceOf = new TokenAmount(pair.liquidityToken, balanceOfContract.toString())
+
+                const value0 = pair.getLiquidityValue(pair.token0, totalSupply, balanceOf)
+                const value1 = pair.getLiquidityValue(pair.token1, totalSupply, balanceOf)
+                const liquidityMinted = pair.getLiquidityMinted(totalSupply, value0, value1)
+                const shareOfPool = new Percent(liquidityMinted.raw, totalSupply.add(liquidityMinted).raw)
+                const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
                 
-                if(Number(balanceOf) > 0) {
-                    console.log(`${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`)
+                if(Number(balanceOfContract) > 0) {
+                    console.log(`${pair.token0.symbol}-${pair.token1.symbol}`)
                     staked.push({
-                        pair: `${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`,
-                        staked: true
+                        pair: `${pair.token0.symbol}-${pair.token1.symbol}`,
+                        staked: true,
+                        shareOfPool: shareOfPool?.lessThan(ONE_BIPS) ? '<0.01' : shareOfPool?.toFixed(2) ?? '0'
                     })
                 } else {
-                    console.log(`${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`)
+                    console.log(`${pair.token0.symbol}-${pair.token1.symbol}`)
                     staked.push({
-                        pair: `${pairs[i].token0.symbol}-${pairs[i].token1.symbol}`,
-                        staked: false
+                        pair: `${pair.token0.symbol}-${pair.token1.symbol}`,
+                        staked: false,
+                        shareOfPool: shareOfPool?.lessThan(ONE_BIPS) ? '<0.01' : shareOfPool?.toFixed(2) ?? '0'
                     })
                 }
                 
