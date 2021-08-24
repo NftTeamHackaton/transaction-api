@@ -13,7 +13,7 @@ export class FeedbackService {
         private readonly telegramService: TelegramService
     ) {}
 
-    public async create(feedbackCreateDto: FeedBackCreateDto) {
+    public async create(feedbackCreateDto: FeedBackCreateDto): Promise<FeedBack> {
         const text = `
 * name: ${feedbackCreateDto.name};
 * title: ${feedbackCreateDto.title ? feedbackCreateDto.title : ''};
@@ -31,6 +31,14 @@ export class FeedbackService {
             text: feedbackCreateDto.text,
             title: feedbackCreateDto.title ? feedbackCreateDto.title : '',
             createdAt: new Date
+        })
+    }
+
+    public async list(): Promise<FeedBack[]> {
+        return this.feedbackRepository.find({
+            order: {
+                id: 'DESC'
+            }
         })
     }
 }

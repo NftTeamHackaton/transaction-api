@@ -13,6 +13,7 @@ import { TransactionModule } from './transaction/transaction.module';
 import { StoriesModule } from './stories/stories.module';
 import { MinioClientModule } from './minio-client/minio-client.module';
 import { FeedbackModule } from './feedback/feedback.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { FeedbackModule } from './feedback/feedback.module';
     UniswapModule, 
     ConfigModule,
     PancakeswapModule, 
-    CompoundModule, AaveModule, TransactionModule, StoriesModule, MinioClientModule, FeedbackModule
+    CompoundModule, AaveModule, TransactionModule, StoriesModule, MinioClientModule, FeedbackModule, AnalyticsModule
   ],
   controllers: [AppController],
   providers: [AppService],
