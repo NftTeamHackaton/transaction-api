@@ -140,8 +140,10 @@ export class CompoundService {
             })
             staked = underlyingBalance
         } else {
-            const stakedBefore = compoundStaked.stakedBalance
-
+            if(compoundStaked.stakedBalance <= 0) {
+                compoundStaked.stakedBalance = underlyingBalance
+                await this.compoundRepository.save(compoundStaked)
+            }
             if(underlyingBalance <= 0) {
                 compoundStaked.stakedBalance = 0
                 compoundStaked.reward = 0
@@ -152,9 +154,10 @@ export class CompoundService {
                 compoundStaked.stakedBalance = underlyingBalance
                 await this.compoundRepository.save(compoundStaked)
             }
-            
-            reward = (underlyingBalance - stakedBefore)
-            staked = stakedBefore
+            console.log(compoundStaked.stakedBalance)
+            console.log(underlyingBalance)
+            reward = (underlyingBalance - compoundStaked.stakedBalance)
+            staked = compoundStaked.stakedBalance
             if(reward < 0) 
                 reward = 0;
         }

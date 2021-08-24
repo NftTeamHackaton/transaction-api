@@ -96,7 +96,9 @@ export class AaveService {
                 aaveStaked.stakedBalance = formattedBalance
                 await this.aaveRepository.save(aaveStaked)
             }
-
+            console.log(formattedBalance)
+            console.log(aaveStaked.stakedBalance)
+            console.log(percentDepositAPY)
             reward = (formattedBalance - aaveStaked.stakedBalance)
             staked = aaveStaked.stakedBalance
             if(reward < 0) 
