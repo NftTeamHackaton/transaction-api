@@ -102,15 +102,17 @@ export class AnalyticsService {
                 .addGroupBy('q.tokenDecimals')
                 .addGroupBy('q.operation')
                 .getRawMany()
-            const uniswapData = {
+            const lpData = {
                 usd: 0,
-                lp: {
-                    usd: 0,
-                    data: []
-                },
-                swap: {
-                    usd: 0,
-                    data: []
+                uniswap: {
+                    lp: {
+                        usd: 0,
+                        data: []
+                    },
+                    swap: {
+                        usd: 0,
+                        data: []
+                    }
                 }
             }
             for(let i = 0; i < uniswapOperations.length; i++) {
@@ -134,19 +136,19 @@ export class AnalyticsService {
                     usd: usdPrice
                 }
 
-                uniswapData.usd += usdPrice
+                lpData.usd += usdPrice
 
                 if(uniswap.operation == 'addLiquidity') {
-                    uniswapData.lp.usd += usdPrice
-                    uniswapData.lp.data.push(data)
+                    lpData.uniswap.lp.usd += usdPrice
+                    lpData.uniswap.lp.data.push(data)
                 }
 
                 if(uniswap.operation == 'swap') {
-                    uniswapData.swap.usd += usdPrice
-                    uniswapData.swap.data.push(data)
+                    lpData.uniswap.swap.usd += usdPrice
+                    lpData.uniswap.swap.data.push(data)
                 }
             }
-            return uniswapData;
+            return lpData;
         } catch (e) {
             let message = e.message
 
