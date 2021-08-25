@@ -92,6 +92,7 @@ export class BscTransactionService {
                 await this.bep20TransactionRepository.save({
                     ...tx,
                     nonce: Number(tx.nonce),
+                    contractAddress,
                     tokenDecimals: Number(tx.tokenDecimal),
                     transactionDate: new Date(Number(tx.timeStamp) * 1000),
                     network,
