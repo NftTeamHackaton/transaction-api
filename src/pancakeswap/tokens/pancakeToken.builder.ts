@@ -52,7 +52,7 @@ export class PancakeTokenBuilder {
                 name: 'Binance-Peg Basic Attention Token'
             }
         },
-        WETH: {
+        ETH: {
             56: {
                 decimals: 18,
                 symbol: 'ETH',
