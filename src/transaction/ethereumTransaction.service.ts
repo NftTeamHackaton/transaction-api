@@ -141,16 +141,17 @@ export class EthereumTransactionService {
             const tx: EthereumTransactionInterface = data[i]
 
             const savedTx = await this.erc20TransactionRepository.findOne({hash: tx.hash});
-            
+            console.log(savedTx)
+            console.log(savedTx instanceof Erc20TransactionEntity)
+            console.log(savedTx.tokenSymbol == 'ETH')
             if(savedTx instanceof Erc20TransactionEntity) {
-                
+                console.log('instanceof')
                 if(savedTx.tokenSymbol == 'ETH') {
-                    continue;
                     console.log('CONTINUE')
+                    continue;
                 }
 
             }
-            console.log(savedTx.tokenSymbol == 'ETH')
             await this.erc20TransactionRepository.save({
                 blockNumber: tx.blockNumber,
                 timeStamp: tx.timeStamp,
