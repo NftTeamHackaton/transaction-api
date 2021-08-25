@@ -120,10 +120,13 @@ export class BscTransactionService {
         console.log(data)
         for (let i = 0; i < data.length; i++) {
             const tx: SmartChainTransactionInterface = data[i]
-
+            console.log('iteration')
             const savedTx = await this.bep20TransactionRepository.findOne({hash: tx.hash, tokenSymbol: 'BNB'});
+            console.log(savedTx)
             if(savedTx instanceof Bep20TransactionEntity) {
+                console.log(savedTx instanceof Bep20TransactionEntity)
                 if(savedTx.tokenSymbol == 'BNB') {
+                    console.log(savedTx.tokenSymbol == 'BNB')
                     continue;
                 }
 
