@@ -81,6 +81,7 @@ export class BscTransactionService {
                 apikey: this.configService.getSmartChainEtherscanApiKey()
             }
         }).toPromise()
+        console.log(transactions)
         
         const data: Bep20TransactionInterface[] = transactions.data.result;
         for (let i = 0; i < data.length; i++) {
@@ -115,6 +116,7 @@ export class BscTransactionService {
                 apikey: this.configService.getSmartChainEtherscanApiKey()
             }
         }).toPromise()
+        console.log(transactions)
         const data: SmartChainTransactionInterface[] = transactions.data.result;
         for (let i = 0; i < data.length; i++) {
             const tx: SmartChainTransactionInterface = data[i]
