@@ -36,8 +36,8 @@ export class BscTransactionService {
 
     private async fetchBEP20TransactionList(network: string, contractAddress: string, address: string) {
         return this.bep20TransactionRepository.createQueryBuilder('q')
-            .where('LOWER(q.contractAddress) = :contractAddress and from = :from', {contractAddress, from: address})
-            .orWhere('LOWER(q.contractAddress) = :contractAddress and from = :from', {contractAddress, to: address})
+            .where('LOWER(q.contractAddress) = :contractAddress and q.from = :from', {contractAddress, from: address})
+            .orWhere('LOWER(q.contractAddress) = :contractAddress and q.to = :to', {contractAddress, to: address})
             .getMany()
     }
 
