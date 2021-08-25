@@ -1,5 +1,5 @@
 import { HttpService, Injectable, Logger, Post } from '@nestjs/common';
-import { Raw, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from 'src/config/config.service';
 import { Bep20TransactionEntity } from 'src/entities/bep20Transaction.entity';
@@ -35,10 +35,10 @@ export class BscTransactionService {
     }
 
     private async fetchBEP20TransactionList(network: string, contractAddress: string, address: string) {
-        return this.bep20TransactionRepository.find({where: [
-            {contractAddress: Raw(alias => `LOWER(${alias}) = ${contractAddress}`), from: address},
-            {contractAddress: Raw(alias => `LOWER(${alias}) = ${contractAddress}`), to: address},
-        ]})
+        return this.bep20TransactionRepository.createQueryBuilder('q')
+            .where('LOWER(q.contractAddress) = :contractAddress and from = :from', {contractAddress, from: address})
+            .orWhere('LOWER(q.contractAddress) = :contractAddress and from = :from', {contractAddress, to: address})
+            .getMany()
     }
 
 
