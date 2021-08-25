@@ -80,16 +80,7 @@ export class StoriesService {
         const contents = stories.contents
 
         for (let i = 0; i < contents.length; i++) {
-            console.log(contents[i] )
-            if(!contents[i].indexNumber) {
-                contents[i].indexNumber = 0
-            } 
-
-            if(contents[i].indexNumber >= index && contents[i].indexNumber > 0) {
-                contents[i].indexNumber -= 1
-            }
-
-
+            contents[i].indexNumber += 1
             await this.fileRepository.save(contents[i])
         }
 
@@ -172,12 +163,19 @@ export class StoriesService {
         }
 
         if(updateStoriesDto.removeContent.length > 0) {
-            stories.contents = stories.contents.filter(function (content) {
-                for(let i = 0; i < updateStoriesDto.removeContent.length; i++) {
-                    return content.id != updateStoriesDto.removeContent[i] ? content : null
+            const contents = []
+            
+            for(let i = 0; i < stories.contents.length; i++) {
+                const content = stories.contents[i]
+                if(!updateStoriesDto.removeContent.includes(String(content.id))) {
+                    console.log(!updateStoriesDto.removeContent.includes(String(content.id)))
+                    contents.push(content)
                 }
-            })
-            console.log(stories.contents)
+            }
+
+            console.log(contents)
+
+            stories.contents = contents
         }
         stories.preview = preview
         stories.name = updateStoriesDto.name
