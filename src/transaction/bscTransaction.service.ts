@@ -125,33 +125,37 @@ export class BscTransactionService {
         for (let i = 0; i < data.length; i++) {
             const tx: SmartChainTransactionInterface = data[i]
 
-            const savedTx = await this.bep20TransactionRepository.findOne({hash: tx.hash});
-            if(savedTx == undefined) {
-                await this.bep20TransactionRepository.save({
-                    blockNumber: tx.blockNumber,
-                    timeStamp: tx.timeStamp,
-                    hash: tx.hash,
-                    nonce: Number(tx.nonce),
-                    blockHash: tx.blockHash,
-                    from: tx.from,
-                    contractAddress: '',
-                    to: tx.to,
-                    value: tx.value,
-                    tokenName: 'Binance Coin',
-                    tokenSymbol: 'BNB',
-                    tokenDecimals: 18,
-                    transactionIndex: tx.transactionIndex,
-                    gas: tx.gas,
-                    gasPrice: tx.gasPrice,
-                    gasUsed: tx.gasUsed,
-                    cumulativeGasUsed: tx.cumulativeGasUsed,
-                    input: tx.input,
-                    confirmations: tx.confirmations,
-                    transactionDate: new Date(Number(tx.timeStamp) * 1000),
-                    network,
-                    operation
-                })
+            const savedTx = await this.bep20TransactionRepository.findOne({hash: tx.hash, tokenSymbol: 'BNB'});
+            if(savedTx instanceof Bep20TransactionEntity) {
+                if(savedTx.tokenSymbol == 'BNB') {
+                    continue;
+                }
+
             }
+            await this.bep20TransactionRepository.save({
+                blockNumber: tx.blockNumber,
+                timeStamp: tx.timeStamp,
+                hash: tx.hash,
+                nonce: Number(tx.nonce),
+                blockHash: tx.blockHash,
+                from: tx.from,
+                contractAddress: '',
+                to: tx.to,
+                value: tx.value,
+                tokenName: 'Binance Coin',
+                tokenSymbol: 'BNB',
+                tokenDecimals: 18,
+                transactionIndex: tx.transactionIndex,
+                gas: tx.gas,
+                gasPrice: tx.gasPrice,
+                gasUsed: tx.gasUsed,
+                cumulativeGasUsed: tx.cumulativeGasUsed,
+                input: tx.input,
+                confirmations: tx.confirmations,
+                transactionDate: new Date(Number(tx.timeStamp) * 1000),
+                network,
+                operation
+            })
         }
     }
 
