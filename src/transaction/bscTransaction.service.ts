@@ -45,35 +45,29 @@ export class BscTransactionService {
     public async getAllPancakeSwapTransaction(network: string, token0: string, token1: string, address: string) {
         const tokenFirst = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network], token0)
         const tokenSecond = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network], token1)
-        const cachedTxCount = await this.bep20TransactionRepository.count({where: [
-            {from: address},
-            {to: address}
-        ]})
-        if(cachedTxCount <= 0) {
-            await this.transactionBEP20Cache(network, tokenSecond.address, address, 'swap')
-            await this.transactionBNBCache(network, address, 'swap')
-        }
         return this.fetchPancakeSwapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
     public async newTxInPancakeSwap(network: string, token0: string, token1: string, address: string, operation: string) {
         const tokenFirst = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network], token0)
         const tokenSecond = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network], token1)
+        const pair = `${tokenFirst.symbol}-${tokenSecond.symbol}`
+        await this.delay(20000)
         if(tokenFirst.symbol != 'WBNB') {
-            await this.transactionBEP20Cache(network, tokenFirst.address, address, operation)
+            await this.transactionBEP20Cache(network, tokenFirst.address, address, operation, pair, 'pancakeswap')
         }
 
         if(tokenSecond.symbol != 'WBNB') {
-            await this.transactionBEP20Cache(network, tokenSecond.address, address, operation)
+            await this.transactionBEP20Cache(network, tokenSecond.address, address, operation, pair, 'pancakeswap')
         }
 
         if(tokenFirst.symbol == 'WBNB' || tokenSecond.symbol == 'WBNB') {
-            await this.transactionBNBCache(network, address, operation)
+            await this.transactionBNBCache(network, address, operation, pair, 'pancakeswap')
         }
         return this.fetchPancakeSwapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
-    private async transactionBEP20Cache(network: string, contractAddress: string, address: string, operation: string) {
+    private async transactionBEP20Cache(network: string, contractAddress: string, address: string, operation?: string, pair?: string, service?: string) {
         const transactions = await this.httpService.get('/api', {
             baseURL: 'https://api.bscscan.com',
             params: {
@@ -82,7 +76,7 @@ export class BscTransactionService {
                 contractaddress: contractAddress,
                 address,
                 page: 1,
-                offset: 100,
+                offset: 1,
                 sort: 'desc',
                 apikey: this.configService.getSmartChainEtherscanApiKey()
             }
@@ -100,13 +94,13 @@ export class BscTransactionService {
                     tokenDecimals: Number(tx.tokenDecimal),
                     transactionDate: new Date(Number(tx.timeStamp) * 1000),
                     network,
-                    operation
+                    operation, pair, service
                 })
             }
         }
     }
 
-    private async transactionBNBCache(network: string, address: string, operation: string): Promise<void> {
+    private async transactionBNBCache(network: string, address: string, operation?: string, pair?: string, service?: string): Promise<void> {
         const transactions = await this.httpService.get('/api', {
             baseURL: 'https://api.bscscan.com',
             params: {
@@ -116,7 +110,7 @@ export class BscTransactionService {
                 startblock: 0,
                 endblock: 99999999,
                 page: 1,
-                offset: 100,
+                offset: 1,
                 sort: 'desc',
                 apikey: this.configService.getSmartChainEtherscanApiKey()
             }
@@ -154,48 +148,21 @@ export class BscTransactionService {
                 confirmations: tx.confirmations,
                 transactionDate: new Date(Number(tx.timeStamp) * 1000),
                 network,
-                operation
+                operation, pair, service
             })
         }
     }
 
     private async fetchPancakeSwapTransaction(token0Symbol: string, token1Symbol: string, address: string) {
-        if(token0Symbol == 'WBNB') {
-            token0Symbol = 'BNB'
-        }
+        const pair = `${token0Symbol}-${token1Symbol}`
 
-        if(token1Symbol == 'WBNB') {
-            token1Symbol = 'BNB'
-        }
-        return this.bep20TransactionRepository.find({where: [
-            {tokenSymbol: token1Symbol, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
-            {tokenSymbol: token1Symbol, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
-
-            {tokenSymbol: token1Symbol, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
-            {tokenSymbol: token1Symbol, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
-
-            {tokenSymbol: token1Symbol, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
-            {tokenSymbol: token1Symbol, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
-
-            {tokenSymbol: token1Symbol, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
-            {tokenSymbol: token1Symbol, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
-
-            {tokenSymbol: token1Symbol, from: address, to: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16'.toLowerCase()},
-            {tokenSymbol: token1Symbol, from: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16'.toLowerCase(), to: address},
-            {tokenSymbol: token0Symbol, from: address, to: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16'.toLowerCase()},
-            {tokenSymbol: token0Symbol, from: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16'.toLowerCase(), to: address},
-
-            {tokenSymbol: token0Symbol, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
-            {tokenSymbol: token0Symbol, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
-
-            {tokenSymbol: token0Symbol, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
-            {tokenSymbol: token0Symbol, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
-
-            {tokenSymbol: token0Symbol, from: address, to: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase()},
-            {tokenSymbol: token0Symbol, from: '0x98Fe4bDD020fe387e746Cb53e01812055De592fc'.toLowerCase(), to: address},
-
-            {tokenSymbol: token0Symbol, from: address, to: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase()},
-            {tokenSymbol: token0Symbol, from: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'.toLowerCase(), to: address},
+        return this.bep20TransactionRepository.find({order: {nonce: 'DESC'}, where: [
+            {pair, from: address},
+            {pair, to: address},
         ]})
+    }
+
+    private async delay(second) {
+        return new Promise(res => setTimeout(res, second));
     }
 }

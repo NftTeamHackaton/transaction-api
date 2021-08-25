@@ -196,14 +196,6 @@ export class EthereumTransactionService {
         return this.erc20TransactionRepository.find({order: {nonce: 'DESC'}, where: [
             {pair, from: address},
             {pair, to: address},
-            // {pair, from: address, to: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase()},
-            // {pair, from: '0xcc1b14a6cEF311050eb3A8690F871F98d1F7c4B7'.toLowerCase(), to: address},
-
-            // {pair, from: address, to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase()},
-            // {pair, from: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'.toLowerCase(), to: address},
-
-            // {pair, from: address, to: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase()},
-            // {pair, from: '0xd1106dB81792a47DBb702Ad714ca63eF83463309'.toLowerCase(), to: address},
         ]})
     }
 
