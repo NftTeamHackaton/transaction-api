@@ -36,8 +36,8 @@ export class BscTransactionService {
 
     private async fetchBEP20TransactionList(network: string, contractAddress: string, address: string) {
         return this.bep20TransactionRepository.find({where: [
-            {contractAddress, from: address},
-            {contractAddress, to: address},
+            {'LOWER(contractAddress)': contractAddress.toLowerCase(), from: address},
+            {'LOWER(contractAddress)': contractAddress.toLowerCase(), to: address},
         ]})
     }
 
