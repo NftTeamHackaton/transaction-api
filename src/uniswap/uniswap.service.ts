@@ -42,25 +42,33 @@ export class UniswapService {
                 totalSupply = new TokenAmount(pair.liquidityToken, totalSupply.toString())
                 let balanceOf = new TokenAmount(pair.liquidityToken, balanceOfContract.toString())
 
-                const value0 = pair.getLiquidityValue(pair.token0, totalSupply, balanceOf)
-                const value1 = pair.getLiquidityValue(pair.token1, totalSupply, balanceOf)
-                const liquidityMinted = pair.getLiquidityMinted(totalSupply, value0, value1)
-                const shareOfPool = new Percent(liquidityMinted.raw, totalSupply.add(liquidityMinted).raw)
-                const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
-                
-                if(Number(balanceOfContract) > 0) {
-                    console.log(`${pair.token0.symbol}-${pair.token1.symbol}`)
-                    staked.push({
-                        pair: `${pair.token0.symbol}-${pair.token1.symbol}`,
-                        staked: true,
-                        shareOfPool: shareOfPool?.lessThan(ONE_BIPS) ? '<0.01' : shareOfPool?.toFixed(2) ?? '0'
-                    })
-                } else {
-                    console.log(`${pair.token0.symbol}-${pair.token1.symbol}`)
+                try {
+                    const value0 = pair.getLiquidityValue(pair.token0, totalSupply, balanceOf)
+                    const value1 = pair.getLiquidityValue(pair.token1, totalSupply, balanceOf)
+                    const liquidityMinted = pair.getLiquidityMinted(totalSupply, value0, value1)
+                    const shareOfPool = new Percent(liquidityMinted.raw, totalSupply.add(liquidityMinted).raw)
+                    const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
+                    
+                    if(Number(balanceOfContract) > 0) {
+                        console.log(`${pair.token0.symbol}-${pair.token1.symbol}`)
+                        staked.push({
+                            pair: `${pair.token0.symbol}-${pair.token1.symbol}`,
+                            staked: true,
+                            shareOfPool: shareOfPool?.lessThan(ONE_BIPS) ? '<0.01' : shareOfPool?.toFixed(2) ?? '0'
+                        })
+                    } else {
+                        console.log(`${pair.token0.symbol}-${pair.token1.symbol}`)
+                        staked.push({
+                            pair: `${pair.token0.symbol}-${pair.token1.symbol}`,
+                            staked: false,
+                            shareOfPool: shareOfPool?.lessThan(ONE_BIPS) ? '<0.01' : shareOfPool?.toFixed(2) ?? '0'
+                        })
+                    }
+                } catch (e) {
                     staked.push({
                         pair: `${pair.token0.symbol}-${pair.token1.symbol}`,
                         staked: false,
-                        shareOfPool: shareOfPool?.lessThan(ONE_BIPS) ? '<0.01' : shareOfPool?.toFixed(2) ?? '0'
+                        shareOfPool: '0'
                     })
                 }
                 

@@ -15,6 +15,25 @@ export class CryptoListService {
         private readonly cryptoAssetRepository: Repository<CryptoAsset>
     ) {}
 
+    public async listAssets(id: number): Promise<CryptoAsset[]> {
+        const list = await this.cryptoListRepoistory.findOne(id)
+
+        if(!list) {
+            throw new NotFoundException('List not found!')
+        }
+
+
+        return this.cryptoAssetRepository.find({
+            where: {
+                cryptoList: list
+            }
+        })
+    }
+
+    public async all() {
+        return this.cryptoListRepoistory.find()
+    }
+
     public async assetList() {
         return this.cryptoListRepoistory.findOne({relations: ['assets']})
     }

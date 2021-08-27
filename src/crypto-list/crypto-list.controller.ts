@@ -8,6 +8,18 @@ import { CryptoListService } from './crypto-list.service';
 export class CryptoListController {
     constructor(private readonly cryptoListService: CryptoListService) {}
 
+    @Get('/all')
+    public async all(@Res() response: Response) {
+        const list = await this.cryptoListService.all()
+        return response.status(HttpStatus.OK).send(list)
+    }
+
+    @Get('/list-assets/:id')
+    public async listAssets(@Param('id') id: number, @Res() response: Response) {
+        const assets = await this.cryptoListService.listAssets(id)
+        return response.status(HttpStatus.OK).send(assets)
+    }
+
     @Post('/create-list')
     public async createList(@Body() createListDto: CreateListDto, @Res() response: Response) {
         const list = await this.cryptoListService.createList(createListDto)
