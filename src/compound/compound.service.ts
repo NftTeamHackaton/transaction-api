@@ -24,39 +24,8 @@ export class CompoundService {
         private readonly httpService: HttpService
     ) {}
 
-    private async cacheTransactionHistory(network: string, contractAddress: string, address: string): Promise<void> {
-        const transactions = await this.httpService.get('/api', {
-            params: {
-                module: 'account',
-                action: 'tokentx',
-                contractaddress: contractAddress,
-                address,
-                page: 1,
-                offset: 100,
-                sort: 'desc',
-                apikey: this.configService.getEtherscanApiKey()
-            }
-        }).toPromise()
-        const data: Erc20TransactionInterface[] = transactions.data.result;
-        for (let i = 0; i < data.length; i++) {
-            const tx: Erc20TransactionInterface = data[i]
-
-            const savedTx = await this.erc20TransactionRepository.findOne({hash: tx.hash});
-
-            if(savedTx == undefined) {
-                await this.erc20TransactionRepository.save({
-                    ...tx,
-                    nonce: Number(tx.nonce),
-                    tokenDecimals: Number(tx.tokenDecimal),
-                    transactionDate: new Date(Number(tx.timeStamp) * 1000),
-                    network
-                })
-            }
-        }
-    }
-
     public async stakedBalance(network: string, address: string) {
-        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL(network)));
         const cTokenUSDT = new provider.eth.Contract(cTokenABI, Compound.util.getAddress('cUSDT', network.toLowerCase()));
         const cTokenUSDC = new provider.eth.Contract(cTokenABI, Compound.util.getAddress('cUSDC', network.toLowerCase()));
         const cTokenDAI = new provider.eth.Contract(cTokenABI, Compound.util.getAddress('cDAI', network.toLowerCase()));
@@ -71,7 +40,7 @@ export class CompoundService {
     }
 
     public async staking(network: string, stakingDto: StakingDto) {
-        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL(network)));
         const erc20TokenAddress = Compound.util.getAddress(stakingDto.erc20Symbol, network.toLowerCase())
         const cTokenAddress = Compound.util.getAddress(stakingDto.cTokenSymbol, network.toLowerCase())
         const underlying = new provider.eth.Contract(ERC20ABI, erc20TokenAddress);
@@ -101,15 +70,15 @@ export class CompoundService {
     }
 
     public async getCompData(network: string, address: string) {
-        const balance = await Compound.comp.getCompBalance(address, 'https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077');
-        const accrued = await Compound.comp.getCompAccrued(address, 'https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077');
+        const balance = await Compound.comp.getCompBalance(address, this.configService.getInfuraURL(network));
+        const accrued = await Compound.comp.getCompAccrued(address, this.configService.getInfuraURL(network));
         return {
             balance, accrued
         }
     }
 
     public async getRewardData(network: string, erc20Symbol: string, cTokenSymbol: string, address: string) {
-        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL(network)));
         const erc20TokenAddress = Compound.util.getAddress(erc20Symbol, network)
         const cTokenAddress = Compound.util.getAddress(cTokenSymbol, network)
         const underlying = new provider.eth.Contract(ERC20ABI, erc20TokenAddress);

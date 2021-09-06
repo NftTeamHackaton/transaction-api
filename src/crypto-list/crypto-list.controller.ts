@@ -8,9 +8,9 @@ import { CryptoListService } from './crypto-list.service';
 export class CryptoListController {
     constructor(private readonly cryptoListService: CryptoListService) {}
 
-    @Get('/all')
-    public async all(@Res() response: Response) {
-        const list = await this.cryptoListService.all()
+    @Get('/:network/all')
+    public async all(@Param('network') network: string, @Res() response: Response) {
+        const list = await this.cryptoListService.all(network)
         return response.status(HttpStatus.OK).send(list)
     }
 

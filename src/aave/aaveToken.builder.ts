@@ -5,7 +5,15 @@ import {ChainId, Fetcher, WETH, Route, Trade, TokenAmount, TradeType, Percent, T
 export class AaveTokenBuilder {
     readonly TOKENS = {
         USDC: {
-            1: {},
+            1: {
+                aTokenAddress: "0xBcca60bB61934080951369a648Fb03DF4F96263C",
+                aTokenSymbol: "aUSDC",
+                stableDebtTokenAddress: "0xE4922afAB0BbaDd8ab2a88E0C79d884Ad337fcA6",
+                variableDebtTokenAddress: "0x619beb58998eD2278e08620f97007e1116D5D25b",
+                symbol: "USDC",
+                address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                decimals: 6
+            },
             42: {
                 aTokenAddress: '0xe12AFeC5aa12Cf614678f9bFeeB98cA9Bb95b5B0',
                 aTokenSymbol: 'aUSDC',
@@ -17,7 +25,15 @@ export class AaveTokenBuilder {
             }
         },
         USDT: {
-            1: {},
+            1: {
+                aTokenAddress: "0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811",
+                aTokenSymbol: "aUSDT",
+                stableDebtTokenAddress: "0xe91D55AB2240594855aBd11b3faAE801Fd4c4687",
+                variableDebtTokenAddress: "0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec",
+                symbol: "USDT",
+                address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+                decimals: 6
+            },
             42: {
                 aTokenAddress: '0xFF3c8bc103682FA918c954E84F5056aB4DD5189d',
                 aTokenSymbol: 'aUSDT',
@@ -29,7 +45,15 @@ export class AaveTokenBuilder {
             }
         },
         WETH: {
-            1: {},
+            1: {
+                aTokenAddress: "0x030bA81f1c18d280636F32af80b9AAd02Cf0854e",
+                aTokenSymbol: "aWETH",
+                stableDebtTokenAddress: "0x4e977830ba4bd783C0BB7F15d3e243f73FF57121",
+                variableDebtTokenAddress: "0xF63B34710400CAd3e044cFfDcAb00a0f32E33eCf",
+                symbol: "WETH",
+                address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+                decimals: 18
+            },
             42: {
                 aTokenAddress: '0x87b1f4cf9BD63f7BBD3eE1aD04E8F52540349347',
                 aTokenSymbol: 'aWETH',

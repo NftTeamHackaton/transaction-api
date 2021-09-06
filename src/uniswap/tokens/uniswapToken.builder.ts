@@ -5,7 +5,12 @@ import {ChainId, Fetcher, WETH, Route, Trade, TokenAmount, TradeType, Percent, T
 export class UniswapTokenBuilder {
     readonly TOKENS = {
         USDC: {
-            1: {},
+            1: {
+                decimals: 6,
+                symbol: 'USDC',
+                address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+                name: 'USD Coin (USDC)'
+            },
             4: {
                 decimals: 6,
                 symbol: 'USDC',
@@ -20,7 +25,12 @@ export class UniswapTokenBuilder {
             }
         },
         USDT: {
-            1: {},
+            1: {
+                decimals: 6,
+                symbol: 'USDT',
+                address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+                name: 'Compound USDT (USDT)'
+            },
             4: {
                 decimals: 18,
                 symbol: 'USDT',
@@ -35,7 +45,12 @@ export class UniswapTokenBuilder {
             }
         },
         WBTC: {
-            1: {},
+            1: {
+                decimals: 8,
+                symbol: 'WBTC',
+                address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
+                name: 'Wrapped BTC (WBTC)'
+            },
             4: {
                 decimals: 8,
                 symbol: 'WBTC',
@@ -50,6 +65,12 @@ export class UniswapTokenBuilder {
             }
         },
         DAI: {
+            1: {
+                decimals: 18,
+                symbol: 'DAI',
+                address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+                name: 'DAI Stablecoin'
+            },
             42: {
                 decimals: 18,
                 symbol: 'DAI',
@@ -58,6 +79,12 @@ export class UniswapTokenBuilder {
             }
         },
         BAT: {
+            1: {
+                decimals: 18,
+                symbol: 'BAT',
+                address: '0x0d8775f648430679a709e98d2b0cb6250d2887ef',
+                name: 'Basic Attention Token'
+            },
             42: {
                 decimals: 18,
                 symbol: 'BAT',
@@ -66,6 +93,12 @@ export class UniswapTokenBuilder {
             }
         },
         COMP: {
+            1: {
+                decimals: 18,
+                symbol: 'COMP',
+                address: '0xc00e94cb662c3520282e6f5717214004a7f26888',
+                name: 'Compound'
+            },
             42: {
                 decimals: 18,
                 symbol: 'COMP',

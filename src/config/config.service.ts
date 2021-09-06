@@ -21,11 +21,32 @@ export class ConfigService {
         return this.get('HTTP_MAX_REDIRECTS') == undefined ? 5 : Number(this.get('HTTP_MAX_REDIRECTS'))
     }
 
-    getEtherscanApiBaseUrl(): string {
-        if(this.get('NETWORK') == 'kovan') {
+    getEtherscanApiBaseUrl(network: string): string {
+        network = network.toLowerCase()
+        if(network == 'kovan') {
             return "https://api-kovan.etherscan.io"
         }
-        return "https://api-kovan.etherscan.io"
+
+        if(network == 'mainnet') {
+            return "https://api.etherscan.io"
+        }
+        return "https://api.etherscan.io"
+    }
+
+    getInfuraURL(network: string): string {
+        network = network.toLowerCase()
+        if(network == 'kovan') {
+            return "https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"
+        }
+        return "https://mainnet.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"
+    }
+
+    getAaveLendingPoolAddress(network: string) {
+        network = network.toLowerCase()
+        if(network == 'kovan') {
+            return "0xE0fBa4Fc209b4948668006B2bE61711b7f465bAe"
+        }
+        return "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9"
     }
 
     getEtherscanApiKey(): string {

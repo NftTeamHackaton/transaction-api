@@ -24,7 +24,7 @@ export class EthereumTransactionService {
         const contractAddress = Compound.util.getAddress(erc20Symbol, network.toLowerCase()).toLowerCase()
         await this.delay(20000)
         await this.transactionErc20Cache(network, contractAddress, address, opeartion, undefined, 'compound')
-        return this.fetchCompoundTransaction(address, erc20Symbol.toUpperCase())
+        return this.fetchCompoundTransaction(network, address, erc20Symbol.toUpperCase())
     }
 
     public async getAllEthereumTransactionList(network: string, address: string) {
@@ -37,19 +37,19 @@ export class EthereumTransactionService {
         return this.fetchERC20TransactionList(network, contractAddress, address)
     }
 
-    public async getAllCompoundTransaction(erc20Symbol: string, address: string) {
-        return this.fetchCompoundTransaction(address, erc20Symbol.toUpperCase())
+    public async getAllCompoundTransaction(network, erc20Symbol: string, address: string) {
+        return this.fetchCompoundTransaction(network, address, erc20Symbol.toUpperCase())
     }
 
     public async newTxInAave(network: string, erc20Symbol: string, address: string, operation: string) {
         const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network], erc20Symbol)
         await this.delay(20000)
         await this.transactionErc20Cache(network, tokenData.address, address, operation, undefined, 'aave')
-        return this.fetchAaveTransaction(address, erc20Symbol.toUpperCase())
+        return this.fetchAaveTransaction(network, address, erc20Symbol.toUpperCase())
     }
 
-    public async getAllAaveTransaction(erc20Symbol: string, address: string) {
-        return this.fetchAaveTransaction(address, erc20Symbol.toUpperCase())
+    public async getAllAaveTransaction(network, erc20Symbol: string, address: string) {
+        return this.fetchAaveTransaction(network, address, erc20Symbol.toUpperCase())
     }
 
     public async newTxInUniswap(network: string, token0: string, token1: string, address: string, operation: string) {
@@ -69,13 +69,13 @@ export class EthereumTransactionService {
             await this.transactionEthCache(network, address, operation, pair, 'uniswap')
         }
         
-        return this.fetchUniswapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
+        return this.fetchUniswapTransaction(network, tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
     public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string, operation?: string) {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
-        return this.fetchUniswapTransaction(tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
+        return this.fetchUniswapTransaction(network, tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
     private async transactionErc20Cache(network: string, contractAddress: string, address: string, operation?: string, pair?: string, service?: string): Promise<void> {
@@ -83,6 +83,7 @@ export class EthereumTransactionService {
             operation = ''
         }
         const transactions = await this.httpService.get('/api', {
+            baseURL: this.configService.getEtherscanApiBaseUrl(network),
             params: {
                 module: 'account',
                 action: 'tokentx',
@@ -122,6 +123,7 @@ export class EthereumTransactionService {
             operation = ''
         }
         const transactions = await this.httpService.get('/api', {
+            baseURL: this.configService.getEtherscanApiBaseUrl(network),
             params: {
                 module: 'account',
                 action: 'txlist',
@@ -178,38 +180,38 @@ export class EthereumTransactionService {
 
     private async fetchEthereumTransactionList(network: string, tokenSymbol: string, address: string) {
         return this.erc20TransactionRepository.find({where: [
-            {tokenSymbol, from: address},
-            {tokenSymbol, to: address},
+            {network, tokenSymbol, from: address},
+            {network, tokenSymbol, to: address},
         ]})
     }
 
     private async fetchERC20TransactionList(network: string, contractAddress: string, address: string) {
         return this.erc20TransactionRepository.find({where: [
-            {contractAddress, from: address},
-            {contractAddress, to: address},
+            {network, contractAddress, from: address},
+            {network, contractAddress, to: address},
         ]})
     }
 
-    private async fetchUniswapTransaction(token0Symbol: string, token1Symbol: string, address: string) {
+    private async fetchUniswapTransaction(network, token0Symbol: string, token1Symbol: string, address: string) {
         const pair = `${token0Symbol}-${token1Symbol}`
 
         return this.erc20TransactionRepository.find({order: {nonce: 'DESC'}, where: [
-            {pair, from: address},
-            {pair, to: address},
+            {network, pair, from: address},
+            {network, pair, to: address},
         ]})
     }
 
-    private async fetchAaveTransaction(address: string, symbol: string) {
+    private async fetchAaveTransaction(network, address: string, symbol: string) {
         return this.erc20TransactionRepository.find({where: [
-            {service: 'aave', tokenSymbol: symbol, from: address},
-            {service: 'aave', tokenSymbol: symbol, to: address},
+            {network, service: 'aave', tokenSymbol: symbol, from: address},
+            {network, service: 'aave', tokenSymbol: symbol, to: address},
         ]})
     }
 
-    private async fetchCompoundTransaction(address: string, symbol: string) {
+    private async fetchCompoundTransaction(network, address: string, symbol: string) {
         return this.erc20TransactionRepository.find({where: [
-            {service: 'compound', tokenSymbol: symbol, from: address},
-            {service: 'compound', tokenSymbol: symbol, to: address},
+            {network, service: 'compound', tokenSymbol: symbol, from: address},
+            {network, service: 'compound', tokenSymbol: symbol, to: address},
         ]})
     }
 }

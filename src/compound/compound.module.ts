@@ -14,8 +14,7 @@ import { CompoundService } from './compound.service';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         timeout: configService.getHttpTimeout(),
-        maxRedirects: configService.getHttpMaxRedirects(),
-        baseURL: configService.getEtherscanApiBaseUrl()
+        maxRedirects: configService.getHttpMaxRedirects()
       }),
       inject: [ConfigService]
     })

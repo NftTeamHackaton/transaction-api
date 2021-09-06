@@ -4,4 +4,8 @@ export class CreateListDto {
     @IsNotEmpty()
     @IsString()
     meta: string;
+
+    @IsNotEmpty()
+    @IsString()
+    network: string;
 }

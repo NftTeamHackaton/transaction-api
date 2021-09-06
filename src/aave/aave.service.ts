@@ -7,6 +7,7 @@ import Web3 from 'web3'
 import { aTokenABI } from './aToken.abi';
 import { AaveTokenBuilder } from './aaveToken.builder';
 import { LendingPoolABI } from './lendingPool.abi';
+import { ConfigService } from 'src/config/config.service';
 
 @Injectable()
 export class AaveService {
@@ -14,17 +15,17 @@ export class AaveService {
     constructor(
         @InjectRepository(AaveInvest)
         private readonly aaveRepository: Repository<AaveInvest>,
-
-        private readonly tokenBuilder: AaveTokenBuilder
+        private readonly tokenBuilder: AaveTokenBuilder,
+        private readonly configService: ConfigService
     ) {}
 
     public async apyInfo(network: string) {
         const RAY = 1e27
-        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL(network)));
         const usdtToken: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], 'USDT')
         const usdcToken: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], 'USDC')
 
-        const lendingPool = new provider.eth.Contract(LendingPoolABI, "0xE0fBa4Fc209b4948668006B2bE61711b7f465bAe")
+        const lendingPool = new provider.eth.Contract(LendingPoolABI, this.configService.getAaveLendingPoolAddress(network))
 
         const usdtInfo = await lendingPool.methods.getReserveData(usdtToken.address).call()
         const usdcInfo = await lendingPool.methods.getReserveData(usdcToken.address).call()
@@ -35,7 +36,7 @@ export class AaveService {
     }
 
     public async stakedData(network: string, address: string) {
-        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL(network)));
 
         const usdtToken: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], 'USDT')
         const usdcToken: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], 'USDC')
@@ -50,12 +51,12 @@ export class AaveService {
     }
 
     public async getRewardData(network: string, erc20Symbol: string, address: string) {
-        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL(network)));
 
         const tokenData: IToken = this.tokenBuilder.build(ChainId[network.toUpperCase()], erc20Symbol)
 
         const aToken = new provider.eth.Contract(aTokenABI, tokenData.aTokenAddress);
-        const lendingPool = new provider.eth.Contract(LendingPoolABI, "0xE0fBa4Fc209b4948668006B2bE61711b7f465bAe")
+        const lendingPool = new provider.eth.Contract(LendingPoolABI, this.configService.getAaveLendingPoolAddress(network))
         const s = await lendingPool.methods.getReserveData(tokenData.address).call()
         const RAY = 1e27
         const percentDepositAPY = 100 * Number(s.currentLiquidityRate)/RAY

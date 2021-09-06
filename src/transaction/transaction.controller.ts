@@ -56,7 +56,7 @@ export class TransactionController {
             operation = operation.toLowerCase()
         }
         const transactions = await this.ethereumTransactionService.getAllCompoundTransaction(
-            erc20Symbol.toUpperCase(), address.toLowerCase()
+            network.toUpperCase(), erc20Symbol.toUpperCase(), address.toLowerCase()
         );
         return response.status(200).send({transactions});
     }
@@ -84,7 +84,7 @@ export class TransactionController {
         if(operation) {
             operation = operation.toLowerCase()
         }
-        const transactions = await this.ethereumTransactionService.getAllAaveTransaction(erc20Symbol.toUpperCase(), address.toLowerCase());
+        const transactions = await this.ethereumTransactionService.getAllAaveTransaction(network.toUpperCase(), erc20Symbol.toUpperCase(), address.toLowerCase());
         return response.status(200).send({transactions});
     }
 

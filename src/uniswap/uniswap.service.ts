@@ -3,13 +3,17 @@ import { ethers } from 'ethers';
 import {ChainId, Fetcher, CurrencyAmount, Route, Trade, TokenAmount, TradeType, Percent, JSBI, Price, Pair} from '@uniswap/sdk'
 import { UniswapTokenBuilder } from './tokens/uniswapToken.builder';
 import Web3 from 'web3'
+import { ConfigService } from 'src/config/config.service';
 
 @Injectable()
 export class UniswapService {
-    constructor(private readonly tokenBuilder: UniswapTokenBuilder) {}
+    constructor(
+        private readonly tokenBuilder: UniswapTokenBuilder,
+        private readonly configService: ConfigService
+    ) {}
 
     public async getTransaction(network: string, transactionHash: string) {
-        let provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/0d8a073ce66b4854b3d7aae977591077"));
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL(network)));
         let transaction = await provider.eth.getTransactionReceipt(transactionHash)
         for (let i = 0; i < transaction.logs.length; i++) {
             const log = transaction.logs[i]

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CryptoAsset } from 'src/entities/cryptoAsset.entity';
 import { CryptoList } from 'src/entities/cryptoList.entity';
@@ -30,8 +30,8 @@ export class CryptoListService {
         })
     }
 
-    public async all() {
-        return this.cryptoListRepoistory.find()
+    public async all(network: string) {
+        return this.cryptoListRepoistory.find({network})
     }
 
     public async assetList() {
@@ -39,9 +39,15 @@ export class CryptoListService {
     }
 
     public async createList(createListDto: CreateListDto): Promise<CryptoList> {
+
+        if(await this.cryptoListRepoistory.count({network: createListDto.network}) > 0) {
+            throw new BadRequestException(`List with this network: ${createListDto.network} exist!`)
+        }
+
         return this.cryptoListRepoistory.save({
             version: 0,
-            meta: createListDto.meta
+            meta: createListDto.meta,
+            network: createListDto.network
         })
     }
 
