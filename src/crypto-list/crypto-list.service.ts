@@ -31,7 +31,7 @@ export class CryptoListService {
     }
 
     public async all(network: string) {
-        return this.cryptoListRepoistory.find({network})
+        return this.cryptoListRepoistory.find({where: {network}, relations: ['assets']})
     }
 
     public async assetList() {

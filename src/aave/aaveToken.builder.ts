@@ -63,6 +63,68 @@ export class AaveTokenBuilder {
                 symbol: 'WETH',
                 address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C'
             }
+        },
+        DAI: {
+            1: {
+                aTokenAddress: "0x028171bCA77440897B824Ca71D1c56caC55b68A3",
+                aTokenSymbol: "aDAI",
+                stableDebtTokenAddress: "0x778A13D3eeb110A4f7bb6529F99c000119a08E92",
+                variableDebtTokenAddress: "0x6C3c78838c761c6Ac7bE9F59fe808ea2A6E4379d",
+                symbol: "DAI",
+                address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+                decimals: 18
+            },
+            42: {
+                aTokenAddress: "0xdCf0aF9e59C002FA3AA091a46196b37530FD48a8",
+                aTokenSymbol: "aDAI",
+                stableDebtTokenAddress: "0x3B91257Fe5CA63b4114ac41A0d467D25E2F747F3",
+                variableDebtTokenAddress: "0xEAbBDBe7aaD7d5A278da40967E62C8c8Fe5fAec8",
+                symbol: "DAI",
+                address: "0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD",
+                decimals: 18
+            }
+        },
+        GUSD: {
+            1: {
+                aTokenAddress: "0xD37EE7e4f452C6638c96536e68090De8cBcdb583",
+                aTokenSymbol: "aGUSD",
+                stableDebtTokenAddress: "0xf8aC64ec6Ff8E0028b37EB89772d21865321bCe0",
+                variableDebtTokenAddress: "0x279AF5b99540c1A3A7E3CDd326e19659401eF99e",
+                symbol: "GUSD",
+                address: "0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd",
+                decimals: 2
+            },
+            42: {
+
+            }
+        },
+        CRV: {
+            1: {
+                aTokenAddress: "0x8dAE6Cb04688C62d939ed9B68d32Bc62e49970b1",
+                aTokenSymbol: "aCRV",
+                stableDebtTokenAddress: "0x9288059a74f589C919c7Cf1Db433251CdFEB874B",
+                variableDebtTokenAddress: "0x00ad8eBF64F141f1C81e9f8f792d3d1631c6c684",
+                symbol: "CRV",
+                address: "0xD533a949740bb3306d119CC777fa900bA034cd52",
+                decimals: 18
+            },
+            42: {
+
+            }
+        },
+        SNX: {
+            1: {
+                aTokenAddress: "0x35f6B052C598d933D69A4EEC4D04c73A191fE6c2",
+                aTokenSymbol: "aSNX",
+                stableDebtTokenAddress: "0x8575c8ae70bDB71606A53AeA1c6789cB0fBF3166",
+                variableDebtTokenAddress: "0x267EB8Cf715455517F9BD5834AeAE3CeA1EBdbD8",
+                symbol: "SNX",
+                address: "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",
+                decimals: 18
+            },
+            42: {
+
+            }
         }
     }
     

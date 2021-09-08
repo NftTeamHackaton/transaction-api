@@ -105,6 +105,34 @@ export class UniswapTokenBuilder {
                 address: '0x61460874a7196d6a22D1eE4922473664b3E95270',
                 name: 'Compound'
             }
+        },
+        LINK: {
+            1: {
+                decimals: 18,
+                symbol: 'LINK',
+                address: '0x514910771af9ca656af840dff83e8264ecf986ca',
+                name: 'ChainLink Token'
+            },
+            42: {
+                decimals: 18,
+                symbol: 'LINK',
+                address: '0xa36085f69e2889c224210f603d836748e7dc0088',
+                name: 'ChainLink Token'
+            }
+        },
+        PAX: {
+            1: {
+                decimals: 18,
+                symbol: 'USDP',
+                address: '0x8e870d67f660d95d5be530380d0ec0bd388289e1',
+                name: 'Pax Dollar'
+            },
+            // 42: { In kovan has not usdp token
+            //     decimals: 18,
+            //     symbol: 'USDP',
+            //     address: '0xa36085f69e2889c224210f603d836748e7dc0088',
+            //     name: 'Pax Dollar'
+            // }
         }
     }
     
