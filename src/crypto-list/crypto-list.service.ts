@@ -64,7 +64,7 @@ export class CryptoListService {
 
         for(let i = 0; i < addAssetDto.assets.length; i++) {
             const asset: CryptoAssetInterface = addAssetDto.assets[i]
-            const assetInDb = await this.cryptoAssetRepository.findOne({ symbol: asset.symbol, type: asset.type })
+            const assetInDb = await this.cryptoAssetRepository.findOne({ symbol: asset.symbol, type: asset.type, network: asset.network })
 
             if(assetInDb) {
                 continue;
