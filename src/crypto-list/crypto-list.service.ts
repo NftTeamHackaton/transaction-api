@@ -15,6 +15,10 @@ export class CryptoListService {
         private readonly cryptoAssetRepository: Repository<CryptoAsset>
     ) {}
 
+    public async allList(): Promise<CryptoList[]> {
+        return this.cryptoListRepoistory.find()
+    }
+
     public async listAssets(id: number): Promise<CryptoAsset[]> {
         const list = await this.cryptoListRepoistory.findOne(id)
 
@@ -60,7 +64,7 @@ export class CryptoListService {
 
         for(let i = 0; i < addAssetDto.assets.length; i++) {
             const asset: CryptoAssetInterface = addAssetDto.assets[i]
-            const assetInDb = await this.cryptoAssetRepository.findOne({ symbol: asset.symbol })
+            const assetInDb = await this.cryptoAssetRepository.findOne({ symbol: asset.symbol, type: asset.type })
 
             if(assetInDb) {
                 continue;
