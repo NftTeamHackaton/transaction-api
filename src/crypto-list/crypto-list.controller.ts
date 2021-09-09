@@ -32,9 +32,9 @@ export class CryptoListController {
         return response.status(HttpStatus.OK).send({message: 'Success assets added!'})
     }
 
-    @Get('/check-version/:version')
-    public async checkVersion(@Param('version') version: number, @Res() response: Response) {
-        const checkVersion = await this.cryptoListService.checkVersion(version)
+    @Get('/check-version/:network/:version')
+    public async checkVersion(@Param('network') network: string, @Param('version') version: number, @Res() response: Response) {
+        const checkVersion = await this.cryptoListService.checkVersion(network, version)
         return response.status(HttpStatus.OK).send({checkVersion})
     }
 

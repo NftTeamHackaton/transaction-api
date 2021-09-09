@@ -84,8 +84,8 @@ export class CryptoListService {
         await this.cryptoListRepoistory.save(list)
     }
 
-    public async checkVersion(version: number): Promise<boolean> {
-        const list = await this.cryptoListRepoistory.findOne()
+    public async checkVersion(network: string, version: number): Promise<boolean> {
+        const list = await this.cryptoListRepoistory.findOne({network})
 
         if(!list) {
             throw new NotFoundException('Entity not found!')
