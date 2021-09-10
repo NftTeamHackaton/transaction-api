@@ -15,6 +15,10 @@ export class CryptoListService {
         private readonly cryptoAssetRepository: Repository<CryptoAsset>
     ) {}
 
+    public async detailCryptoList(id: number): Promise<CryptoList> {
+        return this.cryptoListRepoistory.findOne({id})
+    }
+
     public async allList(): Promise<CryptoList[]> {
         return this.cryptoListRepoistory.find()
     }

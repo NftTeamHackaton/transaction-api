@@ -14,6 +14,12 @@ export class CryptoListController {
         return response.status(HttpStatus.OK).send(list)
     }
 
+    @Get('/detail/:id')
+    public async detailCryptoList(@Param('id') id: number, @Res() response: Response) {
+        const list = await this.cryptoListService.detailCryptoList(id)
+        return response.status(HttpStatus.OK).send(list)
+    }
+
     @Get('/:network/all')
     public async all(@Param('network') network: string, @Res() response: Response) {
         const list = await this.cryptoListService.all(network)
