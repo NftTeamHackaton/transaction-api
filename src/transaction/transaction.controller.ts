@@ -17,19 +17,19 @@ export class TransactionController {
 
     @Get('/ethereum/:network/:address')
     public async ethereumTransactionList(@Param('network') network: string, @Param('address') address: string, @Res() response: Response) {
-        const transactions = await this.ethereumTransactionService.getAllEthereumTransactionList(network.toUpperCase(), address.toLowerCase())
+        const transactions = await this.ethereumTransactionService.getAllEthereumTransactionList(network, address.toLowerCase())
         return response.status(200).send({transactions})
     }
 
     @Get('/erc20/:network/:contractAddress/:address')
     public async erc20TransactionList(@Param('network') network: string, @Param('contractAddress') contractAddress: string, @Param('address') address: string, @Res() response: Response) {
-        const transactions = await this.ethereumTransactionService.getAllERC20TransactionList(network.toUpperCase(), contractAddress.toLowerCase(), address.toLowerCase())
+        const transactions = await this.ethereumTransactionService.getAllERC20TransactionList(network, contractAddress.toLowerCase(), address.toLowerCase())
         return response.status(200).send({transactions})
     }
 
     @Get('/bsc/:network/:address')
     public async bscTransactionList(@Param('network') network: string, @Param('address') address: string, @Res() response: Response) {
-        const transactions = await this.bscTransactionService.getAllBNBTransactionList(network.toUpperCase(), address.toLowerCase())
+        const transactions = await this.bscTransactionService.getAllBNBTransactionList(network, address.toLowerCase())
         return response.status(200).send({transactions})
     }
 
@@ -40,7 +40,7 @@ export class TransactionController {
         @Param('address') address: string, 
         @Res() response: Response
     ) {
-        const transactions = await this.bscTransactionService.getAllBEP20TransactionList(network.toUpperCase(), contractAddress.toLowerCase(), address.toLowerCase())
+        const transactions = await this.bscTransactionService.getAllBEP20TransactionList(network, contractAddress.toLowerCase(), address.toLowerCase())
         return response.status(200).send({transactions})
     }
 
@@ -56,7 +56,7 @@ export class TransactionController {
             operation = operation.toLowerCase()
         }
         const transactions = await this.ethereumTransactionService.getAllCompoundTransaction(
-            network.toUpperCase(), erc20Symbol.toUpperCase(), address.toLowerCase()
+            network, erc20Symbol.toUpperCase(), address.toLowerCase()
         );
         return response.status(200).send({transactions});
     }
@@ -69,7 +69,7 @@ export class TransactionController {
 
     @Post('/aave/:network')
     public async newTxInAave(@Param('network') network: string, @Body() aaveTxDto: AaveTxDto, @Res() response: Response) {
-        const transactions = await this.ethereumTransactionService.newTxInAave(network.toUpperCase(), aaveTxDto.erc20Symbol.toUpperCase(), aaveTxDto.address.toLowerCase(), aaveTxDto.operation);
+        const transactions = await this.ethereumTransactionService.newTxInAave(network, aaveTxDto.erc20Symbol.toUpperCase(), aaveTxDto.address.toLowerCase(), aaveTxDto.operation);
         return response.status(200).send({transactions})
     }
 
@@ -84,13 +84,13 @@ export class TransactionController {
         if(operation) {
             operation = operation.toLowerCase()
         }
-        const transactions = await this.ethereumTransactionService.getAllAaveTransaction(network.toUpperCase(), erc20Symbol.toUpperCase(), address.toLowerCase());
+        const transactions = await this.ethereumTransactionService.getAllAaveTransaction(network, erc20Symbol.toUpperCase(), address.toLowerCase());
         return response.status(200).send({transactions});
     }
 
     @Post('/uniswap/:network')
     public async newTxInUniswap(@Param('network') network: string, @Body() uniswapTxDto: UniswapTxDto, @Res() response: Response) {
-        const transactions = await this.ethereumTransactionService.newTxInUniswap(network.toUpperCase(), uniswapTxDto.token0.toUpperCase(), uniswapTxDto.token1.toUpperCase(), uniswapTxDto.address.toLowerCase(), uniswapTxDto.operation);
+        const transactions = await this.ethereumTransactionService.newTxInUniswap(network, uniswapTxDto.token0.toUpperCase(), uniswapTxDto.token1.toUpperCase(), uniswapTxDto.address.toLowerCase(), uniswapTxDto.operation);
         return response.status(200).send({transactions})
     }
 
@@ -106,19 +106,19 @@ export class TransactionController {
         if(operation) {
             operation = operation.toLowerCase()
         }
-        const result = await this.ethereumTransactionService.getAllUniswapTransaction(network.toUpperCase(), token0.toUpperCase(), token1.toUpperCase(), address.toLowerCase(), operation);
+        const result = await this.ethereumTransactionService.getAllUniswapTransaction(network, token0.toUpperCase(), token1.toUpperCase(), address.toLowerCase(), operation);
         return response.status(200).send(result);
     }
 
     @Post('/pancakeswap/:network')
     public async newTxInPancakeSwap(@Param('network') network: string, @Body() pancakeSwapDto: PancakeSwapDto, @Res() response: Response) {
-        const transactions = await this.bscTransactionService.newTxInPancakeSwap(network.toUpperCase(), pancakeSwapDto.token0.toUpperCase(), pancakeSwapDto.token1.toUpperCase(), pancakeSwapDto.address.toLowerCase(), pancakeSwapDto.operation);
+        const transactions = await this.bscTransactionService.newTxInPancakeSwap(network, pancakeSwapDto.token0.toUpperCase(), pancakeSwapDto.token1.toUpperCase(), pancakeSwapDto.address.toLowerCase(), pancakeSwapDto.operation);
         return response.status(200).send({transactions})
     }
 
     @Get('/pancakeswap/:network/:token0/:token1/:address')
     public async pancakeSwapTransactionList(@Param('network') network: string, @Param('token0') token0: string, @Param('token1') token1: string, @Param('address') address: string, @Res() response: Response) {
-        const transactions = await this.bscTransactionService.getAllPancakeSwapTransaction(network.toUpperCase(), token0.toUpperCase(), token1.toUpperCase(), address.toLowerCase());
+        const transactions = await this.bscTransactionService.getAllPancakeSwapTransaction(network, token0.toUpperCase(), token1.toUpperCase(), address.toLowerCase());
         return response.status(200).send({transactions});
     }
 }
