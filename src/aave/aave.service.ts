@@ -68,6 +68,35 @@ export class AaveService {
         let reward = 0;
         let staked = 0;
 
+        const depositLogs = await lendingPool.getPastEvents('Deposit', {
+            filter: {'onBehalfOf': address},
+            fromBlock: 190, toBlock: 'latest'
+        })
+        const withdrawLogs = await lendingPool.getPastEvents('Withdraw', {
+            filter: {'user': address},
+            fromBlock: 190, toBlock: 'latest'
+        })
+        let withdrawSum = 0
+        let depositSum = 0
+        withdrawLogs.map(function (event) {
+            if(event.returnValues.reserve.toLowerCase() == tokenData.address.toLowerCase()) {
+                withdrawSum += Number(event.returnValues.amount)
+            }
+        })
+
+         depositLogs.map(function (event) {
+            if(event.returnValues.reserve.toLowerCase() == tokenData.address.toLowerCase()) {
+                depositSum += Number(event.returnValues.amount)
+            }
+        })
+
+        if(depositSum >= withdrawSum) {
+            staked = depositSum - withdrawSum
+        } else {
+            staked = withdrawSum - depositSum
+        }
+        staked = (staked / Math.pow(10, tokenData.decimals))
+
         if(aaveStaked == undefined) {
             await this.aaveRepository.save({
                 address: address.toLowerCase(),
@@ -82,24 +111,10 @@ export class AaveService {
             staked = formattedBalance
         } else {
 
-            if(aaveStaked.stakedBalance <= 0) {
-                aaveStaked.stakedBalance = formattedBalance
+            if(aaveStaked.stakedBalance != staked) {
+                aaveStaked.stakedBalance = staked
                 await this.aaveRepository.save(aaveStaked)
             }
-
-            if(formattedBalance <= 0) {
-                aaveStaked.stakedBalance = 0
-                aaveStaked.reward = 0
-                await this.aaveRepository.save(aaveStaked)
-            }
-
-            if(formattedBalance < aaveStaked.stakedBalance) {
-                aaveStaked.stakedBalance = formattedBalance
-                await this.aaveRepository.save(aaveStaked)
-            }
-            console.log(formattedBalance)
-            console.log(aaveStaked.stakedBalance)
-            console.log(percentDepositAPY)
             reward = (formattedBalance - aaveStaked.stakedBalance)
             staked = aaveStaked.stakedBalance
             if(reward < 0) 
