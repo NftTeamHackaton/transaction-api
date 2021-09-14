@@ -42,7 +42,9 @@ export class EthereumTransactionService {
     }
 
     public async newTxInAave(network: string, erc20Symbol: string, address: string, operation: string) {
-        const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network], erc20Symbol)
+        console.log(network, erc20Symbol, address, operation)
+        const tokenData: IToken = this.aaveTokenBuilder.build(ChainId[network.toUpperCase()], erc20Symbol)
+        console.log(tokenData)
         await this.delay(20000)
         await this.transactionErc20Cache(network, tokenData.address, address, operation, undefined, 'aave')
         return this.fetchAaveTransaction(network, address, erc20Symbol.toUpperCase())
@@ -53,8 +55,8 @@ export class EthereumTransactionService {
     }
 
     public async newTxInUniswap(network: string, token0: string, token1: string, address: string, operation: string) {
-        const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
-        const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
+        const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token0)
+        const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token1)
         const pair = `${tokenFirst.symbol}-${tokenSecond.symbol}`
         await this.delay(20000)
         if(tokenFirst.symbol != 'WETH') {
@@ -73,8 +75,8 @@ export class EthereumTransactionService {
     }
 
     public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string, operation?: string) {
-        const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network], token0)
-        const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network], token1)
+        const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token0)
+        const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token1)
         return this.fetchUniswapTransaction(network, tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
