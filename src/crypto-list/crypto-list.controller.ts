@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { AddAssetDto } from './addAsset.dto';
 import { CreateListDto } from './createList.dto';
@@ -7,6 +7,22 @@ import { CryptoListService } from './crypto-list.service';
 @Controller('crypto-list')
 export class CryptoListController {
     constructor(private readonly cryptoListService: CryptoListService) {}
+
+    // @Get('/many-add')
+    // public async manyAssetAdd(@Res() response: Response) {
+    //     const list = await this.cryptoListService.manyAssetsAdd()
+    //     return response.status(HttpStatus.OK).send(list)
+    // }
+
+    // @Get('/search/:network')
+    // public async search(
+    //     @Param('network') network: string,
+    //     @Query('q') q,
+    //     @Res() response: Response
+    // ) {
+    //     const list = await this.cryptoListService.search(network, q)
+    //     return response.status(HttpStatus.OK).send(list)
+    // }
 
     @Get('/all-list')
     public async allList(@Res() response: Response) {
@@ -21,8 +37,8 @@ export class CryptoListController {
     }
 
     @Get('/:network/all')
-    public async all(@Param('network') network: string, @Res() response: Response) {
-        const list = await this.cryptoListService.all(network)
+    public async all(@Param('network') network: string, @Query('q') q, @Res() response: Response) {
+        const list = await this.cryptoListService.search(network, q)
         return response.status(HttpStatus.OK).send(list)
     }
 

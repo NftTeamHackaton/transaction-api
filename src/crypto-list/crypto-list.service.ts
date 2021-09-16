@@ -5,6 +5,8 @@ import { CryptoList } from 'src/entities/cryptoList.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { AddAssetDto } from './addAsset.dto';
 import { CreateListDto } from './createList.dto';
+import {smartchain} from 'src/assets/smartchain/output';
+import { response } from 'express';
 
 @Injectable()
 export class CryptoListService {
@@ -14,6 +16,45 @@ export class CryptoListService {
         @InjectRepository(CryptoAsset)
         private readonly cryptoAssetRepository: Repository<CryptoAsset>
     ) {}
+
+    public async search(network: string, query: string|undefined) {
+        const list = await this.cryptoListRepoistory.findOne({network})
+
+        const responseObj = {
+            id: list.id,
+            version: list.version,
+            meta: list.meta,
+            network: list.network,
+            assets: []
+        }
+
+        if(!list) {
+            throw new NotFoundException('Crypto list not found!')
+        }
+
+        const queryBuilder = this.cryptoAssetRepository.createQueryBuilder('q')
+        
+        if(!query) {
+            const assets = await this.cryptoAssetRepository.find({take: 2000, where: {cryptoList: list}})
+            responseObj.assets = assets
+            return responseObj
+        }
+
+        const assets = await queryBuilder
+            .where("q.cryptoList.id = :listId AND LOWER(q.symbol) ILIKE LOWER(:query)", {listId: list.id, query: `%${query}%`})
+            .orWhere("q.cryptoList.id = :listId AND LOWER(q.name) ILIKE LOWER(:query)", {listId: list.id, query: `%${query}%`})
+            .getMany()
+        responseObj.assets = assets
+        return responseObj
+    }
+
+    public async manyAssetsAdd() {
+        console.log(smartchain.length)
+        return this.addAsset({
+            listId: 1,
+            assets: smartchain
+        })
+    }
 
     public async detailCryptoList(id: number): Promise<CryptoList> {
         return this.cryptoListRepoistory.findOne({id})
@@ -61,11 +102,11 @@ export class CryptoListService {
 
     public async addAsset(addAssetDto: AddAssetDto): Promise<void> {
         const list = await this.cryptoListRepoistory.findOne(addAssetDto.listId)
-
+        
         if(!list) {
             throw new NotFoundException('Entity not found!')
         }
-
+        console.log(addAssetDto.assets.length)
         for(let i = 0; i < addAssetDto.assets.length; i++) {
             const asset: CryptoAssetInterface = addAssetDto.assets[i]
             const assetInDb = await this.cryptoAssetRepository.findOne({ symbol: asset.symbol, type: asset.type, network: asset.network })

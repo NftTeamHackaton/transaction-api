@@ -12,7 +12,7 @@ export class CryptoAsset {
     @Column({ name: 'website', type: 'varchar', length: '255' })
     website: string;
 
-    @Column({ name: 'description', type: 'varchar', length: '255' })
+    @Column({ name: 'description', type: 'varchar', length: '2000', nullable: true })
     description: string;
 
     @Column({ name: 'symbol', type: 'varchar', length: '50' })
