@@ -15,6 +15,7 @@ import { MinioClientModule } from './minio-client/minio-client.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { CryptoListModule } from './crypto-list/crypto-list.module';
+import { BalancerModule } from './balancer/balancer.module';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { CryptoListModule } from './crypto-list/crypto-list.module';
     UniswapModule, 
     ConfigModule,
     PancakeswapModule, 
-    CompoundModule, AaveModule, TransactionModule, StoriesModule, MinioClientModule, FeedbackModule, AnalyticsModule, CryptoListModule
+    CompoundModule, AaveModule, TransactionModule, StoriesModule, MinioClientModule, FeedbackModule, AnalyticsModule, CryptoListModule, BalancerModule
   ],
   controllers: [AppController],
   providers: [AppService],

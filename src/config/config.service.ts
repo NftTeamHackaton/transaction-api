@@ -21,6 +21,20 @@ export class ConfigService {
         return this.get('HTTP_MAX_REDIRECTS') == undefined ? 5 : Number(this.get('HTTP_MAX_REDIRECTS'))
     }
 
+    getSubgraphUrl(network: string): string {
+        const SUBGRAPH_URLS = {
+            'mainnet':
+                'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+            'goerli':
+                'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-goerli-v2',
+            'kovan':
+                'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-kovan-v2',
+            'polygon':
+                'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2',
+        };   
+        return SUBGRAPH_URLS[network]
+    }
+
     getEtherscanApiBaseUrl(network: string): string {
         network = network.toLowerCase()
         if(network == 'kovan') {

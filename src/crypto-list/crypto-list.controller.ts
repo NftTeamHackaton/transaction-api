@@ -8,11 +8,11 @@ import { CryptoListService } from './crypto-list.service';
 export class CryptoListController {
     constructor(private readonly cryptoListService: CryptoListService) {}
 
-    // @Get('/many-add')
-    // public async manyAssetAdd(@Res() response: Response) {
-    //     const list = await this.cryptoListService.manyAssetsAdd()
-    //     return response.status(HttpStatus.OK).send(list)
-    // }
+    @Get('/many-add')
+    public async manyAssetAdd(@Res() response: Response) {
+        const list = await this.cryptoListService.manyAssetsAdd()
+        return response.status(HttpStatus.OK).send(list)
+    }
 
     // @Get('/search/:network')
     // public async search(

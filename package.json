@@ -43,7 +43,8 @@
     "rxjs": "^6.6.7",
     "rxjs-compat": "^6.6.7",
     "typeorm": "^0.2.34",
-    "web3": "^1.4.0"
+    "web3": "^1.4.0",
+    "@balancer-labs/sor2": "npm:@balancer-labs/sor@^2.0.0-beta.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
