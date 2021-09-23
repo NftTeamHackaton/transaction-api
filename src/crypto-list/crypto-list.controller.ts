@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { AddAssetDto } from './addAsset.dto';
+import { BindAssetDto } from './bindAsset.dto';
 import { CreateListDto } from './createList.dto';
 import { CryptoListService } from './crypto-list.service';
 
@@ -11,6 +12,12 @@ export class CryptoListController {
     @Get('/many-add')
     public async manyAssetAdd(@Res() response: Response) {
         const list = await this.cryptoListService.manyAssetsAdd()
+        return response.status(HttpStatus.OK).send(list)
+    }
+
+    @Post('/bind-tokens')
+    public async bindTokensToList(@Body() bindAssetDto: BindAssetDto, @Res() response: Response) {
+        const list = await this.cryptoListService.bindAsset(bindAssetDto)
         return response.status(HttpStatus.OK).send(list)
     }
 
@@ -37,8 +44,13 @@ export class CryptoListController {
     }
 
     @Get('/:network/all')
-    public async all(@Param('network') network: string, @Query('q') q, @Res() response: Response) {
-        const list = await this.cryptoListService.search(network, q)
+    public async all(
+        @Param('network') network: string, 
+        @Query('q') q, 
+        @Query('type') type,
+        @Res() response: Response
+    ) {
+        const list = await this.cryptoListService.search(network, q, type)
         return response.status(HttpStatus.OK).send(list)
     }
 

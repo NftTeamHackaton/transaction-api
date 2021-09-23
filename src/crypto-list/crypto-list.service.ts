@@ -2,11 +2,12 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { CryptoAsset } from 'src/entities/cryptoAsset.entity';
 import { CryptoList } from 'src/entities/cryptoList.entity';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { EntityNotFoundError, In, Repository } from 'typeorm';
 import { AddAssetDto } from './addAsset.dto';
 import { CreateListDto } from './createList.dto';
 import {smartchain} from 'src/assets/smartchain/output';
 import { response } from 'express';
+import { BindAssetDto } from './bindAsset.dto';
 
 @Injectable()
 export class CryptoListService {
@@ -17,7 +18,35 @@ export class CryptoListService {
         private readonly cryptoAssetRepository: Repository<CryptoAsset>
     ) {}
 
-    public async search(network: string, query: string|undefined) {
+    public async bindAsset(bindAssetDto: BindAssetDto) {
+        const list = await this.cryptoListRepoistory.findOne({id: bindAssetDto.listId}, {relations: ['assets']})
+
+        if(!list) {
+            throw new NotFoundException('Entity not found!')
+        }
+
+        for(let i = 0; i < bindAssetDto.assets.length; i++) {
+            const assetData = bindAssetDto.assets[i]
+            const asset = await this.cryptoAssetRepository.findOne({
+                symbol: assetData.symbol, 
+                network: assetData.network,
+                type: assetData.type
+            })
+            console.log(assetData)
+            if(!asset) {
+                continue
+            }
+            list.assets.push(asset)
+        }
+        return this.cryptoListRepoistory.save(list)
+    }
+
+    public async search(network: string, query: string|undefined, type: string|undefined) {
+
+        if(type) {
+            return this.findListByTypeAndNetwork(network, type)
+        }
+
         const list = await this.cryptoListRepoistory.findOne({network})
 
         const responseObj = {
@@ -35,7 +64,7 @@ export class CryptoListService {
         const queryBuilder = this.cryptoAssetRepository.createQueryBuilder('q')
         
         if(!query) {
-            const assets = await this.cryptoAssetRepository.find({take: 2000, where: {cryptoList: list}})
+            const assets = await queryBuilder.where("q.cryptoList.id IN (:...ids)", {ids: [list.id]}).getMany()
             responseObj.assets = assets
             return responseObj
         }
@@ -89,15 +118,26 @@ export class CryptoListService {
 
     public async createList(createListDto: CreateListDto): Promise<CryptoList> {
 
-        if(await this.cryptoListRepoistory.count({network: createListDto.network}) > 0) {
-            throw new BadRequestException(`List with this network: ${createListDto.network} exist!`)
-        }
+        // if(await this.cryptoListRepoistory.count({network: createListDto.network}) > 0) {
+        //     throw new BadRequestException(`List with this network: ${createListDto.network} exist!`)
+        // }
 
         return this.cryptoListRepoistory.save({
             version: 0,
             meta: createListDto.meta,
-            network: createListDto.network
+            network: createListDto.network,
+            type: createListDto.type
         })
+    }
+
+    public async findListByTypeAndNetwork(network: string, type: string) {
+        const cryptoList = await this.cryptoListRepoistory.findOne({network, type}, {relations: ['assets']})
+        
+        if(!cryptoList) {
+            throw new NotFoundException('Entity not found!')
+        }
+        console.log(cryptoList)
+        return cryptoList
     }
 
     public async addAsset(addAssetDto: AddAssetDto): Promise<void> {

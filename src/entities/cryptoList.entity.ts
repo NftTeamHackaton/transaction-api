@@ -12,8 +12,11 @@ export class CryptoList {
     @Column({ name: 'meta', type: 'varchar', length: 255 })
     meta: string;
 
-    @Column({ name: 'network', type: 'varchar', length: 255, nullable: true, unique: true })
+    @Column({ name: 'network', type: 'varchar', length: 255, nullable: true, unique: false })
     network: string;
+
+    @Column({ name: 'type', type: 'varchar', length: 255, nullable: true })
+    type: string;
 
     @OneToMany(() => CryptoAsset, asset => asset.cryptoList)
     assets: CryptoAsset[];

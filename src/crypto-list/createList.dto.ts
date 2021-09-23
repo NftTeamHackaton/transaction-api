@@ -8,4 +8,6 @@ export class CreateListDto {
     @IsNotEmpty()
     @IsString()
     network: string;
+
+    type: string;
 }
