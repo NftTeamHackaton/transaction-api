@@ -85,8 +85,9 @@ export class CryptoListService {
         }
 
         const assets = await queryBuilder
-            .where("q.cryptoList.id = :listId AND LOWER(q.symbol) ILIKE LOWER(:query)", {listId: list.id, query: `%${query}%`})
-            .orWhere("q.cryptoList.id = :listId AND LOWER(q.name) ILIKE LOWER(:query)", {listId: list.id, query: `%${query}%`})
+            .leftJoinAndSelect("q.cryptoList", "cryptoList")
+            .where("cryptoList.id = :listId AND LOWER(q.symbol) ILIKE LOWER(:query)", {listId: list.id, query: `%${query}%`})
+            .orWhere("cryptoList.id = :listId AND LOWER(q.name) ILIKE LOWER(:query)", {listId: list.id, query: `%${query}%`})
             .getMany()
         responseObj.assets = assets
         return responseObj
