@@ -32,12 +32,12 @@ export class CryptoListService {
                 network: assetData.network,
                 type: assetData.type
             })
-            console.log(assetData)
             if(!asset) {
                 continue
             }
             list.assets.push(asset)
         }
+        list.version += 1
         return this.cryptoListRepoistory.save(list)
     }
 
@@ -64,7 +64,7 @@ export class CryptoListService {
         const queryBuilder = this.cryptoAssetRepository.createQueryBuilder('q')
         
         if(!query) {
-            const assets = await queryBuilder.where("q.cryptoList.id IN (:...ids)", {ids: [list.id]}).getMany()
+            const assets = await queryBuilder.leftJoinAndSelect("q.cryptoList", "cryptoList").where("cryptoList.id IN (:...ids)", {ids: [list.id]}).limit(2000).getMany()
             responseObj.assets = assets
             return responseObj
         }
@@ -154,7 +154,7 @@ export class CryptoListService {
             if(assetInDb) {
                 continue;
             }
-            await this.cryptoAssetRepository.save({
+            const newAsset = await this.cryptoAssetRepository.save({
                 name: asset.name,
                 website: asset.website,
                 description: asset.description,
@@ -164,9 +164,9 @@ export class CryptoListService {
                 network: asset.network,
                 explorer: asset.explorer,
                 decimals: asset.decimals,
-                cryptoList: list,
                 contractAddress: asset.contractAddress
             })
+            list.assets.push(newAsset)
             
         }
         list.version += 1

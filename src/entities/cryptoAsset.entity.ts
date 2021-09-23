@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from 'typeorm';
 import { CryptoList } from './cryptoList.entity';
 
 @Entity('crypto_assets')
@@ -36,6 +36,6 @@ export class CryptoAsset {
     @Column({ name: 'contract_address', type: 'varchar', length: 255, nullable: true })
     contractAddress: string;
 
-    @ManyToOne(() => CryptoList, list => list.assets)
-    cryptoList: CryptoList;
+    @ManyToMany(() => CryptoList, list => list.assets)
+    cryptoList: CryptoList[];
 }

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { CryptoAsset } from './cryptoAsset.entity';
 
 @Entity('crypto_lists')
@@ -18,6 +18,7 @@ export class CryptoList {
     @Column({ name: 'type', type: 'varchar', length: 255, nullable: true })
     type: string;
 
-    @OneToMany(() => CryptoAsset, asset => asset.cryptoList)
+    @ManyToMany(() => CryptoAsset, asset => asset.cryptoList)
+    @JoinTable()
     assets: CryptoAsset[];
 }
