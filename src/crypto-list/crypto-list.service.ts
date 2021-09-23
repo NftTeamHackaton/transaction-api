@@ -156,7 +156,7 @@ export class CryptoListService {
     }
 
     public async addAsset(addAssetDto: AddAssetDto): Promise<void> {
-        const list = await this.cryptoListRepoistory.findOne(addAssetDto.listId)
+        const list = await this.cryptoListRepoistory.findOne(addAssetDto.listId, {relations: ['assets']})
         
         if(!list) {
             throw new NotFoundException('Entity not found!')
