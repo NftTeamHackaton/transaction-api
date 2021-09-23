@@ -62,7 +62,7 @@ export class CryptoListService {
             return this.findListByTypeAndNetwork(network, type)
         }
 
-        const list = await this.cryptoListRepoistory.findOne({network})
+        const list = await this.cryptoListRepoistory.findOne({network, type: 'tokens'})
 
         const responseObj = {
             id: list.id,
@@ -190,7 +190,7 @@ export class CryptoListService {
     }
 
     public async checkVersion(network: string, version: number): Promise<boolean> {
-        const list = await this.cryptoListRepoistory.findOne({network})
+        const list = await this.cryptoListRepoistory.findOne({network, type: 'tokens'})
 
         if(!list) {
             throw new NotFoundException('Entity not found!')
