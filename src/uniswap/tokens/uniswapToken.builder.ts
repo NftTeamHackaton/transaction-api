@@ -88,7 +88,7 @@ export class UniswapTokenBuilder {
             42: {
                 decimals: 18,
                 symbol: 'BAT',
-                address: '0x482dc9bb08111cb875109b075a40881e48ae02cd',
+                address: '0x2d12186fbb9f9a8c28b3ffdd4c42920f8539d738',
                 name: 'Basic Attention Token'
             }
         },
