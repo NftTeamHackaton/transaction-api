@@ -18,6 +18,21 @@ export class CryptoListService {
         private readonly cryptoAssetRepository: Repository<CryptoAsset>
     ) {}
 
+    public async bindAllAsset(listId: number) {
+        const list = await this.cryptoListRepoistory.findOne({id: listId}, {relations: ['assets']})
+        if(!list) {
+            throw new NotFoundException('Entity not found!')
+        }
+
+        const assets = await this.cryptoAssetRepository.find()
+
+        for(let i = 0; i < assets.length; i++) {
+            list.assets.push(assets[i])
+        }
+        list.version += 1
+        return this.cryptoListRepoistory.save(list)
+    }
+
     public async bindAsset(bindAssetDto: BindAssetDto) {
         const list = await this.cryptoListRepoistory.findOne({id: bindAssetDto.listId}, {relations: ['assets']})
 

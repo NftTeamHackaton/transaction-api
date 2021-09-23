@@ -15,6 +15,12 @@ export class CryptoListController {
         return response.status(HttpStatus.OK).send(list)
     }
 
+    @Get('/bind-all-asset/:listId')
+    public async bindAllAsset(@Param('listId') listId: number, @Res() response: Response) {
+        const list = await this.cryptoListService.bindAllAsset(listId)
+        return response.status(HttpStatus.OK).send(list)
+    }
+
     @Post('/bind-tokens')
     public async bindTokensToList(@Body() bindAssetDto: BindAssetDto, @Res() response: Response) {
         const list = await this.cryptoListService.bindAsset(bindAssetDto)
