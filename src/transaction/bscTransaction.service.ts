@@ -49,8 +49,8 @@ export class BscTransactionService {
     }
 
     public async newTxInPancakeSwap(network: string, token0: string, token1: string, address: string, operation: string) {
-        const tokenFirst = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network], token0)
-        const tokenSecond = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network], token1)
+        const tokenFirst = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network.toUpperCase()], token0)
+        const tokenSecond = this.pancakeSwapTokenBuilder.build(ChainIdBSC[network.toUpperCase()], token1)
         const pair = `${tokenFirst.symbol}-${tokenSecond.symbol}`
         await this.delay(20000)
         if(tokenFirst.symbol != 'WBNB') {
