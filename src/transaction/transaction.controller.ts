@@ -40,7 +40,7 @@ export class TransactionController {
         @Param('address') address: string, 
         @Res() response: Response
     ) {
-        const transactions = await this.bscTransactionService.getAllBEP20TransactionList(network, contractAddress.toLowerCase(), address.toLowerCase())
+        const transactions = await this.bscTransactionService.getAllBEP20TransactionList(network, contractAddress, address.toLowerCase())
         return response.status(200).send({transactions})
     }
 
