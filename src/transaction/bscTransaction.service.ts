@@ -86,7 +86,7 @@ export class BscTransactionService {
         console.log(data)
         for (let i = 0; i < data.length; i++) {
             const tx: Bep20TransactionInterface = data[i]
-            const savedTx = await this.bep20TransactionRepository.findOne({hash: tx.hash});
+            const savedTx = await this.bep20TransactionRepository.findOne({hash: tx.hash, tokenSymbol: tx.tokenSymbol});
             console.log(savedTx)
             if(savedTx == undefined) {
                 await this.bep20TransactionRepository.save({

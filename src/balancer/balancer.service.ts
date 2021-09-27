@@ -34,14 +34,14 @@ export class BalancerService {
         tokenOut = list.assets.find(function (asset) {
             return asset.symbol == tokenOutSymbol
         })
-        if(tokenInSymbol == 'ETH' && tokenIn == undefined) {
+        if(tokenInSymbol == 'ETH') {
             tokenIn = {
                 contractAddress: AddressZero,
                 decimals: 18,
                 symbol: 'ETH',
             }
         }
-        if(tokenOutSymbol == 'ETH' && tokenIn == undefined) {
+        if(tokenOutSymbol == 'ETH') {
             tokenOut = {
                 contractAddress: AddressZero,
                 decimals: 18,
