@@ -95,7 +95,32 @@ export class CompoundService {
             address: address.toLowerCase(), network, erc20TokenAddress, cTokenAddress
         })
         let reward = 0;
-        let staked = 0;
+        let staked = 0; 
+        const mintLogs = await cToken.getPastEvents('Transfer', {
+            filter: {'to': address},
+            fromBlock: 190, toBlock: 'latest'
+        })
+        const reedemLogs = await cToken.getPastEvents('Transfer', {
+            filter: {'from': address},
+            fromBlock: 190, toBlock: 'latest'
+        })
+        let withdrawSum = 0
+        let depositSum = 0
+        mintLogs.map(function (event) {
+            depositSum += Number(event.returnValues.amount)
+        })
+        reedemLogs.map(function (event) {
+            withdrawSum += Number(event.returnValues.amount)
+        })
+
+        if(depositSum >= withdrawSum) {
+            staked = depositSum - withdrawSum
+        } else {
+            staked = withdrawSum - depositSum
+        }
+        staked = (staked / Math.pow(10, cTokenDecimals)) * oneCTokenInUnderlying
+        console.log(staked)
+
         if(compoundStaked == undefined) {
             await this.compoundRepository.save({
                 address: address.toLowerCase(),
@@ -109,18 +134,9 @@ export class CompoundService {
             })
             staked = underlyingBalance
         } else {
-            if(compoundStaked.stakedBalance <= 0) {
-                compoundStaked.stakedBalance = underlyingBalance
+            if(compoundStaked.stakedBalance != staked) {
+                compoundStaked.stakedBalance = staked
                 await this.compoundRepository.save(compoundStaked)
-            }
-            if(underlyingBalance <= 0) {
-                compoundStaked.stakedBalance = 0
-                compoundStaked.reward = 0
-                await this.compoundRepository.save(compoundStaked)
-            }
-
-            if(underlyingBalance < compoundStaked.stakedBalance) {
-                compoundStaked.stakedBalance = underlyingBalance
             }
             reward = (underlyingBalance - compoundStaked.stakedBalance)
             staked = compoundStaked.stakedBalance
