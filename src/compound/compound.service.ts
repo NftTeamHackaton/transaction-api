@@ -96,6 +96,33 @@ export class CompoundService {
         })
         let reward = 0;
         let staked = 0;
+
+        const depositLogs = await cToken.getPastEvents('Transfer', {
+            filter: {'from': address, 'to': cTokenAddress},
+            fromBlock: 190, toBlock: 'latest'
+        })
+        const withdrawLogs = await cToken.getPastEvents('Transfer', {
+            filter: {'from': cTokenAddress, 'to': address},
+            fromBlock: 190, toBlock: 'latest'
+        })
+
+        let withdrawSum = 0
+        let depositSum = 0
+        withdrawLogs.map(function (event) {
+            withdrawSum += Number(event.returnValues.value)
+        })
+
+         depositLogs.map(function (event) {
+            depositSum += Number(event.returnValues.value)
+        })
+
+        if(depositSum >= withdrawSum) {
+            staked = depositSum - withdrawSum
+        } else {
+            staked = withdrawSum - depositSum
+        }
+        staked = (staked / Math.pow(10, underlyingDecimals))
+
         if(compoundStaked == undefined) {
             await this.compoundRepository.save({
                 address: address.toLowerCase(),
@@ -109,22 +136,10 @@ export class CompoundService {
             })
             staked = underlyingBalance
         } else {
-            if(compoundStaked.stakedBalance <= 0) {
-                compoundStaked.stakedBalance = underlyingBalance
+            if(compoundStaked.stakedBalance != staked) {
+                compoundStaked.stakedBalance = staked
                 await this.compoundRepository.save(compoundStaked)
             }
-            if(underlyingBalance <= 0) {
-                compoundStaked.stakedBalance = 0
-                compoundStaked.reward = 0
-                await this.compoundRepository.save(compoundStaked)
-            }
-
-            if(underlyingBalance < compoundStaked.stakedBalance) {
-                compoundStaked.stakedBalance = underlyingBalance
-                await this.compoundRepository.save(compoundStaked)
-            }
-            console.log(compoundStaked.stakedBalance)
-            console.log(underlyingBalance)
             reward = (underlyingBalance - compoundStaked.stakedBalance)
             staked = compoundStaked.stakedBalance
             if(reward < 0) 
