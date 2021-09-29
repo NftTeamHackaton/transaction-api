@@ -94,25 +94,28 @@ export class CompoundService {
         const compoundStaked = await this.compoundRepository.findOne({
             address: address.toLowerCase(), network, erc20TokenAddress, cTokenAddress
         })
+        console.log(cTokenBalance)
         let reward = 0;
         let staked = 0;
 
-        const depositLogs = await cToken.getPastEvents('Transfer', {
-            filter: {'from': address, 'to': cTokenAddress},
+        const withdrawLogs = await underlying.getPastEvents('Transfer', {
+            filter: {'from': cTokenAddress, 'to': address},
             fromBlock: 190, toBlock: 'latest'
         })
-        const withdrawLogs = await cToken.getPastEvents('Transfer', {
-            filter: {'from': cTokenAddress, 'to': address},
+        const depositLogs = await underlying.getPastEvents('Transfer', {
+            filter: {'from': address, 'to': cTokenAddress},
             fromBlock: 190, toBlock: 'latest'
         })
 
         let withdrawSum = 0
         let depositSum = 0
-        withdrawLogs.map(function (event) {
+        depositLogs.map(function (event) {
+            
             withdrawSum += Number(event.returnValues.value)
         })
 
-         depositLogs.map(function (event) {
+        withdrawLogs.map(function (event) {
+            console.log(event)
             depositSum += Number(event.returnValues.value)
         })
 
