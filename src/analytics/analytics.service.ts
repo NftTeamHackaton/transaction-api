@@ -51,7 +51,7 @@ export class AnalyticsService {
             }
             for(let i = 0; i < walletOperations.length; i++) {
                 if(this.even(i)) {
-                    await this.delay(2000)
+                    await this.delay(1000)
                 }
 
                 const walletOperation = walletOperations[i]
@@ -122,7 +122,7 @@ export class AnalyticsService {
                 services: [
                     {
                         name: 'uniswap',
-                        logo: "asdasd",
+                        logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/app.uniswap.org.png",
                         description: "asdasd",
                         usd: 0,
                         data: []
@@ -131,7 +131,7 @@ export class AnalyticsService {
             }
             for(let i = 0; i < uniswapOperations.length; i++) {
                 if(this.even(i)) {
-                    await this.delay(2000)
+                    await this.delay(1000)
                 }
                 const uniswap = uniswapOperations[i]
                 const value = uniswap.sum
@@ -195,7 +195,7 @@ export class AnalyticsService {
                 services: [
                     {
                         name: 'uniswap',
-                        logo: "asdasd",
+                        logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/app.uniswap.org.png",
                         description: "asdasd",
                         usd: 0,
                         data: []
@@ -204,7 +204,7 @@ export class AnalyticsService {
             }
             for(let i = 0; i < uniswapOperations.length; i++) {
                 if(this.even(i)) {
-                    await this.delay(2000)
+                    await this.delay(1000)
                 }
                 const uniswap = uniswapOperations[i]
                 const value = uniswap.sum
@@ -263,14 +263,14 @@ export class AnalyticsService {
                 services: [
                     {
                         name: 'compound',
-                        logo: "asdasd",
+                        logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/app.compound.finance.png",
                         description: "asdasd",
                         usd: 0,
                         data: []
                     },
                     {
                         name: 'aave',
-                        logo: "asdasd",
+                        logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/app.aave.com.png",
                         description: "asdasd",
                         usd: 0,
                         data: []
@@ -279,7 +279,7 @@ export class AnalyticsService {
             }
             for(let i = 0; i < stakingOperations.length; i++) {
                 if(this.even(i)) {
-                    await this.delay(2000)
+                    await this.delay(1000)
                 }
                 const staking = stakingOperations[i]
                 const value = staking.sum
