@@ -62,6 +62,7 @@ export class CryptoListController {
 
     @Get('/list-assets/:id')
     public async listAssets(@Param('id') id: number, @Res() response: Response) {
+        console.log(id)
         const assets = await this.cryptoListService.listAssets(id)
         return response.status(HttpStatus.OK).send(assets)
     }

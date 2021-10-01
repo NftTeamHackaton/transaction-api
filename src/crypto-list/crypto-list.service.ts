@@ -111,7 +111,7 @@ export class CryptoListService {
 
     public async listAssets(id: number): Promise<CryptoAsset[]> {
         const list = await this.cryptoListRepoistory.findOne(id)
-
+        console.log('LIST MATH HAHAHA', list)
         if(!list) {
             throw new NotFoundException('List not found!')
         }
