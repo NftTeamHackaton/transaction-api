@@ -118,6 +118,7 @@ export class CryptoListService {
 
 
         return this.cryptoAssetRepository.find({
+            relations: ['cryptoList'],
             where: {
                 cryptoList: list
             }
