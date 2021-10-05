@@ -32,6 +32,7 @@ export class AnalyticsService {
                 .select('q.tokenSymbol', 'tokenSymbol')
                 .addSelect('q.tokenDecimals', 'tokenDecimals')
                 .addSelect('q.operation', 'operation')
+                .addSelect('q.network', 'network')
                 .addSelect('sum(q.value::numeric)', 'sum')
                 .where('q.operation = \'\' and q.from = :from', {
                     from: address
@@ -70,6 +71,7 @@ export class AnalyticsService {
                     symbol: walletOperation.tokenSymbol,
                     decimals: walletOperation.tokenDecimals,
                     price: price.toString(),
+                    network: walletOperation.network,
                     usd: usdPrice
                 }
 
