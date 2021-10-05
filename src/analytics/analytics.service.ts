@@ -44,6 +44,7 @@ export class AnalyticsService {
                 .addGroupBy('q.service')
                 .addGroupBy('q.tokenDecimals')
                 .addGroupBy('q.operation')
+                .addGroupBy('q.network')
                 .getRawMany()
                 console.log(walletOperations)
             const walletData = {
