@@ -32,7 +32,7 @@ export class AnalyticsService {
                 .select('q.tokenSymbol', 'tokenSymbol')
                 .addSelect('q.tokenDecimals', 'tokenDecimals')
                 .addSelect('q.operation', 'operation')
-                .addSelect('q.network', 'network')
+                .addSelect('q.tokenSymbol', 'tokenSymbol')
                 .addSelect('sum(q.value::numeric)', 'sum')
                 .where('q.operation = \'\' and q.from = :from', {
                     from: address
@@ -44,7 +44,7 @@ export class AnalyticsService {
                 .addGroupBy('q.service')
                 .addGroupBy('q.tokenDecimals')
                 .addGroupBy('q.operation')
-                .addGroupBy('q.network')
+                .addGroupBy('q.tokenSymbol')
                 .getRawMany()
                 console.log(walletOperations)
             const walletData = {
@@ -72,7 +72,7 @@ export class AnalyticsService {
                     symbol: walletOperation.tokenSymbol,
                     decimals: walletOperation.tokenDecimals,
                     price: price.toString(),
-                    network: walletOperation.network,
+                    tokenSymbol: walletOperation.tokenSymbol,
                     usd: usdPrice
                 }
 
