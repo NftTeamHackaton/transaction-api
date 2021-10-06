@@ -139,6 +139,14 @@ export class PancakeTokenBuilder {
                 address: '0x0D8Ce2A99Bb6e3B7Db580eD848240e4a0F9aE153',
                 name: 'Filecoin'
             }
+        },
+        CAKE: {
+            56: {
+                decimals: 18,
+                symbol: 'CAKE',
+                address: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
+                name: 'PancakeSwap Token'
+            }
         }
     }
     
