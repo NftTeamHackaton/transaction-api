@@ -50,7 +50,7 @@ export class BalancerService {
         }
 
         
-        const swapType = SwapTypes.SwapExactIn;
+        const swapType = SwapTypes.SwapExactOut;
         const swapAmount = new BigNumber(amount); // In normalized format, i.e. 1USDC = 1
         const provider = new JsonRpcProvider(this.configService.getInfuraURL(network));
         const swapInfo = await getSwap(

@@ -67,6 +67,78 @@ export class PancakeTokenBuilder {
                 address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
                 name: 'Ethereum Token'
             }
+        },
+        ADA: {
+            56: {
+                decimals: 18,
+                symbol: 'ADA',
+                address: '0x3EE2200Efb3400fAbB9AacF31297cBdD1d435D47',
+                name: 'Cardano Token'
+            }
+        },
+        XRP: {
+            56: {
+                decimals: 18,
+                symbol: 'XRP',
+                address: '0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE',
+                name: 'XRP Token'
+            }
+        },
+        DOGE: {
+            56: {
+                decimals: 8,
+                symbol: 'DOGE',
+                address: '0xbA2aE424d960c26247Dd6c32edC70B295c744C43',
+                name: 'Binance-Peg Dogecoin'
+            }
+        },
+        DOT: {
+            56: {
+                decimals: 8,
+                symbol: 'DOT',
+                address: '0x7083609fCE4d1d8Dc0C979AAb8c869Ea2C873402',
+                name: 'Polkadot Token'
+            }
+        },
+        UNI: {
+            56: {
+                decimals: 18,
+                symbol: 'UNI',
+                address: '0xBf5140A22578168FD562DCcF235E5D43A02ce9B1',
+                name: 'Uniswap'
+            }
+        },
+        LINK: {
+            56: {
+                decimals: 18,
+                symbol: 'LINK',
+                address: '0xa36085F69e2889c224210F603D836748e7dC0088',
+                name: 'Chainlink Token'
+            }
+        },
+        LTC: {
+            56: {
+                decimals: 18,
+                symbol: 'LTC',
+                address: '0x4338665CBB7B2485A8855A139b75D5e34AB0DB94',
+                name: 'Litecoin Token'
+            }
+        },
+        BCH: {
+            56: {
+                decimals: 18,
+                symbol: 'BCH',
+                address: '0x8fF795a6F4D97E7887C79beA79aba5cc76444aDf',
+                name: 'Bitcoin Cash Token'
+            }
+        },
+        FIL: {
+            56: {
+                decimals: 18,
+                symbol: 'FIL',
+                address: '0x0D8Ce2A99Bb6e3B7Db580eD848240e4a0F9aE153',
+                name: 'Filecoin'
+            }
         }
     }
     
