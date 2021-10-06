@@ -144,7 +144,7 @@ export class PancakeTokenBuilder {
             56: {
                 decimals: 18,
                 symbol: 'CAKE',
-                address: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
+                address: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
                 name: 'PancakeSwap Token'
             }
         }
