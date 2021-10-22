@@ -16,6 +16,8 @@ import { FeedbackModule } from './feedback/feedback.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { CryptoListModule } from './crypto-list/crypto-list.module';
 import { BalancerModule } from './balancer/balancer.module';
+import { SerumModule } from './serum/serum.module';
+import { RaydiumModule } from './raydium/raydium.module';
 
 @Module({
   imports: [
@@ -29,7 +31,7 @@ import { BalancerModule } from './balancer/balancer.module';
     UniswapModule, 
     ConfigModule,
     PancakeswapModule, 
-    CompoundModule, AaveModule, TransactionModule, StoriesModule, MinioClientModule, FeedbackModule, AnalyticsModule, CryptoListModule, BalancerModule
+    CompoundModule, AaveModule, TransactionModule, StoriesModule, MinioClientModule, FeedbackModule, AnalyticsModule, CryptoListModule, BalancerModule, SerumModule, RaydiumModule
   ],
   controllers: [AppController],
   providers: [AppService],

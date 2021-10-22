@@ -5,7 +5,7 @@ import { CryptoList } from 'src/entities/cryptoList.entity';
 import { EntityNotFoundError, In, Repository } from 'typeorm';
 import { AddAssetDto } from './addAsset.dto';
 import { CreateListDto } from './createList.dto';
-import {smartchain} from 'src/assets/smartchain/output';
+import {smartchain, solana} from 'src/assets/smartchain/output';
 import { response } from 'express';
 import { BindAssetDto } from './bindAsset.dto';
 
@@ -93,11 +93,18 @@ export class CryptoListService {
         return responseObj
     }
 
-    public async manyAssetsAdd() {
-        console.log(smartchain.length)
+    public async manyAssetsAdd(network: string) {
+        let assets = []
+        if(network == 'smartchain') {
+            assets = smartchain
+        }
+
+        if(network == 'solana') {
+            assets = solana
+        }
         return this.addAsset({
             listId: 1,
-            assets: smartchain
+            assets: assets
         })
     }
 
