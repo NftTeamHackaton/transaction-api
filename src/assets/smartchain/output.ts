@@ -29374,18 +29374,6 @@ export const solana = [
         "contractAddress": "E99CQ2gFMmbiyK2bwiaFNWUUmwz4r8k2CVEFxwuvQ7ue"
     },
     {
-        "name": "Mike Krow's Official Best Friend Super Kawaii Kasu Token",
-        "website": "-",
-        "description": "-",
-        "symbol": "KROWZ",
-        "type": "SPL",
-        "logoURI": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/GkXP719hnhLtizWHcQyGVYajuJqVsJJ6fyeUob9BPCFC/logo.png",
-        "network": "solana",
-        "explorer": "https://explorer.solana.com/address/GkXP719hnhLtizWHcQyGVYajuJqVsJJ6fyeUob9BPCFC",
-        "decimals": 9,
-        "contractAddress": "GkXP719hnhLtizWHcQyGVYajuJqVsJJ6fyeUob9BPCFC"
-    },
-    {
         "name": "SAIL",
         "website": "-",
         "description": "-",
