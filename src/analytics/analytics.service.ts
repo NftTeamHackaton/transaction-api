@@ -1,5 +1,7 @@
-import { BadRequestException, HttpException, HttpService, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, CACHE_MANAGER, HttpException, HttpService, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cache } from 'cache-manager';
 import { map } from 'rxjs-compat/operator/map';
 import { ERC20ABI } from 'src/compound/erc20.abi';
 import { ConfigService } from 'src/config/config.service';
@@ -10,12 +12,14 @@ import Web3 from 'web3'
 
 @Injectable()
 export class AnalyticsService {
+    private readonly logger = new Logger(AnalyticsService.name)
 
     constructor(
         private readonly configService: ConfigService,
         @InjectRepository(Erc20TransactionEntity)
         private readonly erc20TransactionRepository: Repository<Erc20TransactionEntity>,
-        private readonly httpService: HttpService
+        private readonly httpService: HttpService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) {}
 
     public async operationAnalytics(address: string) {
@@ -63,8 +67,7 @@ export class AnalyticsService {
                 let usdPrice = 0
                 
                 if(price > 0) {
-                    const response = await this.httpService.get(`/v1/tools/price-conversion?amount=${price}&symbol=${walletOperation.tokenSymbol}`).toPromise()
-                    usdPrice = response.data.data.quote.USD.price
+                    usdPrice = await this.cacheManager.get(walletOperation.tokenSymbol.toUpperCase())
                 }
                 const data = {
                     symbol: walletOperation.tokenSymbol,
@@ -143,8 +146,7 @@ export class AnalyticsService {
                 let usdPrice = 0
                 
                 if(price > 0) {
-                    const response = await this.httpService.get(`/v1/tools/price-conversion?amount=${price}&symbol=${uniswap.tokenSymbol}`).toPromise()
-                    usdPrice = response.data.data.quote.USD.price
+                    usdPrice = await this.cacheManager.get(uniswap.tokenSymbol.toUpperCase())
                 }
                 console.log(value.toString())
                 const data = {
@@ -216,8 +218,7 @@ export class AnalyticsService {
                 let usdPrice = 0
                 
                 if(price > 0) {
-                    const response = await this.httpService.get(`/v1/tools/price-conversion?amount=${price}&symbol=${uniswap.tokenSymbol}`).toPromise()
-                    usdPrice = response.data.data.quote.USD.price
+                    usdPrice = await this.cacheManager.get(uniswap.tokenSymbol.toUpperCase())
                 }
                 console.log(value.toString())
                 const data = {
@@ -291,8 +292,7 @@ export class AnalyticsService {
                 let usdPrice = 0
                 
                 if(price > 0) {
-                    const response = await this.httpService.get(`/v1/tools/price-conversion?amount=${price}&symbol=${staking.tokenSymbol}`).toPromise()
-                    usdPrice = response.data.data.quote.USD.price
+                    usdPrice = await this.cacheManager.get(staking.tokenSymbol.toUpperCase())
                 }
                 const data = {
                     symbol: staking.tokenSymbol,
@@ -332,5 +332,18 @@ export class AnalyticsService {
 
     private async delay(second) {
         return new Promise(res => setTimeout(res, second));
+    }
+
+    @Cron('45 * * * * *')
+    public async handleCron() {
+        this.logger.debug('Cache usd price started')
+        const response = await this.httpService.get(`/v1/cryptocurrency/listings/latest`).toPromise()
+        const data = response.data.data
+        for(let i = 0; i < data.length; i++) {
+            await this.cacheManager.set(data[i].symbol.toUpperCase(), data[i].quote.USD.price, {
+                ttl: 30000
+            })
+        }
+        this.logger.debug('Cache usd price complete!')
     }
 }
