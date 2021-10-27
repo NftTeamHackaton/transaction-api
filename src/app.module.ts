@@ -19,6 +19,7 @@ import { BalancerModule } from './balancer/balancer.module';
 import { SerumModule } from './serum/serum.module';
 import { RaydiumModule } from './raydium/raydium.module';
 
+
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -31,7 +32,17 @@ import { RaydiumModule } from './raydium/raydium.module';
     UniswapModule, 
     ConfigModule,
     PancakeswapModule, 
-    CompoundModule, AaveModule, TransactionModule, StoriesModule, MinioClientModule, FeedbackModule, AnalyticsModule, CryptoListModule, BalancerModule, SerumModule, RaydiumModule
+    CompoundModule, 
+    AaveModule, 
+    TransactionModule, 
+    StoriesModule, 
+    MinioClientModule, 
+    FeedbackModule, 
+    AnalyticsModule, 
+    CryptoListModule, 
+    BalancerModule, 
+    SerumModule, 
+    RaydiumModule
   ],
   controllers: [AppController],
   providers: [AppService],
