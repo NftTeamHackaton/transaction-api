@@ -45,12 +45,18 @@ import { cloneDeep } from "lodash"
       )
       const priceImpact =
         ((parseFloat(beforePrice.fixed()) - parseFloat(afterPrice.fixed())) / parseFloat(beforePrice.fixed())) * 100
-  
+      let price = 0
+      price = +new TokenAmount(
+        parseFloat(amountOut) / parseFloat(amount),
+        pc.decimals,
+        true
+      ).fixed()
       return {
         amountIn: fromAmount,
         amountOut: new TokenAmount(amountOut, pc.decimals),
         amountOutWithSlippage: new TokenAmount(amountOutWithSlippage, pc.decimals),
-        priceImpact
+        priceImpact,
+        executionPrice: price
       }
     } else {
       // pc2coin
@@ -79,12 +85,19 @@ import { cloneDeep } from "lodash"
       )
       const priceImpact =
         ((parseFloat(afterPrice.fixed()) - parseFloat(beforePrice.fixed())) / parseFloat(beforePrice.fixed())) * 100
-  
+      let price = 0
+      price = +new TokenAmount(
+        parseFloat(amountOut) / parseFloat(amount),
+        coin.decimals,
+        true
+      ).fixed()
+
       return {
         amountIn: fromAmount,
         amountOut: new TokenAmount(amountOut, coin.decimals),
         amountOutWithSlippage: new TokenAmount(amountOutWithSlippage, coin.decimals),
-        priceImpact
+        priceImpact,
+        executionPrice: price
       }
     }
   }
