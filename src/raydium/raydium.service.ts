@@ -9,15 +9,13 @@ export class RaydiumService {
 
     constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
-    @Cron('45 * * * * *')
+    @Cron('30 * * * * *')
     async handleCron() {
         this.logger.debug('Start sync raydium pools')
         const data = await requestInfos()
         for (let key in data) {
             const pool = data[key]
-            await this.cacheManager.set(pool.name, pool, {
-                ttl: 30000
-            })
+            await this.cacheManager.set(pool.name, pool)
         }
         this.logger.debug('Raydium pools sync complete')
 
