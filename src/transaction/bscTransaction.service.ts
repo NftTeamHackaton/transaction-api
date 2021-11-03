@@ -90,7 +90,7 @@ export class BscTransactionService {
             console.log(savedTx)
             if(savedTx == undefined) {
                 await this.bep20TransactionRepository.save({
-                    ...tx,
+                    ...tx, 
                     nonce: Number(tx.nonce),
                     contractAddress,
                     tokenDecimals: Number(tx.tokenDecimal),
