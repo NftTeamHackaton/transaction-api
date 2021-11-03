@@ -1,4 +1,4 @@
-import { HttpService, Injectable, Logger, Post } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import Compound from '@compound-finance/compound-js';
 import Web3 from 'web3'
 import { ERC20ABI } from './erc20.abi';
@@ -9,19 +9,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StakingDto } from './staking.dto';
 import { ConfigService } from 'src/config/config.service';
 import { Erc20TransactionEntity } from 'src/entities/erc20Transaction.entity';
-const ethers = require('ethers');
 
 @Injectable()
 export class CompoundService {
-    private readonly logger = new Logger(CompoundService.name);
 
     constructor(
         @InjectRepository(CompoundEntity)
         private readonly compoundRepository: Repository<CompoundEntity>,
         @InjectRepository(Erc20TransactionEntity)
-        private readonly erc20TransactionRepository: Repository<Erc20TransactionEntity>,
         private readonly configService: ConfigService,
-        private readonly httpService: HttpService
     ) {}
 
     public async stakedBalance(network: string, address: string) {

@@ -1,21 +1,15 @@
-import { BadRequestException, CACHE_MANAGER, HttpException, HttpService, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, CACHE_MANAGER, HttpService, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
-import { map } from 'rxjs-compat/operator/map';
-import { ERC20ABI } from 'src/compound/erc20.abi';
-import { ConfigService } from 'src/config/config.service';
-import { ERC20Address } from 'src/config/ERC20.address';
 import { Erc20TransactionEntity } from 'src/entities/erc20Transaction.entity';
 import { Repository } from 'typeorm';
-import Web3 from 'web3'
 
 @Injectable()
 export class AnalyticsService {
     private readonly logger = new Logger(AnalyticsService.name)
 
     constructor(
-        private readonly configService: ConfigService,
         @InjectRepository(Erc20TransactionEntity)
         private readonly erc20TransactionRepository: Repository<Erc20TransactionEntity>,
         private readonly httpService: HttpService,

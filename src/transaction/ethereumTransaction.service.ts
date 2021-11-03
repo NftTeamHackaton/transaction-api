@@ -1,4 +1,4 @@
-import { HttpService, Injectable, Logger, Post } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import Compound from '@compound-finance/compound-js';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,7 +10,6 @@ import { UniswapTokenBuilder } from 'src/uniswap/tokens/uniswapToken.builder';
 import { CryptoAsset } from 'src/entities/cryptoAsset.entity';
 @Injectable()
 export class EthereumTransactionService {
-    private readonly logger = new Logger(EthereumTransactionService.name);
 
     constructor(
         @InjectRepository(Erc20TransactionEntity)
@@ -88,12 +87,14 @@ export class EthereumTransactionService {
     }
 
     public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string, operation?: string) {
+        operation = ''
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token1)
         return this.fetchUniswapTransaction(network, tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
     public async getAllBalancerTransaction(network: string, pair: string, address:string, operation?: string) {
+        operation = ''
         return this.fetchBalancerTransaction(network, pair, address)
     }
 

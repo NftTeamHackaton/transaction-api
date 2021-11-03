@@ -1,7 +1,6 @@
 import { CACHE_MANAGER, Controller, Get, Inject, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { LIQUIDITY_POOLS } from './raydium.pools';
-import { bool, publicKey, struct, u32, u64, u8 } from '@project-serum/borsh'
 import { getSwapOutAmount, requestInfos } from './raydium.utils';
 import { Cache } from 'cache-manager';
 @Controller('raydium')
@@ -38,9 +37,9 @@ export class RaydiumController {
         @Param('slippage') slippage: number,
         @Res() response: Response
     ) {
-        console.log(poolName)
+        slippage = 1
         const poolInfo = await this.cacheManager.get(poolName)
-        const swapData = getSwapOutAmount(poolInfo, fromCoinMint, toCoinMint, amount, 1)
+        const swapData = getSwapOutAmount(poolInfo, fromCoinMint, toCoinMint, amount, slippage)
         return response.status(200).send(swapData)
     }
 

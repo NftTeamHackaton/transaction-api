@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ethers } from 'ethers';
-import {ChainId, Fetcher, CurrencyAmount, Route, Trade, TokenAmount, TradeType, Percent, JSBI, Price, Pair} from '@uniswap/sdk'
+import {ChainId, Fetcher, Route, Trade, TokenAmount, TradeType, Percent, JSBI, Pair} from '@uniswap/sdk'
 import { UniswapTokenBuilder } from './tokens/uniswapToken.builder';
 import Web3 from 'web3'
 import { ConfigService } from 'src/config/config.service';

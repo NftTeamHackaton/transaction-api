@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import {ChainId, Fetcher, WETH, Route, Trade, TokenAmount, TradeType, Percent, Token} from '@uniswap/sdk'
 
 @Injectable()
 export class AaveTokenBuilder {
