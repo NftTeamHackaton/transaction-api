@@ -89,9 +89,13 @@ export class AaveService {
                 depositSum += Number(event.returnValues.amount)
             }
         })
-        staked = depositSum - withdrawSum
+        if(depositSum >= withdrawSum) {
+            staked = depositSum - withdrawSum
+        } else {
+            staked = withdrawSum - depositSum
+        }
         
-        // staked = (staked / Math.pow(10, tokenData.decimals))
+        staked = (staked / Math.pow(10, tokenData.decimals))
 
         
 
