@@ -89,13 +89,11 @@ export class AaveService {
                 depositSum += Number(event.returnValues.amount)
             }
         })
+        staked = depositSum - withdrawSum
+        
+        // staked = (staked / Math.pow(10, tokenData.decimals))
 
-        if(depositSum >= withdrawSum) {
-            staked = depositSum - withdrawSum
-        } else {
-            staked = withdrawSum - depositSum
-        }
-        staked = (staked / Math.pow(10, tokenData.decimals))
+        
 
         if(aaveStaked == undefined) {
             await this.aaveRepository.save({
@@ -110,14 +108,17 @@ export class AaveService {
             })
             staked = formattedBalance
         } else {
-            if(balanceOfAToken == 0) {
+            if(staked <= 0 && balanceOfAToken <= 0) {
                 aaveStaked.stakedBalance = 0
                 aaveStaked.reward = 0
                 await this.aaveRepository.save(aaveStaked)
-            } else {
-                aaveStaked.stakedBalance = staked
-                await this.aaveRepository.save(aaveStaked)
             }
+
+            if(staked == balanceOfAToken) {
+                aaveStaked.stakedBalance = formattedBalance
+                aaveStaked.reward = 0
+            } 
+
             reward = (formattedBalance - aaveStaked.stakedBalance)
             staked = aaveStaked.stakedBalance
             if(reward < 0) 
