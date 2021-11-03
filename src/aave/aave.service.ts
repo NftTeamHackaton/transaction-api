@@ -110,14 +110,11 @@ export class AaveService {
             })
             staked = formattedBalance
         } else {
-
             if(balanceOfAToken == 0) {
                 aaveStaked.stakedBalance = 0
                 aaveStaked.reward = 0
                 await this.aaveRepository.save(aaveStaked)
-            }
-
-            if(aaveStaked.stakedBalance != staked) {
+            } else {
                 aaveStaked.stakedBalance = staked
                 await this.aaveRepository.save(aaveStaked)
             }
