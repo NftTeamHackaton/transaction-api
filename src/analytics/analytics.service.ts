@@ -334,7 +334,7 @@ export class AnalyticsService {
         return new Promise(res => setTimeout(res, second));
     }
 
-    @Cron('45 * * * * *')
+    @Cron('0 8 * * *')
     public async handleCron() {
         this.logger.debug('Cache usd price started')
         const response = await this.httpService.get(`/v1/cryptocurrency/listings/latest`).toPromise()

@@ -15,7 +15,9 @@ export class RaydiumService {
         const data = await requestInfos()
         for (let key in data) {
             const pool = data[key]
-            await this.cacheManager.set(pool.name, pool)
+            await this.cacheManager.set(pool.name, pool, {
+                ttl: 300000000
+            })
         }
         this.logger.debug('Raydium pools sync complete')
 

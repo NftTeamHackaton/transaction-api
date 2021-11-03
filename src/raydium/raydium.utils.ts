@@ -7,6 +7,7 @@ import { LP_TOKENS, NATIVE_SOL, TokenAmount, TOKENS } from "./solana.tokens"
 import { commitment, createAmmAuthority, getAddressForWhat, getFilteredProgramAccountsAmmOrMarketCache, getLpMintListDecimals, getMultipleAccounts } from "./web3.service"
 import { ACCOUNT_LAYOUT, AMM_INFO_LAYOUT, AMM_INFO_LAYOUT_V3, AMM_INFO_LAYOUT_V4, getBigNumber, MINT_LAYOUT } from './layouts'
 import { cloneDeep } from "lodash"
+import { OpenOrders } from "@project-serum/serum"
   
   export function getSwapOutAmount(
     poolInfo: any,
@@ -403,16 +404,16 @@ export async function requestInfos() {
 
               break
             }
-            // case 'ammOpenOrders': {
-            //   const OPEN_ORDERS_LAYOUT = OpenOrders.getLayout(new PublicKey(poolInfo.serumProgramId))
-            //   const parsed = OPEN_ORDERS_LAYOUT.decode(data)
+            case 'ammOpenOrders': {
+              const OPEN_ORDERS_LAYOUT = OpenOrders.getLayout(new PublicKey(poolInfo.serumProgramId))
+              const parsed = OPEN_ORDERS_LAYOUT.decode(data)
 
-            //   const { baseTokenTotal, quoteTokenTotal } = parsed
-            //   poolInfo.coin.balance.wei = poolInfo.coin.balance.wei.plus(getBigNumber(baseTokenTotal))
-            //   poolInfo.pc.balance.wei = poolInfo.pc.balance.wei.plus(getBigNumber(quoteTokenTotal))
+              const { baseTokenTotal, quoteTokenTotal } = parsed
+              poolInfo.coin.balance.wei = poolInfo.coin.balance.wei.plus(getBigNumber(baseTokenTotal))
+              poolInfo.pc.balance.wei = poolInfo.pc.balance.wei.plus(getBigNumber(quoteTokenTotal))
 
-            //   break
-            // }
+              break
+            }
             case 'ammId': {
               let parsed
               if (version === 2) {
