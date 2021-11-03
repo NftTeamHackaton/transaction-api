@@ -7,6 +7,7 @@ import { Erc20TransactionEntity } from 'src/entities/erc20Transaction.entity';
 import { AaveTokenBuilder } from 'src/aave/aaveToken.builder';
 import { ChainId } from '@uniswap/sdk';
 import { UniswapTokenBuilder } from 'src/uniswap/tokens/uniswapToken.builder';
+import { CryptoAsset } from 'src/entities/cryptoAsset.entity';
 @Injectable()
 export class EthereumTransactionService {
     private readonly logger = new Logger(EthereumTransactionService.name);
@@ -17,6 +18,8 @@ export class EthereumTransactionService {
         private readonly configService: ConfigService,
         private readonly aaveTokenBuilder: AaveTokenBuilder,
         private readonly uniswapTokenBuilder: UniswapTokenBuilder,
+        @InjectRepository(CryptoAsset)
+        private readonly cryptoAsset: Repository<CryptoAsset>,
         private readonly httpService: HttpService
     ) {}
     
@@ -74,10 +77,24 @@ export class EthereumTransactionService {
         return this.fetchUniswapTransaction(network, tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
+    public async newTxInBalancer(network: string, tokens: string[], address: string, operation: string) {
+        const pair = tokens.join('-')
+        await this.delay(20000)
+        for(let i = 0; i < tokens.length; i++) {
+            const token = await this.cryptoAsset.findOne({symbol: tokens[i]})
+            await this.transactionErc20Cache(network, token.contractAddress, address, operation, pair, 'balancer')
+        }
+        return this.fetchBalancerTransaction(network, pair, address)
+    }
+
     public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string, operation?: string) {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token1)
         return this.fetchUniswapTransaction(network, tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
+    }
+
+    public async getAllBalancerTransaction(network: string, pair: string, address:string, operation?: string) {
+        return this.fetchBalancerTransaction(network, pair, address)
     }
 
     private async transactionErc20Cache(network: string, contractAddress: string, address: string, operation?: string, pair?: string, service?: string): Promise<void> {
@@ -184,6 +201,13 @@ export class EthereumTransactionService {
         return this.erc20TransactionRepository.find({where: [
             {network, tokenSymbol, from: address},
             {network, tokenSymbol, to: address},
+        ]})
+    }
+
+    private async fetchBalancerTransaction(network: string, pair: string, address: string) {
+        return this.erc20TransactionRepository.find({order: {nonce: 'DESC'}, where: [
+            {network, pair, from: address, service: 'balancer'},
+            {network, pair, to: address, service: 'balancer'},
         ]})
     }
 

@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js';
 import { Response } from 'express';
 import { BscTransactionService } from './bscTransaction.service';
 import { AaveTxDto } from './dto/aaveTx.dto';
+import { BalancerTxDto } from './dto/balancerTx.dto';
 import { CompoundTxDto } from './dto/compoundTx.dto';
 import { PancakeSwapDto } from './dto/pancakeSwapTx.dto';
 import { UniswapTxDto } from './dto/uniswapTx.dto';
@@ -101,6 +102,27 @@ export class TransactionController {
     public async newTxInUniswap(@Param('network') network: string, @Body() uniswapTxDto: UniswapTxDto, @Res() response: Response) {
         const transactions = await this.ethereumTransactionService.newTxInUniswap(network, uniswapTxDto.token0.toUpperCase(), uniswapTxDto.token1.toUpperCase(), uniswapTxDto.address.toLowerCase(), uniswapTxDto.operation);
         return response.status(200).send({transactions})
+    }
+
+    @Post('/balancer/:network')
+    public async newTxInBalancer(@Param('network') network: string, @Body() balancerTxDto: BalancerTxDto, @Res() response: Response) {
+        const transactions = await this.ethereumTransactionService.newTxInBalancer(network, balancerTxDto.tokens, balancerTxDto.address.toLowerCase(), balancerTxDto.operation);
+        return response.status(200).send({transactions})
+    }
+
+    @Get('/balancer/:network/:pair/:address')
+    public async balancerTransactionList(
+        @Param('network') network: string, 
+        @Param('pair') pair: string, 
+        @Param('address') address: string, 
+        @Query('operation') operation: string, 
+        @Res() response: Response
+    ) {
+        if(operation) {
+            operation = operation.toLowerCase()
+        }
+        const result = await this.ethereumTransactionService.getAllBalancerTransaction(network, pair, address.toLowerCase(), operation);
+        return response.status(200).send(result);
     }
 
     @Get('/uniswap/:network/:token0/:token1/:address')
