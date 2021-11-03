@@ -108,18 +108,9 @@ export class AaveService {
             })
             staked = formattedBalance
         } else {
-            if(staked <= 0 && balanceOfAToken <= 0) {
-                aaveStaked.stakedBalance = 0
-                aaveStaked.reward = 0
-                await this.aaveRepository.save(aaveStaked)
-            }
+            aaveStaked.stakedBalance = formattedBalance
 
-            if(staked == balanceOfAToken) {
-                aaveStaked.stakedBalance = formattedBalance
-                aaveStaked.reward = 0
-            } 
-
-            reward = (formattedBalance - aaveStaked.stakedBalance)
+            reward = (staked - aaveStaked.stakedBalance)
             staked = aaveStaked.stakedBalance
             if(reward < 0) 
                 reward = 0;
