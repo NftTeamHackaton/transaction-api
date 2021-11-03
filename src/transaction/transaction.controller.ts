@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import { PublicKey } from '@solana/web3.js';
 import { Response } from 'express';
 import { BscTransactionService } from './bscTransaction.service';
 import { AaveTxDto } from './dto/aaveTx.dto';
@@ -6,14 +7,22 @@ import { CompoundTxDto } from './dto/compoundTx.dto';
 import { PancakeSwapDto } from './dto/pancakeSwapTx.dto';
 import { UniswapTxDto } from './dto/uniswapTx.dto';
 import { EthereumTransactionService} from './ethereumTransaction.service';
+import { SolanaTransactionService } from './solanaTransaction.service';
 
 @Controller('transaction')
 export class TransactionController {
 
     constructor(
         private readonly ethereumTransactionService: EthereumTransactionService,
-        private readonly bscTransactionService: BscTransactionService
+        private readonly bscTransactionService: BscTransactionService,
+        private readonly solanaTransactionService: SolanaTransactionService
     ) {}
+
+    @Get('/solana/spl/:address/:mint')
+    public async solanaTransactionList(@Param('address') address: string, @Param('mint') mint: string, @Res() response: Response) {
+        const transactions = await this.solanaTransactionService.getTransactions('mainnet-beta', new PublicKey(address), new PublicKey(mint))
+        return response.status(200).send({transactions})
+    }
 
     @Get('/ethereum/:network/:address')
     public async ethereumTransactionList(@Param('network') network: string, @Param('address') address: string, @Res() response: Response) {

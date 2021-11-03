@@ -11,10 +11,12 @@ import { TransactionController } from './transaction.controller';
 import { Bep20TransactionEntity } from 'src/entities/bep20Transaction.entity';
 import { EthereumTransactionService } from './ethereumTransaction.service';
 import { BscTransactionService } from './bscTransaction.service';
+import { SolanaTransactionService } from './solanaTransaction.service';
+import { CryptoAsset } from 'src/entities/cryptoAsset.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Compound, Erc20TransactionEntity, Bep20TransactionEntity]),
+    TypeOrmModule.forFeature([Compound, Erc20TransactionEntity, Bep20TransactionEntity,CryptoAsset]),
     HttpModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -25,6 +27,6 @@ import { BscTransactionService } from './bscTransaction.service';
     })
   ],
   controllers: [TransactionController],
-  providers: [EthereumTransactionService, BscTransactionService, AaveTokenBuilder, UniswapTokenBuilder, PancakeTokenBuilder]
+  providers: [EthereumTransactionService, BscTransactionService, AaveTokenBuilder, UniswapTokenBuilder, PancakeTokenBuilder, SolanaTransactionService]
 })
 export class TransactionModule {}
