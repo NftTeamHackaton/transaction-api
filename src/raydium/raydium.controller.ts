@@ -40,7 +40,7 @@ export class RaydiumController {
     ) {
         console.log(poolName)
         const poolInfo = await this.cacheManager.get(poolName)
-        const swapData = getSwapOutAmount(poolInfo, fromCoinMint, toCoinMint, amount, slippage)
+        const swapData = getSwapOutAmount(poolInfo, fromCoinMint, toCoinMint, amount, 1)
         return response.status(200).send(swapData)
     }
 
