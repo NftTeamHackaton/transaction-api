@@ -1,12 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CryptoAsset } from 'src/entities/cryptoAsset.entity';
 import { CryptoList } from 'src/entities/cryptoList.entity';
-import { EntityNotFoundError, In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AddAssetDto } from './addAsset.dto';
 import { CreateListDto } from './createList.dto';
 import {smartchain, solana} from 'src/assets/smartchain/output';
-import { response } from 'express';
 import { BindAssetDto } from './bindAsset.dto';
 
 @Injectable()

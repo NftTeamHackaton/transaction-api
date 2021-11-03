@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileEntity } from 'src/entities/file.entity';
 import { StoriesEntity } from 'src/entities/stories.entity';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { CreateStoriesDto } from './createStories.dto';
 import { UpdateStoriesDto } from './updateStories.dto';
 

@@ -1,6 +1,6 @@
-import { DefaultValuePipe, ParseIntPipe, Query, Controller, Post, Get, Param, Body, Res, UseInterceptors, UploadedFile, Delete, UploadedFiles } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, Res, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { response, Response } from 'express';
+import { Response } from 'express';
 import { BufferedFile } from 'src/minio-client/file.model';
 import { MinioClientService } from 'src/minio-client/minio-client.service';
 import { CreateStoriesDto } from './createStories.dto';

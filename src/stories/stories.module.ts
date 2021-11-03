@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { StoriesController } from './stories.controller';
 import { StoriesService } from './stories.service';
-import { MinioModule } from 'nestjs-minio-client';
 import { MinioClientModule } from 'src/minio-client/minio-client.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileEntity } from 'src/entities/file.entity';

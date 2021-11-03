@@ -37,6 +37,7 @@ export class MinioClientService {
     //     HttpStatus.BAD_REQUEST,
     //   );
     // }
+    this.logger.debug('Upload file')
     const timestamp = Date.now().toString();
     const hashedFileName = crypto
       .createHash('md5')
@@ -65,6 +66,9 @@ export class MinioClientService {
             HttpStatus.BAD_REQUEST,
           );
         }
+        if(res) {
+          console.log('success')
+        }
       },
     );
     return this.fileRepository.save({
@@ -81,7 +85,7 @@ export class MinioClientService {
   public async uploadMultiple(files: BufferedFile[], bucketName: string = this.bucketName): Promise<FileEntity[]> {
     const filesMetaData: FileEntity[] = []
     for (let i = 0; i < files.length; i++) {
-      const file = await this.upload(files[i], this.bucketName, i)
+      const file = await this.upload(files[i], bucketName, i)
       filesMetaData.push(file)
     }
     return filesMetaData
@@ -94,6 +98,8 @@ export class MinioClientService {
           'An error occured when deleting!',
           HttpStatus.BAD_REQUEST,
         );
+      if(res)
+        console.log('success')
     });
   }
 }

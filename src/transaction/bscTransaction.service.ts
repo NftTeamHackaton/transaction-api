@@ -1,4 +1,4 @@
-import { HttpService, Injectable, Logger, Post } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from 'src/config/config.service';
@@ -7,7 +7,6 @@ import { ChainId as ChainIdBSC } from '@pancakeswap/sdk';
 import { PancakeTokenBuilder } from 'src/pancakeswap/tokens/pancakeToken.builder';
 @Injectable()
 export class BscTransactionService {
-    private readonly logger = new Logger(BscTransactionService.name);
 
     constructor(
         @InjectRepository(Bep20TransactionEntity)
@@ -23,6 +22,7 @@ export class BscTransactionService {
     }
 
     private async fetchBNBTransactionList(network: string, tokenSymbol: string, address: string) {
+        network = ''
         return this.bep20TransactionRepository.find({where: [
             {tokenSymbol, from: address},
             {tokenSymbol, to: address},

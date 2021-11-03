@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import {ChainId, Fetcher, WETH, Route, Trade, TokenAmount, TradeType, Percent, Token} from '@pancakeswap/sdk'
+import {WETH, Token} from '@pancakeswap/sdk'
 
 @Injectable()
 export class PancakeTokenBuilder {

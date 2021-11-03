@@ -16,7 +16,6 @@ import { FeedbackModule } from './feedback/feedback.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { CryptoListModule } from './crypto-list/crypto-list.module';
 import { BalancerModule } from './balancer/balancer.module';
-import { SerumModule } from './serum/serum.module';
 import { RaydiumModule } from './raydium/raydium.module';
 
 
@@ -41,7 +40,6 @@ import { RaydiumModule } from './raydium/raydium.module';
     AnalyticsModule, 
     CryptoListModule, 
     BalancerModule, 
-    SerumModule, 
     RaydiumModule
   ],
   controllers: [AppController],
