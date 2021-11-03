@@ -86,15 +86,13 @@ export class EthereumTransactionService {
         return this.fetchBalancerTransaction(network, pair, address)
     }
 
-    public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string, operation?: string) {
-        operation = ''
+    public async getAllUniswapTransaction(network: string, token0: string, token1: string, address: string) {
         const tokenFirst = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token0)
         const tokenSecond = this.uniswapTokenBuilder.build(ChainId[network.toUpperCase()], token1)
         return this.fetchUniswapTransaction(network, tokenFirst.symbol.toUpperCase(), tokenSecond.symbol.toUpperCase(), address)
     }
 
-    public async getAllBalancerTransaction(network: string, pair: string, address:string, operation?: string) {
-        operation = ''
+    public async getAllBalancerTransaction(network: string, pair: string, address:string) {
         return this.fetchBalancerTransaction(network, pair, address)
     }
 

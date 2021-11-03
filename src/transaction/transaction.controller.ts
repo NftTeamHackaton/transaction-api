@@ -121,7 +121,7 @@ export class TransactionController {
         if(operation) {
             operation = operation.toLowerCase()
         }
-        const result = await this.ethereumTransactionService.getAllBalancerTransaction(network, pair, address.toLowerCase(), operation);
+        const result = await this.ethereumTransactionService.getAllBalancerTransaction(network, pair, address.toLowerCase());
         return response.status(200).send(result);
     }
 
@@ -137,7 +137,7 @@ export class TransactionController {
         if(operation) {
             operation = operation.toLowerCase()
         }
-        const result = await this.ethereumTransactionService.getAllUniswapTransaction(network, token0.toUpperCase(), token1.toUpperCase(), address.toLowerCase(), operation);
+        const result = await this.ethereumTransactionService.getAllUniswapTransaction(network, token0.toUpperCase(), token1.toUpperCase(), address.toLowerCase());
         return response.status(200).send(result);
     }
 

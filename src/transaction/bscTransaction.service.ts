@@ -18,11 +18,10 @@ export class BscTransactionService {
 
     public async getAllBNBTransactionList(network: string, address: string) {
         await this.transactionBNBCache(network, address, '')
-        return this.fetchBNBTransactionList(network, 'BNB', address)
+        return this.fetchBNBTransactionList('BNB', address)
     }
 
-    private async fetchBNBTransactionList(network: string, tokenSymbol: string, address: string) {
-        network = ''
+    private async fetchBNBTransactionList(tokenSymbol: string, address: string) {
         return this.bep20TransactionRepository.find({where: [
             {tokenSymbol, from: address},
             {tokenSymbol, to: address},
