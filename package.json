@@ -24,6 +24,8 @@
   "dependencies": {
     "@balancer-labs/sor2": "npm:@balancer-labs/sor@^2.0.0-beta.0",
     "@compound-finance/compound-js": "^0.2.13",
+    "@georgeroman/balancer-v2-pools": "0.0.7",
+    "@golevelup/nestjs-graphql-request": "^0.1.7",
     "@nestjs/axios": "0.0.3",
     "@nestjs/common": "^7.6.15",
     "@nestjs/core": "^7.6.15",
@@ -44,6 +46,8 @@
     "class-validator": "^0.13.1",
     "ethereum-input-data-decoder": "^0.3.2",
     "ethers": "^5.3.1",
+    "graphql": "^16.0.1",
+    "graphql-tag": "^2.12.5",
     "nestjs-minio": "^2.1.10",
     "nestjs-minio-client": "^1.0.6",
     "nestjs-telegram": "^1.1.3",

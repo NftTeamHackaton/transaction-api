@@ -1,4 +1,8 @@
-// import { Injectable } from '@nestjs/common';
+import { InjectGraphQLClient } from '@golevelup/nestjs-graphql-request';
+import { Injectable } from '@nestjs/common';
+import { GraphQLClient } from 'graphql-request'; 
+
+
 // import {
 //     SOR,
 //     SwapTypes
@@ -14,14 +18,56 @@
 // import { getSwap } from './balancer.utils'
 // import { CryptoListEnum } from 'src/enums/cryptoList.enum';
 // import { AddressZero } from '@ethersproject/constants';
-// @Injectable()
-// export class BalancerService {
+@Injectable()
+export class BalancerService {
 //     constructor(
 //         private readonly configService: ConfigService,
 //         @InjectRepository(CryptoList)
 //         private readonly cryptoListRepository: Repository<CryptoList>
 //     ) {}
+        constructor(@InjectGraphQLClient() private readonly client: GraphQLClient) {}
 
+
+        public async getPools() {
+            const ids = ["0x6b15a01b5d46a5321b627bd7deef1af57bc629070000000000000000000000d4", "0x3a19030ed746bd1c3f2b0f996ff9479af04c5f0a000200000000000000000004", "0x647c1fd457b95b75d0972ff08fe01d7d7bda05df000200000000000000000001"]
+            const data = {pools: []}
+            for(let i = 0; i < ids.length; i++) {
+                const response = await this.client.request(`
+                    {
+                        pools(first: 10, skip: 0, where: {id: "${ids[i]}"}) {
+                            id
+                            address
+                            poolType
+                            strategyType
+                            swapFee
+                            amp
+                        }
+                    }
+                    `)
+                data.pools.push(response['pools'][0])
+            }
+            console.log(data)
+            for(let i = 0; i < data.pools.length; i++) {
+                const pool = data.pools[i]
+                const poolTokens = await this.client.request(`
+                {
+                    poolTokens(first: 8, where: {poolId: "${pool.id}"}) {
+                        id
+                        symbol
+                        name
+                        decimals
+                        address
+                        balance
+                        invested
+                        investments
+                        weight
+                    }
+                }
+                `)
+                data.pools[i].poolTokens = poolTokens.poolTokens
+            }
+            return data
+        }
 //     public async calculateOutput(network: string, tokenInSymbol: string, tokenOutSymbol: string, amount: string) {
 //         const list = await this.cryptoListRepository.findOne({type: CryptoListEnum.BALANCER}, {relations: ['assets']})
 //         const networkId = ChainId[network.toUpperCase()]
@@ -65,4 +111,4 @@
 //         console.log(swapInfo)
 //         return swapInfo
 //     }
-// }
+}
