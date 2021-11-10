@@ -8,7 +8,6 @@ import { Compound as CompoundEntity } from 'src/entities/compount.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StakingDto } from './staking.dto';
 import { ConfigService } from 'src/config/config.service';
-import { Erc20TransactionEntity } from 'src/entities/erc20Transaction.entity';
 
 @Injectable()
 export class CompoundService {
@@ -16,7 +15,6 @@ export class CompoundService {
     constructor(
         @InjectRepository(CompoundEntity)
         private readonly compoundRepository: Repository<CompoundEntity>,
-        @InjectRepository(Erc20TransactionEntity)
         private readonly configService: ConfigService,
     ) {}
 
