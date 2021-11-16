@@ -17,6 +17,18 @@ export class AnalyticsService {
     ) {}
 
     public async operationAnalytics(address: string) {
+        const cacheData = await this.cacheManager.get(address)
+        if(!cacheData) {
+            const data = await this.analytcsFormatted(address)
+            await this.cacheManager.set(address, data, {
+                ttl: 30000
+            })
+        }
+        return this.cacheManager.get(address)
+        
+    }
+
+    public async analytcsFormatted(address: string) {
         const staking = await this.staking(address)
         const lp = await this.lp(address)
         const swap = await this.swap(address)
