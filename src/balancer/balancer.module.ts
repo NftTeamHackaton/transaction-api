@@ -4,6 +4,9 @@ import { BalancerController } from './balancer.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CryptoList } from 'src/entities/cryptoList.entity';
 import { GraphQLRequestModule } from '@golevelup/nestjs-graphql-request';
+import { BalancerSubgraph } from './subgraph/balancer.subgraph';
+import { WeightedPool } from './pools/weighted.pool';
+import { StablePool } from './pools/stable.pool';
 
 @Module({
   imports: [
@@ -18,7 +21,7 @@ import { GraphQLRequestModule } from '@golevelup/nestjs-graphql-request';
     }),
     TypeOrmModule.forFeature([CryptoList])
   ],
-  providers: [BalancerService],
+  providers: [BalancerService, BalancerSubgraph, WeightedPool, StablePool],
   controllers: [BalancerController]
 })
 export class BalancerModule {}

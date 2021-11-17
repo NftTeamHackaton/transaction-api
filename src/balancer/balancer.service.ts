@@ -1,114 +1,242 @@
-import { InjectGraphQLClient } from '@golevelup/nestjs-graphql-request';
 import { Injectable } from '@nestjs/common';
-import { GraphQLClient } from 'graphql-request'; 
+import { PriceImpactDto } from './dto/priceImpact.dto';
+import { ProportionalSuggestionDto } from './dto/proportionalSuggestion.dto';
+import { BalancerSubgraph } from './subgraph/balancer.subgraph';
+import { WeightedPool } from './pools/weighted.pool';
+import { Vault__factory, WeightedPool__factory, StablePool__factory, InvestmentPool__factory } from '@balancer-labs/typechain';
+import { ERC20ABI } from 'src/config/ERC20.abi';
+import Web3 from 'web3'
+import { formatUnits, parseUnits } from '@ethersproject/units';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
+import { StablePool } from './pools/stable.pool';
+import { PoolCalcLp } from './dto/poolCalcLp.dto';
 
+interface Amounts {
+    send: string[];
+    receive: string[];
+    fixedToken: number;
+  }
+  
 
-// import {
-//     SOR,
-//     SwapTypes
-// } from '@balancer-labs/sor2'  
-// import { BigNumber as BigNumber$1, BigNumberish } from '@ethersproject/bignumber';
-// import { JsonRpcProvider } from '@ethersproject/providers';
-// import { ConfigService } from 'src/config/config.service';
-// import { ChainId } from '@uniswap/sdk';
-// import { Repository } from 'typeorm';
-// import { CryptoList } from 'src/entities/cryptoList.entity';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { CryptoAsset } from 'src/entities/cryptoAsset.entity';
-// import { getSwap } from './balancer.utils'
-// import { CryptoListEnum } from 'src/enums/cryptoList.enum';
-// import { AddressZero } from '@ethersproject/constants';
 @Injectable()
 export class BalancerService {
-//     constructor(
-//         private readonly configService: ConfigService,
-//         @InjectRepository(CryptoList)
-//         private readonly cryptoListRepository: Repository<CryptoList>
-//     ) {}
-        constructor(@InjectGraphQLClient() private readonly client: GraphQLClient) {}
+        constructor(
+            private readonly balancerSubgraph: BalancerSubgraph,
+            private readonly weightedPool: WeightedPool,
+            private readonly stablePool: StablePool
+        ) {}
 
+        private action: string
+        private pool: any
+        private useNativeAsset: boolean
 
-        public async getPools() {
-            const ids = ["0x6b15a01b5d46a5321b627bd7deef1af57bc629070000000000000000000000d4", "0x3a19030ed746bd1c3f2b0f996ff9479af04c5f0a000200000000000000000004", "0x647c1fd457b95b75d0972ff08fe01d7d7bda05df000200000000000000000001"]
-            const data = {pools: []}
-            for(let i = 0; i < ids.length; i++) {
-                const response = await this.client.request(`
-                    {
-                        pools(first: 10, skip: 0, where: {id: "${ids[i]}"}) {
-                            id
-                            address
-                            poolType
-                            strategyType
-                            swapFee
-                            amp
-                        }
-                    }
-                    `)
-                data.pools.push(response['pools'][0])
-            }
-            console.log(data)
-            for(let i = 0; i < data.pools.length; i++) {
-                const pool = data.pools[i]
-                const poolTokens = await this.client.request(`
-                {
-                    poolTokens(first: 8, where: {poolId: "${pool.id}"}) {
-                        id
-                        symbol
-                        name
-                        decimals
-                        address
-                        balance
-                        invested
-                        investments
-                        weight
-                    }
-                }
-                `)
-                data.pools[i].poolTokens = poolTokens.poolTokens
-            }
-            return data
-        }
-//     public async calculateOutput(network: string, tokenInSymbol: string, tokenOutSymbol: string, amount: string) {
-//         const list = await this.cryptoListRepository.findOne({type: CryptoListEnum.BALANCER}, {relations: ['assets']})
-//         const networkId = ChainId[network.toUpperCase()]
-//         const poolsSource = this.configService.getSubgraphUrl(network.toLowerCase())
-//         let tokenIn = {}
-//         let tokenOut = {}
-//         tokenIn = list.assets.find(function (asset) {
-//             return asset.symbol == tokenInSymbol
-//         })
-//         tokenOut = list.assets.find(function (asset) {
-//             return asset.symbol == tokenOutSymbol
-//         })
-//         if(tokenInSymbol == 'ETH') {
-//             tokenIn = {
-//                 contractAddress: AddressZero,
-//                 decimals: 18,
-//                 symbol: 'ETH',
-//             }
-//         }
-//         if(tokenOutSymbol == 'ETH') {
-//             tokenOut = {
-//                 contractAddress: AddressZero,
-//                 decimals: 18,
-//                 symbol: 'ETH',
-//             }
-//         }
+        private poolTotalSupplyOnChain: any
+        private poolDecimals: any
+        private allTokens: any
 
         
-//         const swapType = SwapTypes.SwapExactIn;
-//         const swapAmount = new BigNumber$1({}, amount); // In normalized format, i.e. 1USDC = 1
-//         const provider = new JsonRpcProvider(this.configService.getInfuraURL(network));
-//         const swapInfo = await getSwap(
-//             provider,
-//             networkId,
-//             poolsSource,
-//             tokenIn,
-//             tokenOut,
-//             swapType,
-//             swapAmount
-//         );
-//         console.log(swapInfo)
-//         return swapInfo
-//     }
+        public async getPools() {
+            const ids = ["0x6b15a01b5d46a5321b627bd7deef1af57bc629070000000000000000000000d4", "0x3a19030ed746bd1c3f2b0f996ff9479af04c5f0a000200000000000000000004", "0x647c1fd457b95b75d0972ff08fe01d7d7bda05df000200000000000000000001"]
+            return this.balancerSubgraph.getPoolsByIds(ids)
+        }
+
+        public allABIs(): any {
+            return Object.values(
+                Object.fromEntries(
+                [
+                    ...Vault__factory.abi,
+                    ...WeightedPool__factory.abi,
+                    ...StablePool__factory.abi,
+                    ...InvestmentPool__factory.abi,
+                    ...ERC20ABI
+                ].map(row => [row.name, row])
+                )
+            );
+        }
+
+        public propAmountsGiven(
+            fixedAmount: string,
+            index: number,
+            type: 'send' | 'receive'
+          ): Amounts {
+            if (fixedAmount.trim() === '')
+              return { send: [], receive: [], fixedToken: 0 };
+        
+            const types = ['send', 'receive'];
+            const fixedTokenAddress = this.tokenOf(type, index);
+        
+        
+            const fixedToken = this.allTokens[fixedTokenAddress];
+            const fixedDenormAmount = parseUnits(fixedAmount, fixedToken.decimals);
+            const fixedRatio = this.ratioOf(type, index);
+            const amounts = {
+              send: this.sendTokens.map(() => ''),
+              receive: this.receiveTokens.map(() => ''),
+              fixedToken: index
+            };
+        
+        
+            amounts[type][index] = fixedAmount;
+        
+            [this.sendRatios, this.receiveRatios].forEach((ratios, ratioType) => {
+              ratios.forEach((ratio, i) => {
+                if (i !== index || type !== types[ratioType]) {
+                  const tokenAddress = this.tokenOf(types[ratioType], i);
+                  console.log(tokenAddress)
+                  console.log(this.allTokens)
+                  const token = this.allTokens[tokenAddress];
+                  amounts[types[ratioType]][i] = formatUnits(
+                    fixedDenormAmount.mul(ratio).div(fixedRatio),
+                    token.decimals
+                  );
+                }
+              });
+            });
+        
+            return amounts;
+          }
+
+        public tokenOf(type: string, index: number) {
+            return this[`${type}Tokens`][index];
+          }
+        
+          public ratioOf(type: string, index: number) {
+            return this[`${type}Ratios`][index];
+          }
+
+        public get tokenAddresses(): string[] {
+            if (this.useNativeAsset) {
+              return this.pool.tokensList.map(address => {
+                if (address === "0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1")
+                  return "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+                return address;
+              });
+            }
+            return this.pool.tokensList;
+          }
+
+        public get sendTokens(): string[] {
+            if (this.action === 'join') return this.tokenAddresses;
+                return [this.pool.address];
+        }
+    
+        public get receiveTokens(): string[] {
+            if (this.action === 'join') return [this.pool.address];
+                return this.tokenAddresses;
+        }
+
+        public get poolTokenBalances(): BigNumber[] {
+            const normalizedBalances = Object.values(
+              this.pool.tokens
+            ).map((t: any) => t.balance);
+            return normalizedBalances.map((balance, i) =>
+              parseUnits(balance, this.poolTokenDecimals[i])
+            );
+          }
+
+        public get poolTokenDecimals(): number[] {
+            return Object.values(this.pool.tokens).map((t: any) => t.decimals);
+          }
+    
+        public get sendRatios(): BigNumberish[] {
+            if (this.action === 'join') return this.poolTokenBalances;
+                return [this.poolTotalSupply];
+        }
+    
+        public get receiveRatios(): BigNumberish[] {
+            if (this.action === 'join') return [this.poolTotalSupply];
+                return this.poolTokenBalances;
+        }
+
+        public get poolTotalSupply(): BigNumber {
+            return parseUnits(this.poolTotalSupplyOnChain, this.poolDecimals);
+          }
+
+
+        public async calcAmounts(proportionalSuggestionDto: ProportionalSuggestionDto) {
+            const pool = (await this.balancerSubgraph.getPoolsByIds([proportionalSuggestionDto.poolId])).pools[0]
+            const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
+            const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
+
+            this.action = 'join'
+            this.pool = pool
+            this.useNativeAsset = false
+            this.poolTotalSupplyOnChain = await poolContract.methods.totalSupply().call()
+            this.poolDecimals = await poolContract.methods.decimals().call()
+            
+            let tokens = []
+            for(let i = 0; i < pool.tokens.length; i++) {
+                tokens[pool.tokens[i].address] = pool.tokens[i]
+            }
+            tokens[pool.address] = {decimals: this.poolDecimals}
+            this.allTokens = tokens
+            const amounts = this.propAmountsGiven(proportionalSuggestionDto.amount, proportionalSuggestionDto.index, proportionalSuggestionDto.type)
+            return amounts
+        }
+
+        public async priceImpact(priceImpactDto: PriceImpactDto) {
+            const pool = (await this.balancerSubgraph.getPoolsByIds([priceImpactDto.poolId])).pools[0]
+
+            const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
+            const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
+
+            let totalSupply = await poolContract.methods.totalSupply().call()
+
+            if(this.isStablePool(pool.poolType)) {
+                const poolDecimals = await poolContract.methods.decimals().call()
+                return this.stablePool.priceImpactJoin(priceImpactDto.amountsIn, pool, totalSupply, poolDecimals)
+            }
+
+            if(this.isWeightedPool(pool.poolType)) {
+                const poolTokenWeight = pool.tokens.map(function (token) {
+                    return parseUnits(token.weight.toString(), 18)
+                })
+    
+                const poolTokenDecimals = pool.tokens.map(function (token) {
+                    return token.decimals
+                })
+    
+                const poolTokenBalances = pool.tokens.map(function (token) {
+                    return parseUnits(token.balance, token.decimals)
+                })
+                return this.weightedPool.priceImpactJoin(priceImpactDto.amountsIn, poolTokenBalances, poolTokenWeight, poolTokenDecimals, totalSupply, parseUnits(pool.swapFee, 18))
+            }
+        }
+
+        public async poolCalcLp(poolCalcLpDto: PoolCalcLp) {
+          const pool = (await this.balancerSubgraph.getPoolsByIds([poolCalcLpDto.poolId])).pools[0]
+
+          const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
+          const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
+
+          let totalSupply = await poolContract.methods.totalSupply().call()
+
+          if(this.isStablePool(pool.poolType)) {
+              const poolDecimals = await poolContract.methods.decimals().call()
+              return this.stablePool.btpAmountCalc(poolCalcLpDto.amountsIn, pool, totalSupply, poolDecimals)
+          }
+
+          if(this.isWeightedPool(pool.poolType)) {
+              const poolTokenWeight = pool.tokens.map(function (token) {
+                  return parseUnits(token.weight.toString(), 18)
+              })
+  
+              const poolTokenDecimals = pool.tokens.map(function (token) {
+                  return token.decimals
+              })
+  
+              const poolTokenBalances = pool.tokens.map(function (token) {
+                  return parseUnits(token.balance, token.decimals)
+              })
+              return this.weightedPool.btpAmountCalc(poolCalcLpDto.amountsIn, poolTokenBalances, poolTokenWeight, poolTokenDecimals, totalSupply, parseUnits(pool.swapFee, 18))
+          }
+      }
+
+        private isStablePool(type: string): boolean {
+            return type == 'Stable' 
+        }
+
+        private isWeightedPool(type: string): boolean {
+            return type == 'Weighted'
+        }
 }

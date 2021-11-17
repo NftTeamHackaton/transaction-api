@@ -22,7 +22,10 @@
     "rimraf": "./node_modules/rimraf/bin.js"
   },
   "dependencies": {
+    "@balancer-labs/balancer-js": "^1.0.1",
+    "@balancer-labs/sor": "^2.0.0-beta.7",
     "@balancer-labs/sor2": "npm:@balancer-labs/sor@^2.0.0-beta.0",
+    "@balancer-labs/typechain": "^1.0.0",
     "@compound-finance/compound-js": "^0.2.13",
     "@georgeroman/balancer-v2-pools": "0.0.7",
     "@golevelup/nestjs-graphql-request": "^0.1.7",
@@ -44,6 +47,7 @@
     "cache-manager-redis-store": "^2.0.0",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "date-fns": "^2.25.0",
     "ethereum-input-data-decoder": "^0.3.2",
     "ethers": "^5.3.1",
     "graphql": "^16.0.1",
