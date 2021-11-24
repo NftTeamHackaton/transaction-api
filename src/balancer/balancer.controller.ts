@@ -6,6 +6,7 @@ Res} from '@nestjs/common';
 import { Response } from 'express';
 import { BalancerService } from './balancer.service';
 import { PoolCalcLp } from './dto/poolCalcLp.dto';
+import { PoolExitCalcDto } from './dto/poolExitCalc.dto';
 import { PriceImpactDto } from './dto/priceImpact.dto';
 import { ProportionalSuggestionDto } from './dto/proportionalSuggestion.dto';
 import { BalancerSubgraph } from './subgraph/balancer.subgraph';
@@ -16,14 +17,14 @@ export class BalancerController {
         private readonly balancerSubgraph: BalancerSubgraph
     ) {}
 
-    @Get('/test')
-    public async test(@Res() response: Response) {
+    @Post('/exit-pool-calc')
+    public async exitPoolCalc(@Body() exitPoolCalcDto: PoolExitCalcDto, @Res() response: Response) {
         const data = await this.balancerService.calcAmounts({
-            poolId: '0x3a19030ed746bd1c3f2b0f996ff9479af04c5f0a000200000000000000000004',
-            amount: '5.163891238132467279',
+            poolId: exitPoolCalcDto.poolId,
+            amount: exitPoolCalcDto.amount,
             type: 'send',
             index: 0
-        })
+        }, 'exit')
         return response.status(200).send(data)
     }
 
@@ -55,7 +56,7 @@ export class BalancerController {
 
     @Post('/calc-proportional')
     public async poolCalc(@Body() calcProportional: ProportionalSuggestionDto, @Res() response: Response) {
-        const data = await this.balancerService.calcAmounts(calcProportional)
+        const data = await this.balancerService.calcAmounts(calcProportional, 'join')
         return response.status(200).send(data)
     }
 

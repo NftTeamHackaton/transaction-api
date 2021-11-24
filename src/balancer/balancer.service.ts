@@ -65,11 +65,12 @@ export class BalancerService {
             const types = ['send', 'receive'];
             const fixedTokenAddress = this.tokenOf(type, index);
         
-        
             const fixedToken = this.allTokens[fixedTokenAddress];
-            console.log(fixedToken)
+            console.log(fixedAmount, fixedToken.decimals)
             const fixedDenormAmount = parseUnits(fixedAmount, fixedToken.decimals);
+            
             const fixedRatio = this.ratioOf(type, index);
+            
             const amounts = {
               send: this.sendTokens.map(() => ''),
               receive: this.receiveTokens.map(() => ''),
@@ -84,10 +85,12 @@ export class BalancerService {
                 if (i !== index || type !== types[ratioType]) {
                   const tokenAddress = this.tokenOf(types[ratioType], i);
                   const token = this.allTokens[tokenAddress];
+                  console.log("DECIMALS", i, fixedDenormAmount.toString(), fixedRatio.toString())
                   amounts[types[ratioType]][i] = formatUnits(
                     fixedDenormAmount.mul(ratio).div(fixedRatio),
                     token.decimals
                   );
+                  
                 }
               });
             });
@@ -116,64 +119,65 @@ export class BalancerService {
 
         public get sendTokens(): string[] {
             if (this.action === 'join') return this.tokenAddresses;
-                return [this.pool.address];
+            return [this.pool.address];
         }
     
         public get receiveTokens(): string[] {
             if (this.action === 'join') return [this.pool.address];
-                return this.tokenAddresses;
+            return this.tokenAddresses;
         }
 
         public get poolTokenBalances(): BigNumber[] {
-            const normalizedBalances = Object.values(
-              this.pool.tokens
-            ).map((t: any) => t.balance);
-            return normalizedBalances.map((balance, i) =>
-              parseUnits(balance, this.poolTokenDecimals[i])
-            );
-          }
+          const normalizedBalances = Object.values(
+            this.pool.tokens
+          ).map((t: any) => t.balance);
+          return normalizedBalances.map((balance, i) =>
+            parseUnits(balance, this.poolTokenDecimals[i])
+          );
+        }
 
         public get poolTokenDecimals(): number[] {
-            return Object.values(this.pool.tokens).map((t: any) => t.decimals);
-          }
+          return Object.values(this.pool.tokens).map((t: any) => t.decimals);
+        }
     
         public get sendRatios(): BigNumberish[] {
-            if (this.action === 'join') return this.poolTokenBalances;
-                return [this.poolTotalSupply];
+          if (this.action === 'join') return this.poolTokenBalances;
+          return [this.poolTotalSupply];
         }
     
         public get receiveRatios(): BigNumberish[] {
-            if (this.action === 'join') return [this.poolTotalSupply];
-                return this.poolTokenBalances;
+          if (this.action === 'join') return [this.poolTotalSupply];
+          return this.poolTokenBalances;
         }
 
         public get poolTotalSupply(): BigNumber {
-            return parseUnits(this.poolTotalSupplyOnChain, this.poolDecimals);
-          }
+          console.log(this.poolTotalSupplyOnChain)
+          return this.poolTotalSupplyOnChain //parseUnits(this.poolTotalSupplyOnChain, this.poolDecimals);
+        }
 
 
-        public async calcAmounts(proportionalSuggestionDto: ProportionalSuggestionDto) {
+        public async calcAmounts(proportionalSuggestionDto: ProportionalSuggestionDto, action: string) {
             const pool = (await this.balancerSubgraph.getPoolsByIds([proportionalSuggestionDto.poolId])).pools[0]
             const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
             const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
 
-            this.action = 'exit'
+            this.action = action
             this.pool = pool
             this.useNativeAsset = false
             this.poolTotalSupplyOnChain = await poolContract.methods.totalSupply().call()
             this.poolDecimals = await poolContract.methods.decimals().call()
             
             let tokens = []
-
-            for(let i = 0; i < pool.tokens.length; i++) {
-                tokens[pool.tokens[i].address] = pool.tokens[i]
-            }
             tokens[pool.address] = {
               address: pool.address,
               decimals: this.poolDecimals,
               id: pool.id,
               name: pool.name,
               symbol: pool.symbol,
+              balance: proportionalSuggestionDto.amount
+            }
+            for(let i = 0; i < pool.tokens.length; i++) {
+                tokens[pool.tokens[i].address] = pool.tokens[i]
             }
             this.allTokens = tokens
             const amounts = this.propAmountsGiven(proportionalSuggestionDto.amount, proportionalSuggestionDto.index, proportionalSuggestionDto.type)
