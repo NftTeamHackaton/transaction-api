@@ -50,6 +50,45 @@ export class StablePool {
       return this.exactTokensInForBPTOut(tokenAmounts, pool);
     }
 
+    public exactBPTInForTokenOut(
+      bptAmount: string,
+      tokenIndex: number,
+      pool,
+      poolTotalSupplyOnChain,
+      poolDecimals: number
+    ): OldBigNumber {
+      this.pool = pool
+      this.poolTotalSupplyOnChain = poolTotalSupplyOnChain
+      this.poolDecimals = poolDecimals
+      if (bnum(bptAmount).eq(0))
+        return this.scaleOutput(
+          '0',
+          this.poolTokenDecimals[tokenIndex],
+          this.pool.tokens[tokenIndex].priceRate,
+          OldBigNumber.ROUND_DOWN // If OUT given IN, round down
+        );
+  
+      const amp = bnum(this.pool.amp?.toString() || '0');
+      const ampAdjusted = this.adjustAmp(amp);
+      const bptAmountIn = this.scaleInput(bptAmount);
+  
+      const tokenAmountOut = SDK.StableMath._calcTokenOutGivenExactBptIn(
+        ampAdjusted,
+        this.scaledBalances,
+        tokenIndex,
+        bptAmountIn,
+        this.scaledPoolTotalSupply,
+        bnum(this.poolSwapFee.toString())
+      );
+  
+      return this.scaleOutput(
+        tokenAmountOut.toString(),
+        this.poolTokenDecimals[tokenIndex],
+        this.pool.tokens[tokenIndex].priceRate,
+        OldBigNumber.ROUND_DOWN // If OUT given IN, round down
+      );
+    }
+
     public exactTokensInForBPTOut(tokenAmounts: string[], pool): OldBigNumber {
         try {
           const amp = bnum(pool.amp?.toString() || '0');
@@ -105,6 +144,10 @@ export class StablePool {
         );
         const scaledSupply = parseUnits(normalizedSupply, 18);
         return bnum(scaledSupply.toString());
+      }
+
+      public get poolSwapFee(): BigNumber {
+        return parseUnits(this.pool.swapFee, 18);
       }
 
 

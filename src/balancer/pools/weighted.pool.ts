@@ -33,6 +33,34 @@ export class WeightedPool {
         return this.exactTokensInForBPTOut(tokenAmounts, poolTokenBalances, poolTokenWeights, poolTokenDecimals, poolTotalSupply, poolSwapFee);
     }
 
+    public exactBPTInForTokenOut(
+        bptAmount: string,
+        tokenIndex: number,
+        poolTokenBalances: string[], 
+        poolTokenWeights: string[],
+        poolTokenDecimals: number,
+        poolTotalSupply,
+        poolSwapFee, 
+      ): OldBigNumber {
+        const tokenBalance = bnum(
+          poolTokenBalances[tokenIndex].toString()
+        );
+        const tokenNormalizedWeight = bnum(
+          poolTokenWeights[tokenIndex].toString()
+        );
+        const bptAmountIn = bnum(
+          parseUnits(bptAmount, poolTokenDecimals).toString()
+        );
+    
+        return SDK.WeightedMath._calcTokenOutGivenExactBptIn(
+          tokenBalance,
+          tokenNormalizedWeight,
+          bptAmountIn,
+          bnum(poolTotalSupply.toString()),
+          bnum(poolSwapFee.toString())
+        );
+      }
+
     public exactTokensInForBPTOut(
             tokenAmounts: string[], 
             poolTokenBalances: string[], 

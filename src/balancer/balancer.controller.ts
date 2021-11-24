@@ -7,6 +7,7 @@ import { Response } from 'express';
 import { BalancerService } from './balancer.service';
 import { PoolCalcLp } from './dto/poolCalcLp.dto';
 import { PoolExitCalcDto } from './dto/poolExitCalc.dto';
+import { PoolExitSingleCalcDto } from './dto/poolExitSingleCalc.dto';
 import { PriceImpactDto } from './dto/priceImpact.dto';
 import { ProportionalSuggestionDto } from './dto/proportionalSuggestion.dto';
 import { BalancerSubgraph } from './subgraph/balancer.subgraph';
@@ -17,7 +18,7 @@ export class BalancerController {
         private readonly balancerSubgraph: BalancerSubgraph
     ) {}
 
-    @Post('/exit-pool-calc')
+    @Post('/exit-pool-calc-all')
     public async exitPoolCalc(@Body() exitPoolCalcDto: PoolExitCalcDto, @Res() response: Response) {
         const data = await this.balancerService.calcAmounts({
             poolId: exitPoolCalcDto.poolId,
@@ -26,6 +27,12 @@ export class BalancerController {
             index: 0
         }, 'exit')
         return response.status(200).send(data)
+    }
+
+    @Post('/exit-pool-calc-single')
+    public async exitPoolCalcSingle(@Body() exitPoolCalcDto: PoolExitSingleCalcDto, @Res() response: Response) {
+        const data = await this.balancerService.exitPoolSingleAsset(exitPoolCalcDto)
+        return response.status(200).send({value: data})
     }
 
     @Get('/pool/user-info/:address') 

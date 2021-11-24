@@ -10,6 +10,7 @@ import { formatUnits, parseUnits } from '@ethersproject/units';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { StablePool } from './pools/stable.pool';
 import { PoolCalcLp } from './dto/poolCalcLp.dto';
+import { PoolExitSingleCalcDto } from './dto/poolExitSingleCalc.dto';
 
 interface Amounts {
     send: string[];
@@ -182,6 +183,32 @@ export class BalancerService {
             this.allTokens = tokens
             const amounts = this.propAmountsGiven(proportionalSuggestionDto.amount, proportionalSuggestionDto.index, proportionalSuggestionDto.type)
             return amounts
+        }
+
+        public async exitPoolSingleAsset(poolExitSingCalcDto: PoolExitSingleCalcDto) {
+          const pool = (await this.balancerSubgraph.getPoolsByIds([poolExitSingCalcDto.poolId])).pools[0]
+
+          const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
+          const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
+
+          let totalSupply = await poolContract.methods.totalSupply().call()
+
+          if(this.isStablePool(pool.poolType)) {
+              const poolDecimals = await poolContract.methods.decimals().call()
+              return this.stablePool.exactBPTInForTokenOut(poolExitSingCalcDto.amount, poolExitSingCalcDto.index, pool, totalSupply, poolDecimals)
+          }
+
+          if(this.isWeightedPool(pool.poolType)) {
+              const poolDecimals = await poolContract.methods.decimals().call()
+              const poolTokenWeight = pool.tokens.map(function (token) {
+                  return parseUnits(token.weight.toString(), 18)
+              })
+  
+              const poolTokenBalances = pool.tokens.map(function (token) {
+                  return parseUnits(token.balance, token.decimals)
+              })
+              return this.weightedPool.exactBPTInForTokenOut(poolExitSingCalcDto.amount, poolExitSingCalcDto.index, poolTokenBalances, poolTokenWeight, poolDecimals, totalSupply, parseUnits(pool.swapFee, 18)).toString()
+          }
         }
 
         public async priceImpact(priceImpactDto: PriceImpactDto) {
