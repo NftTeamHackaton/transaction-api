@@ -17,6 +17,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { CryptoListModule } from './crypto-list/crypto-list.module';
 import { BalancerModule } from './balancer/balancer.module';
 import { RaydiumModule } from './raydium/raydium.module';
+import { BalancesModule } from './balances/balances.module';
 
 
 @Module({
@@ -40,7 +41,7 @@ import { RaydiumModule } from './raydium/raydium.module';
     AnalyticsModule, 
     CryptoListModule, 
     BalancerModule, 
-    RaydiumModule
+    RaydiumModule, BalancesModule
   ],
   controllers: [AppController],
   providers: [AppService],

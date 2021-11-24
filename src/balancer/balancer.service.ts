@@ -67,6 +67,7 @@ export class BalancerService {
         
         
             const fixedToken = this.allTokens[fixedTokenAddress];
+            console.log(fixedToken)
             const fixedDenormAmount = parseUnits(fixedAmount, fixedToken.decimals);
             const fixedRatio = this.ratioOf(type, index);
             const amounts = {
@@ -82,8 +83,6 @@ export class BalancerService {
               ratios.forEach((ratio, i) => {
                 if (i !== index || type !== types[ratioType]) {
                   const tokenAddress = this.tokenOf(types[ratioType], i);
-                  console.log(tokenAddress)
-                  console.log(this.allTokens)
                   const token = this.allTokens[tokenAddress];
                   amounts[types[ratioType]][i] = formatUnits(
                     fixedDenormAmount.mul(ratio).div(fixedRatio),
@@ -158,17 +157,24 @@ export class BalancerService {
             const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
             const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
 
-            this.action = 'join'
+            this.action = 'exit'
             this.pool = pool
             this.useNativeAsset = false
             this.poolTotalSupplyOnChain = await poolContract.methods.totalSupply().call()
             this.poolDecimals = await poolContract.methods.decimals().call()
             
             let tokens = []
+
             for(let i = 0; i < pool.tokens.length; i++) {
                 tokens[pool.tokens[i].address] = pool.tokens[i]
             }
-            tokens[pool.address] = {decimals: this.poolDecimals}
+            tokens[pool.address] = {
+              address: pool.address,
+              decimals: this.poolDecimals,
+              id: pool.id,
+              name: pool.name,
+              symbol: pool.symbol,
+            }
             this.allTokens = tokens
             const amounts = this.propAmountsGiven(proportionalSuggestionDto.amount, proportionalSuggestionDto.index, proportionalSuggestionDto.type)
             return amounts
