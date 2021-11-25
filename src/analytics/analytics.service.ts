@@ -17,15 +17,15 @@ export class AnalyticsService {
     ) {}
 
     public async operationAnalytics(address: string) {
-        const cacheData = await this.cacheManager.get(address)
-        if(!cacheData) {
-            const data = await this.analytcsFormatted(address)
-            await this.cacheManager.set(address, data, {
-                ttl: 1000
-            })
-        }
-        return this.cacheManager.get(address)
-        
+        // const cacheData = await this.cacheManager.get(address)
+        // if(!cacheData) {
+        //     const data = await this.analytcsFormatted(address)
+        //     await this.cacheManager.set(address, data, {
+        //         ttl: 1000
+        //     })
+        // }
+        // return this.cacheManager.get(address)
+        return this.analytcsFormatted(address)
     }
 
     public async analytcsFormatted(address: string) {
