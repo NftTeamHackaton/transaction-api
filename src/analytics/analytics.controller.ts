@@ -11,4 +11,10 @@ export class AnalyticsController {
         const data = await this.analyticsService.operationAnalytics(address.toLowerCase())
         return response.status(200).send(data)
     }
+
+    @Get('/cache/price')
+    public async cachePrice(@Res() response: Response) {
+        await this.analyticsService.cachePrice()
+        return response.status(200).send({status: true})
+    } 
 }

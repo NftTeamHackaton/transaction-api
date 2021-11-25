@@ -343,13 +343,15 @@ export class AnalyticsService {
     @Cron('0 8 * * *')
     public async handleCron() {
         this.logger.debug('Cache usd price started')
+        await this.cachePrice()
+        this.logger.debug('Cache usd price complete!')
+    }
+
+    public async cachePrice() {
         const response = await this.httpService.get(`/v1/cryptocurrency/listings/latest`).toPromise()
         const data = response.data.data
         for(let i = 0; i < data.length; i++) {
-            await this.cacheManager.set(data[i].symbol.toUpperCase(), data[i].quote.USD.price, {
-                ttl: 30000
-            })
+            await this.cacheManager.set(data[i].symbol.toUpperCase(), data[i].quote.USD.price)
         }
-        this.logger.debug('Cache usd price complete!')
     }
 }
