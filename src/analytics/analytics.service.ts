@@ -60,9 +60,6 @@ export class AnalyticsService {
                 data: []
             }
             for(let i = 0; i < walletOperations.length; i++) {
-                if(this.even(i)) {
-                    await this.delay(1000)
-                }
 
                 const walletOperation = walletOperations[i]
                 const value = walletOperation.sum
@@ -74,6 +71,7 @@ export class AnalyticsService {
                 
                 if(price > 0) {
                     usdPrice = await this.cacheManager.get(walletOperation.tokenSymbol.toUpperCase())
+                    console.log('USD_PRICE', usdPrice)
                 }
                 const data = {
                     symbol: walletOperation.tokenSymbol,
@@ -140,9 +138,6 @@ export class AnalyticsService {
                 ],
             }
             for(let i = 0; i < uniswapOperations.length; i++) {
-                if(this.even(i)) {
-                    await this.delay(1000)
-                }
                 const uniswap = uniswapOperations[i]
                 const value = uniswap.sum
                 const decimals = uniswap.tokenDecimals
@@ -153,6 +148,7 @@ export class AnalyticsService {
                 
                 if(price > 0) {
                     usdPrice = await this.cacheManager.get(uniswap.tokenSymbol.toUpperCase())
+                    console.log('USD_PRICE', usdPrice)
                 }
                 console.log(value.toString())
                 const data = {
@@ -212,9 +208,6 @@ export class AnalyticsService {
                 ],
             }
             for(let i = 0; i < uniswapOperations.length; i++) {
-                if(this.even(i)) {
-                    await this.delay(1000)
-                }
                 const uniswap = uniswapOperations[i]
                 const value = uniswap.sum
                 const decimals = uniswap.tokenDecimals
@@ -225,6 +218,7 @@ export class AnalyticsService {
                 
                 if(price > 0) {
                     usdPrice = await this.cacheManager.get(uniswap.tokenSymbol.toUpperCase())
+                    console.log('USD_PRICE', usdPrice)
                 }
                 console.log(value.toString())
                 const data = {
@@ -286,9 +280,6 @@ export class AnalyticsService {
                 ],
             }
             for(let i = 0; i < stakingOperations.length; i++) {
-                if(this.even(i)) {
-                    await this.delay(1000)
-                }
                 const staking = stakingOperations[i]
                 const value = staking.sum
                 const decimals = staking.tokenDecimals
@@ -299,6 +290,7 @@ export class AnalyticsService {
                 
                 if(price > 0) {
                     usdPrice = await this.cacheManager.get(staking.tokenSymbol.toUpperCase())
+                    console.log('USD_PRICE', usdPrice)
                 }
                 const data = {
                     symbol: staking.tokenSymbol,
@@ -331,15 +323,6 @@ export class AnalyticsService {
         }
     }
 
-    private even(n: number): boolean {
-        return !(n % 2)
-    }
-
-
-    private async delay(second) {
-        return new Promise(res => setTimeout(res, second));
-    }
-
     @Cron('0 8 * * *')
     public async handleCron() {
         this.logger.debug('Cache usd price started')
@@ -351,6 +334,7 @@ export class AnalyticsService {
         const response = await this.httpService.get(`/v1/cryptocurrency/listings/latest`).toPromise()
         const data = response.data.data
         for(let i = 0; i < data.length; i++) {
+            console.log(data[i].symbol.toUpperCase(), data[i].quote.USD.price)
             await this.cacheManager.set(data[i].symbol.toUpperCase(), data[i].quote.USD.price)
         }
     }
