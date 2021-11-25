@@ -21,7 +21,7 @@ export class AnalyticsService {
         if(!cacheData) {
             const data = await this.analytcsFormatted(address)
             await this.cacheManager.set(address, data, {
-                ttl: 30000
+                ttl: 1000
             })
         }
         return this.cacheManager.get(address)
