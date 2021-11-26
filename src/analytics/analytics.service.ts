@@ -17,15 +17,14 @@ export class AnalyticsService {
     ) {}
 
     public async operationAnalytics(address: string) {
-        // const cacheData = await this.cacheManager.get(address)
-        // if(!cacheData) {
-        //     const data = await this.analytcsFormatted(address)
-        //     await this.cacheManager.set(address, data, {
-        //         ttl: 1000
-        //     })
-        // }
-        // return this.cacheManager.get(address)
-        return this.analytcsFormatted(address)
+        const cacheData = await this.cacheManager.get(address)
+        if(!cacheData) {
+            const data = await this.analytcsFormatted(address)
+            await this.cacheManager.set(address, data, {
+                ttl: 30000
+            })
+        }
+        return this.cacheManager.get(address)
     }
 
     public async analytcsFormatted(address: string) {
@@ -335,7 +334,9 @@ export class AnalyticsService {
         const data = response.data.data
         for(let i = 0; i < data.length; i++) {
             console.log(data[i].symbol.toUpperCase(), data[i].quote.USD.price)
-            await this.cacheManager.set(data[i].symbol.toUpperCase(), data[i].quote.USD.price)
+            await this.cacheManager.set(data[i].symbol.toUpperCase(), data[i].quote.USD.price, {
+                ttl: 0
+            })
         }
     }
 }
