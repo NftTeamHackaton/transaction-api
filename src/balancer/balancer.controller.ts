@@ -1,10 +1,12 @@
 import { Body, Controller, /** Get, Param, Res */ 
 Get,
+HttpStatus,
 Param,
 Post,
 Res} from '@nestjs/common';
 import { Response } from 'express';
 import { BalancerService } from './balancer.service';
+import { ExitPoolEncodeFunctionDto } from './dto/exitPoolEncodeFunction.dto';
 import { PoolCalcLp } from './dto/poolCalcLp.dto';
 import { PoolExitCalcDto } from './dto/poolExitCalc.dto';
 import { PoolExitSingleCalcDto } from './dto/poolExitSingleCalc.dto';
@@ -17,6 +19,12 @@ export class BalancerController {
         private readonly balancerService: BalancerService,
         private readonly balancerSubgraph: BalancerSubgraph
     ) {}
+
+    @Post('/exit-encode-function')
+    public async exitEncodeFuction(@Body() exitEncodeFunctionDto: ExitPoolEncodeFunctionDto, @Res() response: Response) {
+        const data = await this.balancerService.exitPoolEncodeFunction(exitEncodeFunctionDto)
+        return response.status(HttpStatus.OK).send({data})
+    }
 
     @Post('/exit-pool-calc-all')
     public async exitPoolCalc(@Body() exitPoolCalcDto: PoolExitCalcDto, @Res() response: Response) {

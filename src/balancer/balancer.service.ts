@@ -11,6 +11,9 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { StablePool } from './pools/stable.pool';
 import { PoolCalcLp } from './dto/poolCalcLp.dto';
 import { PoolExitSingleCalcDto } from './dto/poolExitSingleCalc.dto';
+import { ExitPoolEncodeFunctionDto } from './dto/exitPoolEncodeFunction.dto';
+import { ConfigService } from 'src/config/config.service';
+import { VAULT_ABI } from './vault.abi';
 
 interface Amounts {
     send: string[];
@@ -24,7 +27,8 @@ export class BalancerService {
         constructor(
             private readonly balancerSubgraph: BalancerSubgraph,
             private readonly weightedPool: WeightedPool,
-            private readonly stablePool: StablePool
+            private readonly stablePool: StablePool,
+            private readonly configService: ConfigService
         ) {}
 
         private action: string
@@ -35,6 +39,17 @@ export class BalancerService {
         private poolDecimals: any
         private allTokens: any
 
+
+        public async exitPoolEncodeFunction(encodeDto: ExitPoolEncodeFunctionDto) {
+          let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL('kovan')));
+          const contract = new provider.eth.Contract(VAULT_ABI)
+          return contract.methods.exitPool(encodeDto.poolId, encodeDto.sender, encodeDto.recipient, {
+            assets: encodeDto.assets, 
+            minAmountsOut: encodeDto.minAmountsOut, 
+            userData: encodeDto.userData, 
+            toInternalBalance: encodeDto.toInternalBalance
+          }).encodeABI()
+        }
         
         public async getPools() {
             const ids = ["0x6b15a01b5d46a5321b627bd7deef1af57bc629070000000000000000000000d4", "0x3a19030ed746bd1c3f2b0f996ff9479af04c5f0a000200000000000000000004", "0x647c1fd457b95b75d0972ff08fe01d7d7bda05df000200000000000000000001"]
