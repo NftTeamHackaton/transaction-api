@@ -69,14 +69,19 @@ export class WeightedPool {
             poolTotalSupply,
             poolSwapFee
     ): OldBigNumber {
+      console.log("SADASD")
         const balances = poolTokenBalances.map(b => bnum(b.toString()));
+        console.log(balances)
         const weights = poolTokenWeights.map(w => bnum(w.toString()));
+        console.log(weights)
         const denormAmounts = this.denormAmounts(
             tokenAmounts,
             poolTokenDecimals
         );
+        console.log("DENORM")
         const amounts = denormAmounts.map(a => bnum(a.toString()));
-
+        console.log("AMOUNTS")
+        
         return SDK.WeightedMath._calcBptOutGivenExactTokensIn(
             balances,
             weights,

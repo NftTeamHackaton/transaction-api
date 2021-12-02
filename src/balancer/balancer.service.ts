@@ -262,10 +262,16 @@ export class BalancerService {
           const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
 
           let totalSupply = await poolContract.methods.totalSupply().call()
+          const poolTokenDecimals = pool.tokens.map(function (token) {
+            return token.decimals
+          })
 
           if(this.isStablePool(pool.poolType)) {
               const poolDecimals = await poolContract.methods.decimals().call()
-              return this.stablePool.btpAmountCalc(poolCalcLpDto.amountsIn, pool, totalSupply, poolDecimals)
+              const amountsIn = poolCalcLpDto.amountsIn.map(function (amount, i) {
+                return formatUnits(amount, poolTokenDecimals[i])
+              })
+              return this.stablePool.btpAmountCalc(amountsIn, pool, totalSupply, poolDecimals)
           }
 
           if(this.isWeightedPool(pool.poolType)) {
@@ -273,14 +279,17 @@ export class BalancerService {
                   return parseUnits(token.weight.toString(), 18)
               })
   
-              const poolTokenDecimals = pool.tokens.map(function (token) {
-                  return token.decimals
-              })
+              
   
               const poolTokenBalances = pool.tokens.map(function (token) {
                   return parseUnits(token.balance, token.decimals)
               })
-              return this.weightedPool.btpAmountCalc(poolCalcLpDto.amountsIn, poolTokenBalances, poolTokenWeight, poolTokenDecimals, totalSupply, parseUnits(pool.swapFee, 18))
+
+              const amountsIn = poolCalcLpDto.amountsIn.map(function (amount, i) {
+                return formatUnits(amount, poolTokenDecimals[i])
+              })
+              console.log(amountsIn[0].toString())
+              return this.weightedPool.btpAmountCalc(amountsIn, poolTokenBalances, poolTokenWeight, poolTokenDecimals, totalSupply, parseUnits(pool.swapFee, 18))
           }
       }
 
