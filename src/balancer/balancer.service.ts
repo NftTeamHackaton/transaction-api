@@ -174,7 +174,7 @@ export class BalancerService {
 
         public async calcAmounts(proportionalSuggestionDto: ProportionalSuggestionDto, action: string) {
             const pool = (await this.balancerSubgraph.getPoolsByIds([proportionalSuggestionDto.poolId])).pools[0]
-            const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
+            const provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL('kovan')));
             const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
 
             this.action = action
@@ -203,7 +203,7 @@ export class BalancerService {
         public async exitPoolSingleAsset(poolExitSingCalcDto: PoolExitSingleCalcDto) {
           const pool = (await this.balancerSubgraph.getPoolsByIds([poolExitSingCalcDto.poolId])).pools[0]
 
-          const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
+          const provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL('kovan')));
           const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
 
           let totalSupply = await poolContract.methods.totalSupply().call()
@@ -229,7 +229,7 @@ export class BalancerService {
         public async priceImpact(priceImpactDto: PriceImpactDto) {
             const pool = (await this.balancerSubgraph.getPoolsByIds([priceImpactDto.poolId])).pools[0]
 
-            const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
+            const provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL('kovan')));
             const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
 
             let totalSupply = await poolContract.methods.totalSupply().call()
@@ -258,7 +258,7 @@ export class BalancerService {
         public async poolCalcLp(poolCalcLpDto: PoolCalcLp) {
           const pool = (await this.balancerSubgraph.getPoolsByIds([poolCalcLpDto.poolId])).pools[0]
 
-          const provider = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"));
+          const provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL('kovan')));
           const poolContract = new provider.eth.Contract(this.allABIs(), pool.address)
 
           let totalSupply = await poolContract.methods.totalSupply().call()
