@@ -50,9 +50,9 @@ export class ConfigService {
     getInfuraURL(network: string): string {
         network = network.toLowerCase()
         if(network == 'kovan') {
-            return "https://kovan.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"
+            return "https://kovan.infura.io/v3/bed540a903df49cda22500fc526b00f5"
         }
-        return "https://mainnet.infura.io/v3/cf9ea9a288c245f3bb640e6a1bc8602a"
+        return "https://mainnet.infura.io/v3/bed540a903df49cda22500fc526b00f5"
     }
 
     getAaveLendingPoolAddress(network: string) {
