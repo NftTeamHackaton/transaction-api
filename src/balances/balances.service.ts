@@ -17,7 +17,12 @@ export class BalancesService {
     ) {}
 
     public async splBalances(address: string) {
-        let addressesInDB = await this.cryptoAssetRepository.createQueryBuilder('c').select('c.contract_address').where('c.type = :type', {type: 'SPL'}).getRawMany()
+        let addressesInDB = await this.cryptoAssetRepository
+            .createQueryBuilder('c')
+            .select('c.contract_address')
+            .where('c.type = :type', {type: 'SPL'})
+            .limit(500)
+            .getRawMany()
         let params = addressesInDB.map(function (item) {
             return [
                 address,
