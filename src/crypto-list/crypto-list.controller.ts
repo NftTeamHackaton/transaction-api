@@ -15,6 +15,12 @@ export class CryptoListController {
         return response.status(HttpStatus.OK).send(list)
     }
 
+    @Get('/swap-list-add')
+    public async swapListAdd(@Res() response: Response) {
+        const data = await this.cryptoListService.swapListAdd()
+        return response.status(HttpStatus.OK).send(data)
+    }
+
     @Get('/bind-all-asset/:listId')
     public async bindAllAsset(@Param('listId') listId: number, @Res() response: Response) {
         const list = await this.cryptoListService.bindAllAsset(listId)
