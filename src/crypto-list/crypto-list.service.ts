@@ -95,7 +95,7 @@ export class CryptoListService {
     public async swapListAdd() {
         const list = await this.cryptoListRepoistory.findOne(7, {relations: ['assets']})
         const symbolsSolana = []
-        const symbolsBSC = ['COS', 'CREAM', 'CTK', 'CVP', 'CYC', 'DAR', 'DEGO', 'DFT', 'DFD', 'DODO', 'DOP', 'DUSK', 'EZ', 'FINA', 'FOR', 'FORM', 'FRIES', 'FUEL', 'GNT', 'GUM', 'HAKKA', 'HEL', 'CAKE', 'IOTX', 'KAVA', 'LTO', 'MARSH', 'MATH', 'MBOX', 'MIR', 'MIX']
+        const symbolsBSC = ['MONI', 'MX', 'NFT', 'NAOS', 'NRV', 'NYA', 'O3', 'OG', 'PHA', 'PORTO', 'PROM', 'PSG', 'QI', 'QUIDD', 'QSD', 'QUSD']
         console.log(symbolsSolana.length, symbolsBSC.length)
         for(let i = 0; i < symbolsSolana.length; i++) {
             const asset = await this.cryptoAssetRepository.findOne({symbol: symbolsSolana[i], network: 'solana'})
