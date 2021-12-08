@@ -34,6 +34,7 @@ export class BalancerSubgraph {
                             weight
                             decimals
                             address
+                            priceRate
                         }
                     }
                 }
