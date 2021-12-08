@@ -96,14 +96,19 @@ export class CryptoListService {
         const list = await this.cryptoListRepoistory.findOne(7, {relations: ['assets']})
         const symbolsSolana = ['ABR', '$ALPHA', '$ASH', '$ASS', '$BOJACK', '$CANS', '$CULT', '$DMT', '$EC', '$FROG', '$HIT', '$KSH', '$PNDC', '$SHIVER', '$SSO', '$UFO', '007E', '1000X', '107', '1Coin', '1INCH', '1SOL', '42', '420TOKE', '8PI', 'aaDAI', 'aaDAI-USDC', 'AAPE']
         const symbolsBSC = ['ALPACA', 'BELT', 'BUNNY', 'EPS', 'NRV', 'SAFEMOON', 'TKO', 'VAI', 'XVS', 'ASR', 'ARV', 'ARPA', 'ATA', 'ANKR', 'ATM', 'ATOM', 'AUTO', 'AXS', 'BABYCAKE', 'bALBT', 'BAND', 'BCH', 'BCOIN', 'bDIGG', 'BMON', 'BFI', 'C98', 'COMP', 'DOT', 'EOS', 'HTB', 'JUV']
+        console.log(symbolsSolana.length, symbolsBSC.length)
         for(let i = 0; i < symbolsSolana.length; i++) {
             const asset = await this.cryptoAssetRepository.findOne({symbol: symbolsSolana[i], network: 'solana'})
-            list.assets.push(asset)
+            if(asset) {
+                list.assets.push(asset)
+            }
         }
 
         for(let z = 0; z < symbolsBSC.length; z++) {
             const asset = await this.cryptoAssetRepository.findOne({symbol: symbolsBSC[z], network: 'smartchain'})
-            list.assets.push(asset)
+            if(asset) {
+                list.assets.push(asset)
+            }
         }
         return this.cryptoListRepoistory.save(list)
     }
