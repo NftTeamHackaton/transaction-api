@@ -18,6 +18,7 @@ export class CryptoListController {
     @Get('/swap-list-add')
     public async swapListAdd(@Res() response: Response) {
         const data = await this.cryptoListService.swapListAdd()
+        console.log(data.assets.length)
         return response.status(HttpStatus.OK).send(data)
     }
 
