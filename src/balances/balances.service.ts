@@ -31,11 +31,11 @@ export class BalancesService {
         })
         console.log(params)
         const httpService = new HttpService()
-        const resp = await (await httpService.post('https://api.mainnet-beta.solana.com', [
+        const resp = await (await httpService.post('https://solana-api.projectserum.com', [
             {
                 jsonrpc: "2.0",
                 id: 1,
-                method: "getTokenAccountsByDelegate",
+                method: "getTokenAccountsByOwner",
                 params: params
             }
         ], {
