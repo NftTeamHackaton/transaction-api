@@ -25,25 +25,25 @@ export class BalancesService {
             .getRawMany()
         let params = addressesInDB.map(function (item) {
             return [
-                address,
                 {
-                    mint: item.contract_address
-                },
-                {
-                encoding: "jsonParsed"
+                    jsonrpc: "2.0",
+                    id: 1,
+                    method: "getTokenAccountsByOwner",
+                    params: [
+                        address,
+                        {
+                            mint: item.contract_address
+                        },
+                        {
+                            encoding: "jsonParsed"
+                        }
+                    ]   
                 }
             ]
         })
         console.log(params)
         const httpService = new HttpService()
-        const resp = await (await httpService.post('https://solana-api.projectserum.com', [
-            {
-                jsonrpc: "2.0",
-                id: 1,
-                method: "getTokenAccountsByOwner",
-                params: params
-            }
-        ], {
+        const resp = await (await httpService.post('https://solana-api.projectserum.com', params, {
             headers: {
                 "Content-Type": "application/json"
             }
