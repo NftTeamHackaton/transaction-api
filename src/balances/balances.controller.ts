@@ -9,9 +9,10 @@ export class BalancesController {
         private readonly balanceService: BalancesService
     ) {}
 
-    @Get('/erc20Balances/:address/:network')
+    @Get('/erc20/:address/:network')
     public async getErc20Balances(@Param('address') address: string, @Param('network') network: string, @Res() response: Response) {
         const balances = await this.balanceService.erc20Balances(address, network)
+        console.log(balances)
         const data = balances.map(balance => {
             return {
                 address: balance.address,
@@ -24,4 +25,9 @@ export class BalancesController {
         return response.status(HttpStatus.OK).send(data)
     }
 
+    @Get('/spl/:address')
+    public async getSplBalances(@Param('address') address: string, @Res() response: Response) {
+        const balances = await this.balanceService.splBalances(address)
+        return response.status(HttpStatus.OK).send(balances)
+    }
 }
