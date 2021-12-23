@@ -12,17 +12,23 @@ export class BalancesController {
     @Get('/erc20/:address/:network')
     public async getErc20Balances(@Param('address') address: string, @Param('network') network: string, @Res() response: Response) {
         const balances = await this.balanceService.erc20Balances(address, network)
-        console.log(balances)
-        // const data = balances.map(balance => {
-        //     return {
-        //         address: balance.address,
-        //         balance: balance.balanceOf[0].value,
-        //         name: balance.name[0].value,
-        //         symbol: balance.symbol[0].value,
-        //         decimals: balance.decimals[0].value,
-        //     }
-        // })
         return response.status(HttpStatus.OK).send(balances)
+    }
+
+    @Get('/erc20-batch/:address/:network')
+    public async getErc20BalancesBatch(@Param('address') address: string, @Param('network') network: string, @Res() response: Response) {
+        const balances = await this.balanceService.erc20BalancesBatch(address, network)
+        console.log(balances)
+        const data = balances.map(balance => {
+            return {
+                address: balance.address,
+                balance: balance.balanceOf[0].value,
+                name: balance.name[0].value,
+                symbol: balance.symbol[0].value,
+                decimals: balance.decimals[0].value,
+            }
+        })
+        return response.status(HttpStatus.OK).send(data)
     }
 
     @Get('/spl/:address')

@@ -52,29 +52,36 @@ export class BalancesService {
         const web3 = new Web3(new Web3.providers.HttpProvider(this.config.getInfuraURL(network)))
         const balancesContract = new web3.eth.Contract(BalancesABI, "0x353Eac17324100dce72c33788444b95c5c344014")
         return balancesContract.methods.getBalances(addresses, address).call()
-        // console.log(addressesInDB)
-        // const contracts = [
-        //     {
-        //         namespace: '',
-        //         addresses: addresses,
-        //         abi: ERC20ABI,
-        //         allReadMethods: true,
-        //         groupByNamespace: false,
-        //         logging: false,
-        //         readMethods: [
-        //             {
-        //                 name: "balanceOf",
-        //                 args: [address],
-        //             }
-        //         ],
+        
+    }
 
-        //     }
-        // ]
+    public async erc20BalancesBatch(address: string, network: string) {
+        let addressesInDB = await this.cryptoAssetRepository.createQueryBuilder('c').select('c.contract_address').where('c.type = :type', {type: 'ERC20'}).getRawMany()
+        let addresses = addressesInDB.map(e => {
+            return e.contract_address
+        })
+        const contracts = [
+            {
+                namespace: '',
+                addresses: addresses,
+                abi: ERC20ABI,
+                allReadMethods: true,
+                groupByNamespace: false,
+                logging: false,
+                readMethods: [
+                    {
+                        name: "balanceOf",
+                        args: [address],
+                    }
+                ],
 
-        // const batchCall = new BatchCall({
-        //     provider: this.config.getInfuraURL(network)
-        // })
-        // return batchCall.execute(contracts)
+            }
+        ]
+
+        const batchCall = new BatchCall({
+            provider: this.config.getInfuraURL(network)
+        })
+        return batchCall.execute(contracts)
     }
 
     public async bep20Balances(address: string) {
