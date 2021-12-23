@@ -198,7 +198,7 @@ export class CryptoListService {
                 description: asset.description,
                 symbol: asset.symbol,
                 type: asset.type,
-                logoURI: asset.logoURI,
+                logoURI: asset.logoURI ? asset.logoURI : '-',
                 network: asset.network,
                 explorer: asset.explorer,
                 decimals: asset.decimals,
