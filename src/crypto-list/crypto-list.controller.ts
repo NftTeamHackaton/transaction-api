@@ -50,6 +50,12 @@ export class CryptoListController {
         return response.status(HttpStatus.OK).send(list)
     }
 
+    @Get('/all-asset')
+    public async allAsset(@Res() response: Response) {
+        const assets = await this.cryptoListService.allAsset()
+        return response.status(HttpStatus.OK).send(assets)
+    }
+
     @Get('/detail/:id')
     public async detailCryptoList(@Param('id') id: number, @Res() response: Response) {
         const list = await this.cryptoListService.detailCryptoList(id)
