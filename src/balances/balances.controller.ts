@@ -22,7 +22,7 @@ export class BalancesController {
         const data = balances.map(balance => {
             return {
                 address: balance.address,
-                balance: balance.balanceOf[0].value,
+                balance: balance.balanceOf[0].value.length == 0 ? balance.balanceOf[0].value : "0",
                 name: balance.name[0].value,
                 symbol: balance.symbol[0].value,
                 decimals: balance.decimals[0].value,
