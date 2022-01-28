@@ -62,7 +62,7 @@ export class ServiceInfoService {
         }
     }
 
-    @Cron('* * * * *')
+    @Cron('0 1 * * *')
     public async updateData() {
         this.logger.debug("Start update apy")
         const network = 'kovan'
