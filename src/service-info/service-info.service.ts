@@ -1,15 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceInfoEntity } from 'src/entities/serviceInfo.entity';
 import { Repository } from 'typeorm';
 import { ServiceInfoDto } from './service-info.dto';
+import { Registry } from './services/registry';
 
 @Injectable()
 export class ServiceInfoService {
 
+    private readonly logger = new Logger(ServiceInfoService.name)
+
     constructor(
         @InjectRepository(ServiceInfoEntity)
-        private readonly serviceInfoRepository: Repository<ServiceInfoEntity>
+        private readonly serviceInfoRepository: Repository<ServiceInfoEntity>,
+        private readonly serviceRegistry: Registry
     ) {}
 
     public async search(name: string){
@@ -55,6 +60,30 @@ export class ServiceInfoService {
             staking: stakingData,
             liquidity: liquidityData
         }
+    }
+
+    @Cron('* * * * *')
+    public async updateData() {
+        this.logger.debug("Start update apy")
+        const network = 'kovan'
+        const services = this.serviceRegistry.getServices()
+        for (let i = 0; i < services.length; i++) {
+            const data = await this.serviceRegistry.getAPYByService(network, services[i])
+            for (let z = 0; z < data.length; z++) {
+                this.logger.debug(data)
+                const info = await this.serviceInfoRepository.findOne({
+                    symbol: data[z].symbol,
+                    service: data[z].service,
+                })
+                this.logger.debug(info)
+                if(!info) {
+                    throw new NotFoundException('Info not found')
+                }
+                info.apy = data[z].apy
+                await this.serviceInfoRepository.save(info)
+            }
+        }
+        this.logger.debug("End update apy")
     }
 
 }
