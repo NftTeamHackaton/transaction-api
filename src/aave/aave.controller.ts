@@ -1,10 +1,24 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { AaveService } from './aave.service';
+import { DepositEncodeAave } from './depositEncodeAave.dto';
+import { WithdrawEncodeAave } from './withdrawEncodeAave.dto';
 
 @Controller('aave')
 export class AaveController {
     constructor(private readonly aaveService: AaveService) {}
+
+    @Post('/deposit-encode')
+    public async depositEncode(@Body() depositDto: DepositEncodeAave, @Res() response: Response) {
+        const data = await this.aaveService.depositEncodeFunction(depositDto)
+        return response.status(200).send({data: data})
+    }
+
+    @Post('/withdraw-encode')
+    public async withdrawEncode(@Body() depositDto: WithdrawEncodeAave, @Res() response: Response) {
+        const data = await this.aaveService.withdrawEncodeFunction(depositDto)
+        return response.status(200).send({data: data})
+    }
 
     @Get('/:network/apy')
     public async apyInfo(

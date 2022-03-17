@@ -8,6 +8,9 @@ import { aTokenABI } from './aToken.abi';
 import { AaveTokenBuilder } from './aaveToken.builder';
 import { LendingPoolABI } from './lendingPool.abi';
 import { ConfigService } from 'src/config/config.service';
+import { INKA_AAVE_PROVIDER } from './inkaAaveProvider.abi';
+import { DepositEncodeAave } from './depositEncodeAave.dto';
+import { WithdrawEncodeAave } from './withdrawEncodeAave.dto';
 
 @Injectable()
 export class AaveService {
@@ -18,6 +21,18 @@ export class AaveService {
         private readonly tokenBuilder: AaveTokenBuilder,
         private readonly configService: ConfigService
     ) {}
+
+    public async depositEncodeFunction(depositEncodeDto: DepositEncodeAave) {
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL('kovan')));
+        const contract = new provider.eth.Contract(INKA_AAVE_PROVIDER)
+        return contract.methods.deposit(depositEncodeDto.asset, depositEncodeDto.amount, depositEncodeDto.onBehalfOf, depositEncodeDto.referralCode).encodeABI()
+    }
+
+    public async withdrawEncodeFunction(withdrawEncodeDto: WithdrawEncodeAave) {
+        let provider = new Web3(new Web3.providers.HttpProvider(this.configService.getInfuraURL('kovan')));
+        const contract = new provider.eth.Contract(LendingPoolABI)
+        return contract.methods.withdraw(withdrawEncodeDto.asset, withdrawEncodeDto.amount, withdrawEncodeDto.to).encodeABI()
+    }
 
     public async apyInfo(network: string) {
         const RAY = 1e27
