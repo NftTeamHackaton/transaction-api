@@ -1,6 +1,6 @@
 // import { NATIVE_SOL, TokenAmount, TOKENS } from "./solana.tokens"
 
-import { AccountInfo, clusterApiUrl, Connection, PublicKey } from "@solana/web3.js"
+import { AccountInfo, Connection, PublicKey } from "@solana/web3.js"
 import { LIQUIDITY_POOL_PROGRAM_ID_V4, SERUM_PROGRAM_ID_V3 } from './ids'
 import { LiquidityPoolInfo, LIQUIDITY_POOLS } from "./raydium.pools"
 import { LP_TOKENS, NATIVE_SOL, TokenAmount, TOKENS } from "./solana.tokens"
@@ -199,7 +199,7 @@ import { OpenOrders } from "@project-serum/serum"
 
 export async function requestInfos() {
 
-    const conn = new Connection(clusterApiUrl('mainnet-beta'))
+    const conn = new Connection("https://twilight-shy-pine.solana-mainnet.quiknode.pro/9a77cbe7dfce95c77b2752fb74cc28dad2fc7421/")
 
     let ammAll: {
       publicKey: PublicKey
