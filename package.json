@@ -43,6 +43,7 @@
     "@solana/web3.js": "^1.29.0",
     "@types/lodash": "^4.14.176",
     "@uniswap/sdk": "^3.0.3",
+    "abi-decoder": "^2.4.0",
     "cache-manager": "^3.4.4",
     "cache-manager-redis-store": "^2.0.0",
     "class-transformer": "^0.4.0",
