@@ -50,34 +50,9 @@ export class TransactionsService {
         return finalTx
       }
 
-      public async voteProposal(hash: string, network: number) {
-        let url = ""
-        if(network == 1) {
-            url = "https://kovan.infura.io/v3/800075abfbc641a1a59bfb477eed5c01"
-        } else if (network == 2) {
-            url = "https://rinkeby.infura.io/v3/800075abfbc641a1a59bfb477eed5c01"
-        }
-        const web3Kovan = new Web3(new Web3.providers.HttpProvider(url));
-        const tx = await web3Kovan.eth.getTransactionReceipt(hash)
-        const decodedLogs = abiDecoder.decodeLogs(tx.logs)
-        
-        let nonce
-        let dataHash
-        for(let i = 0; i < decodedLogs.length; i++) {
-            const events = decodedLogs[i].events
-            events.map(function(event) {
-                if(event.name == "depositNonce") {
-                    nonce = web3Kovan.utils.toDecimal(event.value).toString()
-                }
-
-                if(event.name == "dataHash") {
-                    dataHash = event.value
-                }
-            })
-        }
+      public async voteProposal(nonce: string) {
         const transaction = await this.transactionRepository.findOne({nonce})
         transaction.status = "2"
-        transaction.dataHash = dataHash
         
         return this.transactionRepository.save(transaction)
       }

@@ -21,9 +21,9 @@ export class TransactionsController {
         return response.status(200).send(data)
     }
 
-    @Get('/vote-proposal/:hash/:network')
-    public async voteProposal(@Param('hash') hash: string, @Param('network') network: number, @Res() response: Response) {
-        const data = await this.transactionService.voteProposal(hash, network)
+    @Get('/vote-proposal/:nonce')
+    public async voteProposal(@Param('nonce') nonce: string, @Res() response: Response) {
+        const data = await this.transactionService.voteProposal(nonce)
         return response.status(200).send(data)
     }
 
